@@ -1,0 +1,11 @@
+// JavaScript Document
+var x = 10;
+function contar(){
+x--;
+document.getElementById("segundos").innerHTML = 'Esta ventana se cerrará en '+x+' segundos.';
+if(x <= 0)
+	parent.contenido.location = "../fill.php";
+}
+window.onload = function() {
+setInterval(contar, 1000);
+}
