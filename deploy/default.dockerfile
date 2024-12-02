@@ -24,21 +24,21 @@ RUN apk add --no-cache \
 # install composer
 COPY --from=composer:2.7.6 /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www/html
+WORKDIR /var/www/html/inventario
 
 # copy necessary files and change permissions
 COPY . .
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 /var/www/html/storage \
-    && chmod -R 775 /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/inventario \
+    && chmod -R 775 /var/www/html/inventario/storage \
+    && chmod -R 775 /var/www/html/inventario/bootstrap/cache
 
 # install php and node.js dependencies
 RUN composer install --no-dev --prefer-dist \
     && npm install \
     && npm run build
 
-RUN chown -R www-data:www-data /var/www/html/vendor \
-    && chmod -R 775 /var/www/html/vendor
+RUN chown -R www-data:www-data /var/www/html/inventario/vendor \
+    && chmod -R 775 /var/www/html/inventario/vendor
 
 # stage 2: production stage
 FROM php:8.2-fpm-alpine
@@ -80,6 +80,6 @@ COPY ./deploy/php.ini "$PHP_INI_DIR/conf.d/app.ini"
 WORKDIR /var/www/html/inventario
 
 # add all folders where files are being stored that require persistence. if needed, otherwise remove this line.
-VOLUME ["/var/www/html/storage/app"]
+VOLUME ["/var/www/html/inventario/storage/app"]
 
 CMD ["sh", "-c", "nginx && php-fpm"]
