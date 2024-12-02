@@ -9,18 +9,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
- 
+use Illuminate\Support\Str; 
+
 class AuthController extends Controller
 {
     public function register()
     {
         return view('register');
     }
- 
+
     public function registerPost(Request $request)
     {
         $user = new User();
- 
+
         $user->name = $request->name;
         $user->username = $request->username;
         $user->email = $request->email;
@@ -61,6 +62,15 @@ class AuthController extends Controller
                 'password' => env('USER_PASS'),
             ];
             if (Auth::attempt($credetials)) {
+
+                $token = Str::random(60);
+
+                $user->forceFill([
+                    'api_token' => hash('sha256', $token),
+                ])->save();
+                
+                $request->session()->put('apiToken', $token);
+                $request->session()->put('espacio', $request->espacio);
                 $request->session()->put('username', $result['usuario']['nome_pessoa']);
                 $request->session()->put('nome_pessoa', $result['usuario']['nome_pessoa']);
                 $request->session()->put('email', $result['usuario']['email']);

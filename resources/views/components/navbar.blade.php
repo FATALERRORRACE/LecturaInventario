@@ -5,13 +5,17 @@
         <div class="flex-none w-64 ">
             <a href="/" rel="home" class="img-001 flex items-center md:max-w-[200px] lg:max-w-[200px]">
                 <img src="https://www.biblored.gov.co/sites/default/files/logo-biblored.svg" alt="Inicio"
-                    class="mr-3 w-full">
+                    class="mr-3">
             </a>
+            <p class="base-1-color" style="font-size: x-large;font-weight: 300;">Inventario</p>
         </div>
         <div id="contain-e-t" class="flex-1 w-64 rounded bg-white">
-
-            <div class="flex justify-center margin-50">
+            <div class="flex justify-center margin-50 mt-5">
                 <select id="espacio" class="base-1-color js-example-basic-single border-bblr-1">
+                    <option value="">Asigne una biblioteca</option>
+                    @foreach ($bibliotecas as $biblioteca)
+                        <option value="{{$biblioteca['Id']}}" {{(session('espacio') == $biblioteca['Id'] ? 'selected' : '' )}}>{{$biblioteca['Nombre']}}</option>
+                    @endforeach
                 </select>
             </div>
         </div>

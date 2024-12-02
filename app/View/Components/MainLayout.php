@@ -4,7 +4,7 @@ namespace App\View\Components;
 
 use Illuminate\View\Component;
 use App\Models\Menu;
-use App\Models\Consecutivos;
+use App\Models\Bibliotecas;
 class MainLayout extends Component
 {
     /**
@@ -13,11 +13,12 @@ class MainLayout extends Component
      * @return \Illuminate\View\View
      */
     public function render(){
-        
+        //$request->
         return view(
             'layouts.main',
             [
-                'menu' => Menu::get()->toArray()
+                'menu' => Menu::get()->toArray(),
+                'bibliotecas' => Bibliotecas::get()->toArray()
             ]
         );
     }

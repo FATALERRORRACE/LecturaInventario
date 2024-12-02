@@ -3,6 +3,7 @@
 namespace App\View\Components;
 
 use Illuminate\View\Component;
+use App\Models\Menu;
 
 class GuestLayout extends Component
 {
@@ -13,6 +14,7 @@ class GuestLayout extends Component
      */
     public function render()
     {
-        return view('layouts.guest');
+        return view('layouts.guest', [
+        ]);
     }
 }

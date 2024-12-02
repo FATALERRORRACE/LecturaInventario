@@ -15,7 +15,7 @@ class menuComponent extends Component
     public static function renderMenu($menu){
         $html = "";
         foreach ($menu as $key => $item) {
-            $html.= "<button class=\"rounded-lg base-1-color bg-white btn rounded-lg mx-1\" type=\"button\" id=\"filter-submenu\" > 
+            $html.= "<button class=\"rounded-lg base-1-color bg-white btn rounded-lg mx-1\" type=\"button\" id=\"submenu-{$item["id"]}\" > 
                 {$item["icono"]} {$item["label"]}
             </button>";
         }
