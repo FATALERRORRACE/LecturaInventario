@@ -73,11 +73,11 @@ RUN apk add --no-cache \
     && rm -rf /var/cache/apk/*
 
 # copy files from the build stage
-COPY --from=build /var/www/html /var/www/html
+COPY --from=build /var/www/html/inventario /var/www/html/inventario
 COPY ./deploy/nginx.conf /etc/nginx/http.d/default.conf
 COPY ./deploy/php.ini "$PHP_INI_DIR/conf.d/app.ini"
 
-WORKDIR /var/www/html
+WORKDIR /var/www/html/inventario
 
 # add all folders where files are being stored that require persistence. if needed, otherwise remove this line.
 VOLUME ["/var/www/html/storage/app"]
