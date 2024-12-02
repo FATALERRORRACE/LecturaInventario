@@ -5,13 +5,13 @@ version: '3.8'
 services:
   laravel:
     restart: unless-stopped
-    container_name: laravelapp
+    container_name: inventario
     build:
       context: ../
-      dockerfile: ./deploy/Dockerfile
+      dockerfile: ./deploy/default
     # allocate as many volumes as necessary, if needed.
     volumes:
-      - ../storage/app:/var/www/html/storage/app
+      - ../storage/app:/var/www/html/inventario/storage/app
     environment:
       APP_NAME: ${APP_NAME}
       APP_ENV: ${APP_ENV}
