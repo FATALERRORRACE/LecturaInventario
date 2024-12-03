@@ -12,14 +12,48 @@ $(document).ready(() => {
 
     $('#espacio').select2();
 
-    $("#submenu-1").click((eve)=>{
+    $("#submenu-1").click((eve) => {
         eve.preventDefault();
         inventarioInstance.actionInventario(eve);
     });
 
-    $("#submenu-4").click((eve)=>{
+    $("#submenu-4").click((eve) => {
         eve.preventDefault();
         adminInstance.actionAdmin();
     });
     $("#submenu-1").trigger('click');
 });
+
+window.dragOverHandler = (ev) => {
+    ev.preventDefault();
+    $("#drop_zone").addClass('blur-sm');
+    $("#messagedraganddrop").show();
+}
+
+window.dragLeaveHandler = (ev) => {
+    ev.preventDefault();
+    $("#drop_zone").removeClass('blur-sm');
+    $("#messagedraganddrop").hide();
+}
+
+
+window.dropHandler = (ev) => {
+    ev.preventDefault();
+    $("#drop_zone").removeClass('blur-sm');
+    $("#messagedraganddrop").hide();
+    if (ev.dataTransfer.items) {
+      // Use DataTransferItemList interface to access the file(s)
+      [...ev.dataTransfer.items].forEach((item, i) => {
+        // If dropped items aren't files, reject them
+        if (item.kind === "file") {
+          const file = item.getAsFile();
+          console.log(`… file[${i}].name = ${file.name}`);
+        }
+      });
+    } else {
+      // Use DataTransfer interface to access the file(s)
+      [...ev.dataTransfer.files].forEach((file, i) => {
+        console.log(`… file[${i}].name = ${file.name}`);
+      });
+    }
+  }

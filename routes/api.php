@@ -16,5 +16,5 @@ Route::middleware('auth:api')->post('/inventario/{espacio}/new', [InventarioCont
 Route::middleware('auth:api')->get('/admin/{id}',            [AdministracionController::class, 'index']);
 Route::middleware('auth:api')->post('/admin/biblioteca/set', [AdministracionController::class, 'createJob']);
 Route::middleware('auth:api')->post('/admin/{espacio}/data', [AdministracionController::class, 'getData']);
-Route::middleware('auth:api')->post('/admin/{espacio}/data', [AdministracionController::class, 'getData']);
+Route::get('/admin/data/{id}/xls',   [AdministracionController::class, 'createXls']);
 

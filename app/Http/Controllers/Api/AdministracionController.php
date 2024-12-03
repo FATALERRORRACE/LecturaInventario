@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 use App\Models\Bibliotecas;
 use App\Models\Master;
+use App\Services\XlssExport;
 
 class AdministracionController extends Controller{
     /**
@@ -55,6 +56,16 @@ class AdministracionController extends Controller{
         return DB::table($data['Tabla'])->get()->toArray();
     }
 
+
+    public function createXls(int $id, Request $request){
+        $data = Bibliotecas::where('id', $id)->first();
+        $xlssExportInstance = new XlssExport;
+        $xlssExportInstance
+        ->execute(
+            DB::table($data['Tabla'])->get()->toArray(), 
+            $data['Nombre']
+        );
+    }
 
     public function processTable($tableName, $username){
         $date = new \DateTime();

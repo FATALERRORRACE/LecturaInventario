@@ -313,3 +313,19 @@ button{
 td.gridjs-td {
     padding: 6px 24px !important;
 }
+
+#tableContent .btn {
+    box-shadow: none !important;
+}
+#messagedraganddrop p{
+    position: absolute;
+    text-align: center;
+    margin-top: 40px;
+}
+
+#messagedraganddrop {
+    position: relative;
+    font-size: xx-large;
+    font-weight: 600;
+    letter-spacing: 1px;
+}

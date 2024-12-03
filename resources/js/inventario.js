@@ -28,9 +28,10 @@ export class Inventario {
     actionInventario(eve) {
         var context = this;
         if(gridInstance){
+            gridInstance.config.data = [];
             gridInstance.updateConfig({
+                data: [],
                 columns: context.columns,
-                data: []
             }).forceRender();
         }else{
             gridInstance = new Grid({

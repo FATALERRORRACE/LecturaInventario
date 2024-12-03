@@ -5,28 +5,19 @@ import "select2";
 import toastr from "toastr";
 
 export class Administracion {
+
     columns = [
-        { id: "C_Barras", name: "Código de Barras", width: '100px' },
-        { id: "Situacion", name: "Código de Barras", width: '100px' },
-        { id: "Comentario", name: "Código de Barras", width: '100px' },
-        { id: "Usuario", name: "Código de Barras", width: '100px' },
-        { id: "Estado", name: "Código de Barras", width: '100px' },
-        { id: "Fecha", name: "Código de Barras", width: '100px' },
-        {
-            name: 'Acción',
-            width: '80px',
-            formatter: (_, row) => html(
-                `<div class="flex justify-center">
-                    <button class="py-1 px-2 border rounded-md text-white bg-invented-300" onclick="editUser(${row._cells[0].data})">
-                        <i class="fa-solid fa-check"></i> Validar
-                    </button>
-                </div>`
-            ),
-        },
+        { id: "C_Barras", name: "C_Barras", width: '100px' },
+        { id: "Usuario", name: "Usuario", width: '100px' },
+        { id: "Situacion", name: "Situacion", width: '100px' },
+        { id: "Comentario", name: "Comentario", width: '100px' },
+        { id: "Fecha", name: "Fecha", width: '100px' },
+        { id: "Estado", name: "Estado", width: '100px' },
     ];
+
     actionAdmin() {
         var context = this;
-        $("#espacio").off('change.espacio   1');
+        $("#espacio").off('change.espacio1');
 
         $("#espacio").on('change.espacio1', () => {
             $("#sel-bbl").text($("#espacio").find(':selected').text());
@@ -38,9 +29,7 @@ export class Administracion {
                     redirect: "follow"
                 })
                 .then((response) => {
-                    console.log(response.status);
                     if (response.status == 500) {
-                        
                         $('#dialog-form').hide();
                         gridInstance.updateConfig({
                             columns: context.columns,
@@ -58,11 +47,16 @@ export class Administracion {
                         }).forceRender();
                     });   
                 });
-        }); 
-        if(gridInstance){
+        });
 
-        }else{
+        if(gridInstance)
+            gridInstance.updateConfig({
+                columns: context.columns,
+                search: true,
+            });
+        else
             gridInstance = new Grid({
+                search: true,
                 className: {
                     tr: 'table-tr-custom',
                 },
@@ -74,7 +68,7 @@ export class Administracion {
                 selector: (cell, rowIndex, cellIndex) => cellIndex === 0 ? cell.firstName : cell,
                 data: []
             }).render(document.getElementById("dialog-form"));
-        }
+
 
         fetch(`api/admin/${$("#espacio").val()}`,
             {
@@ -83,42 +77,45 @@ export class Administracion {
                 redirect: "follow"
             }
         )
-            .then((response) => response.text().then(text => {
-                $("#tableContent").html(text);
-                $("#espacio").trigger("change");
-                $("#registercode").submit((event) => {
-                    event.preventDefault();
-                    gridInstance.config.data.push({
-                        'alias': $("#codbar").val(),
-                        'bibloteca': $('#espacio').find(":selected").text()
-                    });
-                    gridInstance.updateConfig({
-                        columns: columns,
-                        data: gridInstance.config.data
-                    }).forceRender();
-                    $("#codbar").val('');
+        .then((response) => response.text().then(text => {
+            $("#tableContent").html(text);
+            $("#espacio").trigger("change");
+            $("#expordata").click(()=>{
+                window.open(`${location.href}api/admin/data/${$("#espacio").val()}/xls`);
+            })
+            $("#registercode").submit((event) => {
+                event.preventDefault();
+                gridInstance.config.data.push({
+                    'alias': $("#codbar").val(),
+                    'bibloteca': $('#espacio').find(":selected").text()
                 });
-                
-                $("#create-items").click(() => {
-                    $("#loader-adm").show();
-                    $("#txt-create-items").hide();
-                    $("#create-items").hide();
-                    fetch('/api/admin/biblioteca/set',
-                        {
-                            method: "POST",
-                            headers: headers,
-                            body: JSON.stringify({
-                                'table': $('#espacio').find(":selected").text()
-                            }),
-                        }
-                    )
-                    .then((response) => response.json().then( json => {
-                        toastr.success(json.message);
-                        $("#submenu-4").trigger('click');
-                        $("#loader-adm").hide();
-                    }));
-                });
-            }));
+                gridInstance.updateConfig({
+                    columns: columns,
+                    data: gridInstance.config.data
+                }).forceRender();
+                $("#codbar").val('');
+            });
+            
+            $("#create-items").click(() => {
+                $("#loader-adm").show();
+                $("#txt-create-items").hide();
+                $("#create-items").hide();
+                fetch('/api/admin/biblioteca/set',
+                    {
+                        method: "POST",
+                        headers: headers,
+                        body: JSON.stringify({
+                            'table': $('#espacio').find(":selected").text()
+                        }),
+                    }
+                )
+                .then((response) => response.json().then( json => {
+                    toastr.success(json.message);
+                    $("#submenu-4").trigger('click');
+                    $("#loader-adm").hide();
+                }));
+            });
 
+        }));
     }
 }

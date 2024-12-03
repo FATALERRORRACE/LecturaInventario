@@ -37,41 +37,35 @@ var Administracion = /*#__PURE__*/function () {
     _classCallCheck(this, Administracion);
     _defineProperty(this, "columns", [{
       id: "C_Barras",
-      name: "Código de Barras",
-      width: '100px'
-    }, {
-      id: "Situacion",
-      name: "Código de Barras",
-      width: '100px'
-    }, {
-      id: "Comentario",
-      name: "Código de Barras",
+      name: "C_Barras",
       width: '100px'
     }, {
       id: "Usuario",
-      name: "Código de Barras",
+      name: "Usuario",
       width: '100px'
     }, {
-      id: "Estado",
-      name: "Código de Barras",
+      id: "Situacion",
+      name: "Situacion",
+      width: '100px'
+    }, {
+      id: "Comentario",
+      name: "Comentario",
       width: '100px'
     }, {
       id: "Fecha",
-      name: "Código de Barras",
+      name: "Fecha",
       width: '100px'
     }, {
-      name: 'Acción',
-      width: '80px',
-      formatter: function formatter(_, row) {
-        return (0,gridjs__WEBPACK_IMPORTED_MODULE_1__.html)("<div class=\"flex justify-center\">\n                    <button class=\"py-1 px-2 border rounded-md text-white bg-invented-300\" onclick=\"editUser(".concat(row._cells[0].data, ")\">\n                        <i class=\"fa-solid fa-check\"></i> Validar\n                    </button>\n                </div>"));
-      }
+      id: "Estado",
+      name: "Estado",
+      width: '100px'
     }]);
   }
   return _createClass(Administracion, [{
     key: "actionAdmin",
     value: function actionAdmin() {
       var context = this;
-      jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").off('change.espacio   1');
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").off('change.espacio1');
       jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").on('change.espacio1', function () {
         jquery__WEBPACK_IMPORTED_MODULE_0___default()("#sel-bbl").text(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").find(':selected').text());
         fetch("api/admin/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/data"), {
@@ -79,7 +73,6 @@ var Administracion = /*#__PURE__*/function () {
           headers: headers,
           redirect: "follow"
         }).then(function (response) {
-          console.log(response.status);
           if (response.status == 500) {
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#dialog-form').hide();
             gridInstance.updateConfig({
@@ -99,22 +92,24 @@ var Administracion = /*#__PURE__*/function () {
           });
         });
       });
-      if (gridInstance) {} else {
-        gridInstance = new gridjs__WEBPACK_IMPORTED_MODULE_1__.Grid({
-          className: {
-            tr: 'table-tr-custom'
-          },
-          columns: context.columns,
-          sort: true,
-          pagination: true,
-          language: gridjs_l10n__WEBPACK_IMPORTED_MODULE_2__.esES,
-          resizable: true,
-          selector: function selector(cell, rowIndex, cellIndex) {
-            return cellIndex === 0 ? cell.firstName : cell;
-          },
-          data: []
-        }).render(document.getElementById("dialog-form"));
-      }
+      if (gridInstance) gridInstance.updateConfig({
+        columns: context.columns,
+        search: true
+      });else gridInstance = new gridjs__WEBPACK_IMPORTED_MODULE_1__.Grid({
+        search: true,
+        className: {
+          tr: 'table-tr-custom'
+        },
+        columns: context.columns,
+        sort: true,
+        pagination: true,
+        language: gridjs_l10n__WEBPACK_IMPORTED_MODULE_2__.esES,
+        resizable: true,
+        selector: function selector(cell, rowIndex, cellIndex) {
+          return cellIndex === 0 ? cell.firstName : cell;
+        },
+        data: []
+      }).render(document.getElementById("dialog-form"));
       fetch("api/admin/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val()), {
         method: "GET",
         headers: headers,
@@ -123,6 +118,9 @@ var Administracion = /*#__PURE__*/function () {
         return response.text().then(function (text) {
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#tableContent").html(text);
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").trigger("change");
+          jquery__WEBPACK_IMPORTED_MODULE_0___default()("#expordata").click(function () {
+            window.open("".concat(location.href, "api/admin/data/").concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/xls"));
+          });
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#registercode").submit(function (event) {
             event.preventDefault();
             gridInstance.config.data.push({
@@ -227,9 +225,10 @@ var Inventario = /*#__PURE__*/function () {
     value: function actionInventario(eve) {
       var context = this;
       if (gridInstance) {
+        gridInstance.config.data = [];
         gridInstance.updateConfig({
-          columns: context.columns,
-          data: []
+          data: [],
+          columns: context.columns
         }).forceRender();
       } else {
         gridInstance = new gridjs__WEBPACK_IMPORTED_MODULE_1__.Grid({
@@ -17853,6 +17852,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _administracion__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./administracion */ "./resources/js/administracion.js");
 /* harmony import */ var select2__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! select2 */ "./node_modules/select2/dist/js/select2.js");
 /* harmony import */ var select2__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(select2__WEBPACK_IMPORTED_MODULE_5__);
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 
 
 
@@ -17873,6 +17878,36 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).ready(function () {
   });
   jquery__WEBPACK_IMPORTED_MODULE_0___default()("#submenu-1").trigger('click');
 });
+window.dragOverHandler = function (ev) {
+  ev.preventDefault();
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#drop_zone").addClass('blur-sm');
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#messagedraganddrop").show();
+};
+window.dragLeaveHandler = function (ev) {
+  ev.preventDefault();
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#drop_zone").removeClass('blur-sm');
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#messagedraganddrop").hide();
+};
+window.dropHandler = function (ev) {
+  ev.preventDefault();
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#drop_zone").removeClass('blur-sm');
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#messagedraganddrop").hide();
+  if (ev.dataTransfer.items) {
+    // Use DataTransferItemList interface to access the file(s)
+    _toConsumableArray(ev.dataTransfer.items).forEach(function (item, i) {
+      // If dropped items aren't files, reject them
+      if (item.kind === "file") {
+        var file = item.getAsFile();
+        console.log("\u2026 file[".concat(i, "].name = ").concat(file.name));
+      }
+    });
+  } else {
+    // Use DataTransfer interface to access the file(s)
+    _toConsumableArray(ev.dataTransfer.files).forEach(function (file, i) {
+      console.log("\u2026 file[".concat(i, "].name = ").concat(file.name));
+    });
+  }
+};
 })();
 
 /******/ })()
