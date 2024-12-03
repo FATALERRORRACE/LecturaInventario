@@ -1,115 +1,6 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./resources/js/Inventario.js":
-/*!************************************!*\
-  !*** ./resources/js/Inventario.js ***!
-  \************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Inventario: () => (/* binding */ Inventario)
-/* harmony export */ });
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var gridjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! gridjs */ "./node_modules/gridjs/dist/gridjs.module.js");
-/* harmony import */ var gridjs_l10n__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! gridjs/l10n */ "./node_modules/gridjs/l10n/dist/l10n.module.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-
-
-
-var Inventario = /*#__PURE__*/function () {
-  function Inventario() {
-    _classCallCheck(this, Inventario);
-    _defineProperty(this, "columns", [{
-      id: "alias",
-      name: "Código de Barras",
-      width: '100px'
-    }, {
-      id: "bibloteca",
-      name: "Biblioteca",
-      width: '100px'
-    }, {
-      name: 'Acción',
-      width: '50px',
-      formatter: function formatter(_, row) {
-        return (0,gridjs__WEBPACK_IMPORTED_MODULE_1__.html)("<div class=\"flex justify-center\">\n                    <button class=\"py-1 px-2 border rounded-md text-white bg-invented-300\" onclick=\"editUser(".concat(row._cells[0].data, ")\">\n                        <i class=\"fa-solid fa-check\"></i> Validar\n                    </button>\n                </div>"));
-      }
-    }]);
-  }
-  return _createClass(Inventario, [{
-    key: "actionInventario",
-    value: function actionInventario(eve) {
-      var context = this;
-      console.log('gridInstance');
-      console.log(gridInstance);
-      if (gridInstance) {
-        gridInstance.updateConfig({
-          columns: context.columns,
-          data: []
-        }).forceRender();
-      } else {
-        gridInstance = new gridjs__WEBPACK_IMPORTED_MODULE_1__.Grid({
-          className: {
-            tr: 'table-tr-custom'
-          },
-          columns: context.columns,
-          sort: true,
-          pagination: true,
-          language: gridjs_l10n__WEBPACK_IMPORTED_MODULE_2__.esES,
-          resizable: true,
-          selector: function selector(cell, rowIndex, cellIndex) {
-            return cellIndex === 0 ? cell.firstName : cell;
-          },
-          data: []
-        }).render(document.getElementById("dialog-form"));
-      }
-      fetch("api/inventario", {
-        method: "GET",
-        headers: headers,
-        redirect: "follow"
-      }).then(function (response) {
-        return response.text().then(function (text) {
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()("#tableContent").html(text);
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()("#registercode").submit(function (event) {
-            event.preventDefault();
-            gridInstance.config.data.push({
-              'alias': jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").val(),
-              'bibloteca': jquery__WEBPACK_IMPORTED_MODULE_0___default()('#espacio').find(":selected").text()
-            });
-            gridInstance.updateConfig({
-              data: gridInstance.config.data
-            }).forceRender();
-            fetch("api/inventario/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/new"), {
-              method: "POST",
-              headers: headers,
-              redirect: "follow",
-              body: JSON.stringify({
-                'cbarras': jquery__WEBPACK_IMPORTED_MODULE_0___default()('#codbar').val()
-              })
-            }).then(function (response) {
-              return response.json().then(function (json) {
-                console.log(json);
-              });
-            });
-            jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").val('');
-          });
-        });
-      });
-    }
-  }]);
-}();
-
-/***/ }),
-
 /***/ "./resources/js/administracion.js":
 /*!****************************************!*\
   !*** ./resources/js/administracion.js ***!
@@ -257,6 +148,126 @@ var Administracion = /*#__PURE__*/function () {
                 jquery__WEBPACK_IMPORTED_MODULE_0___default()("#submenu-4").trigger('click');
               });
             });
+          });
+        });
+      });
+    }
+  }]);
+}();
+
+/***/ }),
+
+/***/ "./resources/js/inventario.js":
+/*!************************************!*\
+  !*** ./resources/js/inventario.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Inventario: () => (/* binding */ Inventario)
+/* harmony export */ });
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var gridjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! gridjs */ "./node_modules/gridjs/dist/gridjs.module.js");
+/* harmony import */ var gridjs_l10n__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! gridjs/l10n */ "./node_modules/gridjs/l10n/dist/l10n.module.js");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+
+
+var Inventario = /*#__PURE__*/function () {
+  function Inventario() {
+    _classCallCheck(this, Inventario);
+    _defineProperty(this, "columns", [{
+      id: 'InserciónEstado',
+      name: 'InserciónEstado'
+    }, {
+      id: 'Inserción',
+      name: 'Inserción',
+      formatter: function formatter(_, row) {
+        return (0,gridjs__WEBPACK_IMPORTED_MODULE_1__.html)("<div class=\"flex justify-center\">\n                    <button class=\"py-1 px-2 border rounded-md text-white bg-invented-300\" onclick=\"editUser(".concat(row._cells[0].data, ")\">\n                        <i class=\"fa-solid fa-check\"></i> Validar\n                    </button>\n                </div>"));
+      }
+    }, {
+      id: 'C_Barras',
+      name: 'C_Barras'
+    }, {
+      id: 'Biblioteca_L',
+      name: 'Biblioteca_L'
+    }, {
+      id: 'Biblioteca_O',
+      name: 'Biblioteca_O'
+    }, {
+      id: 'Fecha',
+      name: 'Fecha'
+    }, {
+      id: 'Situacion',
+      name: 'Situacion'
+    }, {
+      id: 'Usuario',
+      name: 'Usuario'
+    }]);
+  }
+  return _createClass(Inventario, [{
+    key: "actionInventario",
+    value: function actionInventario(eve) {
+      var context = this;
+      if (gridInstance) {
+        gridInstance.updateConfig({
+          columns: context.columns,
+          data: []
+        }).forceRender();
+      } else {
+        gridInstance = new gridjs__WEBPACK_IMPORTED_MODULE_1__.Grid({
+          className: {
+            tr: 'table-tr-custom'
+          },
+          columns: context.columns,
+          sort: true,
+          pagination: true,
+          language: gridjs_l10n__WEBPACK_IMPORTED_MODULE_2__.esES,
+          resizable: true,
+          selector: function selector(cell, rowIndex, cellIndex) {
+            return cellIndex === 0 ? cell.firstName : cell;
+          },
+          data: []
+        }).render(document.getElementById("dialog-form"));
+      }
+      fetch("api/inventario", {
+        method: "GET",
+        headers: headers,
+        redirect: "follow"
+      }).then(function (response) {
+        return response.text().then(function (text) {
+          jquery__WEBPACK_IMPORTED_MODULE_0___default()("#tableContent").html(text);
+          jquery__WEBPACK_IMPORTED_MODULE_0___default()("#registercode").submit(function (event) {
+            event.preventDefault();
+            gridInstance.config.data.push({
+              'alias': jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").val(),
+              'bibloteca': jquery__WEBPACK_IMPORTED_MODULE_0___default()('#espacio').find(":selected").text()
+            });
+            gridInstance.updateConfig({
+              data: gridInstance.config.data
+            }).forceRender();
+            fetch("api/inventario/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/new"), {
+              method: "POST",
+              headers: headers,
+              redirect: "follow",
+              body: JSON.stringify({
+                'cbarras': jquery__WEBPACK_IMPORTED_MODULE_0___default()('#codbar').val()
+              })
+            }).then(function (response) {
+              return response.json().then(function (json) {
+                console.log(json);
+              });
+            });
+            jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").val('');
           });
         });
       });
@@ -17830,7 +17841,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var gridjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! gridjs */ "./node_modules/gridjs/dist/gridjs.module.js");
 /* harmony import */ var gridjs_l10n__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! gridjs/l10n */ "./node_modules/gridjs/l10n/dist/l10n.module.js");
-/* harmony import */ var _Inventario__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Inventario */ "./resources/js/Inventario.js");
+/* harmony import */ var _inventario__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./inventario */ "./resources/js/inventario.js");
 /* harmony import */ var _administracion__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./administracion */ "./resources/js/administracion.js");
 /* harmony import */ var select2__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! select2 */ "./node_modules/select2/dist/js/select2.js");
 /* harmony import */ var select2__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(select2__WEBPACK_IMPORTED_MODULE_5__);
@@ -17840,7 +17851,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var inventarioInstance = new _Inventario__WEBPACK_IMPORTED_MODULE_3__.Inventario();
+var inventarioInstance = new _inventario__WEBPACK_IMPORTED_MODULE_3__.Inventario();
 var adminInstance = new _administracion__WEBPACK_IMPORTED_MODULE_4__.Administracion();
 jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).ready(function () {
   jquery__WEBPACK_IMPORTED_MODULE_0___default()('#espacio').select2();

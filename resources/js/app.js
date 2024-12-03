@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { Grid, html } from "gridjs";
 import { esES } from "gridjs/l10n";
-import { Inventario } from "./Inventario";
+import { Inventario } from "./inventario";
 import { Administracion } from "./administracion";
 import "select2";
 
