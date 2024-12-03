@@ -1,19 +1,21 @@
 import $ from 'jquery';
 import { Grid, html } from "gridjs";
 import { esES } from "gridjs/l10n";
+import toastr from "toastr";
 
 export class Inventario {
 
     columns = [
-        { id: 'InserciónEstado', name: 'InserciónEstado'},
+        { id: 'InsercionEstado', name: 'InserciónEstado', hidden: true },
         { id: 'Inserción', name: 'Inserción',
-            formatter: (_, row) => html(
+            formatter: (_, row) => 
+                html(
                 `<div class="flex justify-center">
-                    <button class="py-1 px-2 border rounded-md text-white bg-invented-300" onclick="editUser(${row._cells[0].data})">
-                        <i class="fa-solid fa-check"></i> Validar
+                    <button class="py-1 px-2 border rounded-md text-white ${(row['_cells'][0]['data'] == 0 ? 'bg-red-600' : 'bg-invented-300' )}" onclick="editUser(${row._cells[0].data})">
+                        ${row['_cells'][6]['data']}
                     </button>
-                </div>`
-            ),
+                </div>`)
+            ,
         },
         { id: 'C_Barras', name: 'C_Barras'},
         { id: 'Biblioteca_L', name: 'Biblioteca_L'},
@@ -55,16 +57,12 @@ export class Inventario {
         .then((response) => response.text().then(text => {
 
             $("#tableContent").html(text);
-            
             $("#registercode").submit((event) => {
                 event.preventDefault();
-                gridInstance.config.data.push({
-                    'alias': $("#codbar").val(),
-                    'bibloteca': $('#espacio').find(":selected").text()
-                });
-                gridInstance.updateConfig({
-                    data: gridInstance.config.data
-                }).forceRender();
+                if($('#codbar').val() == ''){
+                    toastr.error('El código de barras no puede estar vacío');
+                    return;
+                }
                 fetch(`api/inventario/${$("#espacio").val()}/new`,
                 {
                     method: "POST",
@@ -75,7 +73,10 @@ export class Inventario {
                     }),
                 })
                 .then((response) => response.json().then(json => {
-                    console.log(json);
+                    gridInstance.config.data.unshift(json);
+                    gridInstance.updateConfig({
+                        data: gridInstance.config.data
+                    }).forceRender();
                 }));
                 $("#codbar").val('');
             });

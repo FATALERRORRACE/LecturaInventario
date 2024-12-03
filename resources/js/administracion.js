@@ -26,7 +26,7 @@ export class Administracion {
     ];
     actionAdmin() {
         var context = this;
-        $("#espacio").off('change.espacio1');
+        $("#espacio").off('change.espacio   1');
 
         $("#espacio").on('change.espacio1', () => {
             $("#sel-bbl").text($("#espacio").find(':selected').text());
@@ -100,6 +100,9 @@ export class Administracion {
                 });
                 
                 $("#create-items").click(() => {
+                    $("#loader-adm").show();
+                    $("#txt-create-items").hide();
+                    $("#create-items").hide();
                     fetch('/api/admin/biblioteca/set',
                         {
                             method: "POST",
@@ -112,6 +115,7 @@ export class Administracion {
                     .then((response) => response.json().then( json => {
                         toastr.success(json.message);
                         $("#submenu-4").trigger('click');
+                        $("#loader-adm").hide();
                     }));
                 });
             }));

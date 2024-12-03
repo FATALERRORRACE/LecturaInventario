@@ -43,7 +43,6 @@ class AuthController extends Controller
     public function loginPost(Request $request)
     {
         include(__DIR__.'/nusoap_a.php');
-        
         $xmlr = array(
             'cod_pessoa' => $request->alias,
             'senha_pessoa' => $request->password,
@@ -53,7 +52,7 @@ class AuthController extends Controller
         $result = $client->call('ws_autentica_usuario', $xmlr);
         $result = iconv('ISO-8859-1', 'UTF-8', $result);
         $result = (array)new \SimpleXMLElement($result);
-        if($result['usuario']){
+        if(isset($result['usuario'])){
             $result['usuario'] = (array)$result['usuario'];
             Log::info('User Logged: ' . json_encode($result['usuario']));
             $user = User::first();

@@ -7,3 +7,4 @@
 <!-- Custom Css -->
 <link href="/css/customResources.css" rel="stylesheet" type="text/css" />
 <link href="/css/app.css" rel="stylesheet" type="text/css" />
+<link href="/css/loader.css" rel="stylesheet" type="text/css" />

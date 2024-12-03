@@ -6,12 +6,12 @@
             </a>
         </x-slot>
 
-        <!-- Session Status -->
-        <x-auth-session-status class="mb-4" :status="session('status')" />
-
-        <x-auth-validation-errors class="" :errors="$errors" />
+        @if (Session::has('error'))
+            <div class="alert alert-danger text-center" role="alert">
+                {{ Session::get('error') }}
+            </div>
+        @endif
         <div align="center" class="mb-3">
-            <h3>Inventario</h3>
             <form method="POST" action="{{ route('login') }}">
                 @csrf
 

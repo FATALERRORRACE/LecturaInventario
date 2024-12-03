@@ -21,5 +21,5 @@ $(document).ready(() => {
         eve.preventDefault();
         adminInstance.actionAdmin();
     });
-
+    $("#submenu-1").trigger('click');
 });

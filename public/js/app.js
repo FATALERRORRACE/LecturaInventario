@@ -71,7 +71,7 @@ var Administracion = /*#__PURE__*/function () {
     key: "actionAdmin",
     value: function actionAdmin() {
       var context = this;
-      jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").off('change.espacio1');
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").off('change.espacio   1');
       jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").on('change.espacio1', function () {
         jquery__WEBPACK_IMPORTED_MODULE_0___default()("#sel-bbl").text(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").find(':selected').text());
         fetch("api/admin/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/data"), {
@@ -136,6 +136,9 @@ var Administracion = /*#__PURE__*/function () {
             jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").val('');
           });
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#create-items").click(function () {
+            jquery__WEBPACK_IMPORTED_MODULE_0___default()("#loader-adm").show();
+            jquery__WEBPACK_IMPORTED_MODULE_0___default()("#txt-create-items").hide();
+            jquery__WEBPACK_IMPORTED_MODULE_0___default()("#create-items").hide();
             fetch('/api/admin/biblioteca/set', {
               method: "POST",
               headers: headers,
@@ -146,6 +149,7 @@ var Administracion = /*#__PURE__*/function () {
               return response.json().then(function (json) {
                 toastr__WEBPACK_IMPORTED_MODULE_4___default().success(json.message);
                 jquery__WEBPACK_IMPORTED_MODULE_0___default()("#submenu-4").trigger('click');
+                jquery__WEBPACK_IMPORTED_MODULE_0___default()("#loader-adm").hide();
               });
             });
           });
@@ -172,6 +176,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var gridjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! gridjs */ "./node_modules/gridjs/dist/gridjs.module.js");
 /* harmony import */ var gridjs_l10n__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! gridjs/l10n */ "./node_modules/gridjs/l10n/dist/l10n.module.js");
+/* harmony import */ var toastr__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! toastr */ "./node_modules/toastr/toastr.js");
+/* harmony import */ var toastr__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(toastr__WEBPACK_IMPORTED_MODULE_3__);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
@@ -182,17 +188,19 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 
 
 
+
 var Inventario = /*#__PURE__*/function () {
   function Inventario() {
     _classCallCheck(this, Inventario);
     _defineProperty(this, "columns", [{
-      id: 'InserciónEstado',
-      name: 'InserciónEstado'
+      id: 'InsercionEstado',
+      name: 'InserciónEstado',
+      hidden: true
     }, {
       id: 'Inserción',
       name: 'Inserción',
       formatter: function formatter(_, row) {
-        return (0,gridjs__WEBPACK_IMPORTED_MODULE_1__.html)("<div class=\"flex justify-center\">\n                    <button class=\"py-1 px-2 border rounded-md text-white bg-invented-300\" onclick=\"editUser(".concat(row._cells[0].data, ")\">\n                        <i class=\"fa-solid fa-check\"></i> Validar\n                    </button>\n                </div>"));
+        return (0,gridjs__WEBPACK_IMPORTED_MODULE_1__.html)("<div class=\"flex justify-center\">\n                    <button class=\"py-1 px-2 border rounded-md text-white ".concat(row['_cells'][0]['data'] == 0 ? 'bg-red-600' : 'bg-invented-300', "\" onclick=\"editUser(").concat(row._cells[0].data, ")\">\n                        ").concat(row['_cells'][6]['data'], "\n                    </button>\n                </div>"));
       }
     }, {
       id: 'C_Barras',
@@ -248,13 +256,10 @@ var Inventario = /*#__PURE__*/function () {
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#tableContent").html(text);
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#registercode").submit(function (event) {
             event.preventDefault();
-            gridInstance.config.data.push({
-              'alias': jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").val(),
-              'bibloteca': jquery__WEBPACK_IMPORTED_MODULE_0___default()('#espacio').find(":selected").text()
-            });
-            gridInstance.updateConfig({
-              data: gridInstance.config.data
-            }).forceRender();
+            if (jquery__WEBPACK_IMPORTED_MODULE_0___default()('#codbar').val() == '') {
+              toastr__WEBPACK_IMPORTED_MODULE_3___default().error('El código de barras no puede estar vacío');
+              return;
+            }
             fetch("api/inventario/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/new"), {
               method: "POST",
               headers: headers,
@@ -264,7 +269,10 @@ var Inventario = /*#__PURE__*/function () {
               })
             }).then(function (response) {
               return response.json().then(function (json) {
-                console.log(json);
+                gridInstance.config.data.unshift(json);
+                gridInstance.updateConfig({
+                  data: gridInstance.config.data
+                }).forceRender();
               });
             });
             jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").val('');
@@ -17863,6 +17871,7 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).ready(function () {
     eve.preventDefault();
     adminInstance.actionAdmin();
   });
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#submenu-1").trigger('click');
 });
 })();
 

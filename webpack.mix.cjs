@@ -16,4 +16,5 @@ mix
 .js('resources/js/mdb.umd.min.js', 'public/js')
 .postCss('resources/css/app.css',  'public/css')
 .postCss('resources/css/customResources.css',  'public/css')
-.postCss('resources/css/mdb.min.css',  'public/css');
+.postCss('resources/css/mdb.min.css',  'public/css')
+.postCss('resources/css/loader.css',  'public/css');

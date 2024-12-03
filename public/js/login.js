@@ -10806,6 +10806,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/css/loader.css":
+/*!**********************************!*\
+  !*** ./resources/css/loader.css ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
 /***/ "./node_modules/select2/dist/js/select2.js":
 /*!*************************************************!*\
   !*** ./node_modules/select2/dist/js/select2.js ***!
@@ -17119,6 +17132,7 @@ S2.define('jquery.select2',[
 /******/ 		var installedChunks = {
 /******/ 			"/js/login": 0,
 /******/ 			"css/app": 0,
+/******/ 			"css/loader": 0,
 /******/ 			"css/mdb.min": 0,
 /******/ 			"css/customResources": 0
 /******/ 		};
@@ -17170,10 +17184,11 @@ S2.define('jquery.select2',[
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	__webpack_require__.O(undefined, ["css/app","css/mdb.min","css/customResources"], () => (__webpack_require__("./resources/js/login.js")))
-/******/ 	__webpack_require__.O(undefined, ["css/app","css/mdb.min","css/customResources"], () => (__webpack_require__("./resources/css/app.css")))
-/******/ 	__webpack_require__.O(undefined, ["css/app","css/mdb.min","css/customResources"], () => (__webpack_require__("./resources/css/customResources.css")))
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/app","css/mdb.min","css/customResources"], () => (__webpack_require__("./resources/css/mdb.min.css")))
+/******/ 	__webpack_require__.O(undefined, ["css/app","css/loader","css/mdb.min","css/customResources"], () => (__webpack_require__("./resources/js/login.js")))
+/******/ 	__webpack_require__.O(undefined, ["css/app","css/loader","css/mdb.min","css/customResources"], () => (__webpack_require__("./resources/css/app.css")))
+/******/ 	__webpack_require__.O(undefined, ["css/app","css/loader","css/mdb.min","css/customResources"], () => (__webpack_require__("./resources/css/customResources.css")))
+/******/ 	__webpack_require__.O(undefined, ["css/app","css/loader","css/mdb.min","css/customResources"], () => (__webpack_require__("./resources/css/mdb.min.css")))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/app","css/loader","css/mdb.min","css/customResources"], () => (__webpack_require__("./resources/css/loader.css")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()

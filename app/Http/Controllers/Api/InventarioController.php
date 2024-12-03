@@ -37,30 +37,27 @@ class InventarioController extends Controller
         try {
             $record = DB::table($library['Tabla'])->where('C_Barras', $cbarras)->first();
         } catch (\Throwable $th) {
-            return 0;
+            
         }
-        if(!$record){
+        if(!isset($record)){
             $findInAnotherLibrary = Master::where('C_Barras', $cbarras)->first();
             if ($findInAnotherLibrary) {
                 $originalLibrary = Bibliotecas::where("Nombre", $findInAnotherLibrary->Biblioteca)->first();
                 $dataRecord = [
-                    'InserciónEstado' => 0,
-                    'Inserción' => "Fallido, registro de otra biblioteca",
                     'C_Barras' => $cbarras,
                     'Biblioteca_L' => $library['Nombre'], //lectora
-                    'Biblioteca_O' => $originalLibrary->Biblioteca,
+                    'Biblioteca_O' => $originalLibrary->Nombre,
                     'Fecha' => $date->format('Y-m-d'),
                     'Situacion' => 'Encontrado en otra biblioteca',
                     'Usuario' => $username,
                 ];
                 DB::table('anexos')
                     ->insert($dataRecord);
-                $findInAnotherLibrary;
-                return 2;
+                $dataRecord['InsercionEstado'] = 0;
+                $dataRecord['Insercion'] = "Fallido, registro de otra biblioteca";
+                return $dataRecord;
             } else {
                 $dataRecord = [
-                    'InserciónEstado' => 0,
-                    'Inserción' => "Fallido, código de barras no encontrado",
                     'C_Barras' => $cbarras,
                     'Biblioteca_L' =>  NULL,
                     'Biblioteca_O' => NULL,
@@ -70,7 +67,12 @@ class InventarioController extends Controller
                 ];
                 DB::table('anexos')
                     ->insert($dataRecord);
-                return 3;
+
+                $dataRecord['Biblioteca_L'] = 'No encontrado';
+                $dataRecord['Biblioteca_O'] = 'No encontrado';
+                $dataRecord['InsercionEstado'] = 0;
+                $dataRecord['Insercion'] = "Fallido, código de barras no encontrado";
+                return $dataRecord;
             };
         } else if ($record->Situacion == 'Normal') {
             $update = DB::table($library['Tabla'])->where('id', $record->id)
@@ -81,13 +83,13 @@ class InventarioController extends Controller
                 'Fecha' => $date->format('Y-m-d'),
             ]);
             $dataRecord = [
-                'InserciónEstado' => 1,
-                'Inserción' => "Inventareado exitosamente",
+                'InsercionEstado' => 1,
+                'Insercion' => "Inventareado exitosamente",
                 'C_Barras' => $record->C_Barras,
                 'Situacion' => $record->Situacion,
                 'Situacion' => $record->Situacion,
-                'Biblioteca_L' =>  NULL,
-                'Biblioteca_O' => NULL,
+                'Biblioteca_L' =>  $library['Nombre'],
+                'Biblioteca_O' => $library['Nombre'],
                 'Estado' => 'I',
                 'Usuario' => $username,
                 'Fecha' => $date->format('Y-m-d'),
@@ -95,8 +97,8 @@ class InventarioController extends Controller
             return $dataRecord;
         } else if ($record->Situacion != 'Normal') {
             $dataRecord = [
-                'InserciónEstado' => 0,
-                'Inserción' => "Fallido, Estado distinto a normal",
+                'InsercionEstado' => 0,
+                'Insercion' => "Fallido, Estado distinto a normal",
                 'C_Barras' => $record->C_Barras,
                 'Situacion' => $record->Situacion,
                 'Situacion' => $record->Situacion,
@@ -108,6 +110,5 @@ class InventarioController extends Controller
             ];
             return $dataRecord;
         }
-
     }
 }
