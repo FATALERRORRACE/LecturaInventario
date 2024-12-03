@@ -11,7 +11,7 @@ services:
       dockerfile: ./deploy/Dockerfile
     # allocate as many volumes as necessary, if needed.
     volumes:
-      - ../storage/app:/var/www/html/inventario/storage/app
+      - ../storage/app:/var/www/inventario/storage/app
     environment:
       APP_NAME: ${APP_NAME}
       APP_ENV: ${APP_ENV}
