@@ -1,7 +1,4 @@
-# deploy/Dockerfile
-
-# stage 1: build stage
-FROM php:8.2-fpm-alpine as build
+FROM php:8.2-fpm-alpine
 
 # installing system dependencies and php extensions
 RUN apk add --no-cache \
@@ -35,7 +32,7 @@ RUN chown -R www-data:www-data /var/www/inventario \
 # install php and node.js dependencies
 RUN composer install --no-dev --prefer-dist \
     && npm install \
-    && npm run production
-RUN mysql -i -uroot | CREATE DATABASE inventario; | USE inventario; |  source ./inventario.sql
+    && npm run build
+
 RUN chown -R www-data:www-data /var/www/inventario/vendor \
     && chmod -R 775 /var/www/inventario/vendor
