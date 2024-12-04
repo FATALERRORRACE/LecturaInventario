@@ -1,87 +1,46 @@
-# deploy/Dockerfile
+# Use the official PHP image as a base image
+FROM php:8.2-fpm
 
-# stage 1: build stage
-FROM php:8.2-fpm-alpine as build
-
-# installing system dependencies and php extensions
-RUN apk add --no-cache \
-    zip \
-    libzip-dev \
-    freetype \
-    libjpeg-turbo \
-    libpng \
-    freetype-dev \
-    libjpeg-turbo-dev \
-    libpng-dev \
-    nodejs \
-    npm \
-    && docker-php-ext-configure zip \
-    && docker-php-ext-install zip pdo pdo_mysql \
-    && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
-    && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-enable gd
-
-# install composer
-COPY --from=composer:2.7.6 /usr/bin/composer /usr/bin/composer
-
+# Set working directory
 WORKDIR /var/www/inventario
 
-# copy necessary files and change permissions
-COPY . .
-RUN chown -R www-data:www-data /var/www/inventario \
-    && chmod -R 775 /var/www/inventario/storage \
-    && chmod -R 775 /var/www/inventario/bootstrap/cache
-
-# install php and node.js dependencies
-RUN composer install --no-dev --prefer-dist \
-    && npm install \
-    && npm run production
-RUN mysql -i -uroot | CREATE DATABASE inventario; | USE inventario; |  source ./inventario.sql
-RUN chown -R www-data:www-data /var/www/inventario/vendor \
-    && chmod -R 775 /var/www/inventario/vendor
-
-# stage 2: production stage
-FROM php:8.2-fpm-alpine
-
-# install nginx
-RUN apk add --no-cache \
-    zip \
-    libzip-dev \
-    freetype \
-    libjpeg-turbo \
-    libpng \
-    freetype-dev \
-    libjpeg-turbo-dev \
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
     libpng-dev \
-    oniguruma-dev \
-    gettext-dev \
-    freetype-dev \
-    nginx \
-    && docker-php-ext-configure zip \
-    && docker-php-ext-install zip pdo pdo_mysql \
-    && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
-    && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-enable gd \
-    && docker-php-ext-install bcmath \
-    && docker-php-ext-enable bcmath \
-    && docker-php-ext-install exif \
-    && docker-php-ext-enable exif \
-    && docker-php-ext-install gettext \
-    && docker-php-ext-enable gettext \
-    && docker-php-ext-install opcache \
-    && docker-php-ext-enable opcache \
-    && rm -rf /var/cache/apk/*
+    libjpeg-dev \
+    libfreetype6-dev \
+    locales \
+    zip \
+    jpegoptim optipng pngquant gifsicle \
+    vim \
+    unzip \
+    git \
+    curl \
+    libzip-dev \
+    libpq-dev \
+    libonig-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd
 
-# copy files from the build stage
-COPY --from=build /var/www/inventario /var/www/inventario
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring zip exif pcntl
 
-FROM nginx:stable-alpine
-ADD ./deploy/default.conf /etc/nginx/conf.d/default.conf
-# COPY /var/www/inventario/deploy/php.ini "$PHP_INI_DIR/conf.d/app.ini"
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /var/www/inventario
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# add all folders where files are being stored that require persistence. if needed, otherwise remove this line.
-VOLUME ["/var/www/inventario/storage/app"]
+# Copy the existing application directory contents to the working directory
+COPY . /var/www/inventario
 
-CMD ["sh", "-c", "nginx && php-fpm"]
+# Copy the existing application directory permissions to the working directory
+COPY --chown=www-data:www-data . /var/www/inventario
+
+# Change current user to www
+USER www-data
+
+# Expose port 9000 and start php-fpm server
+EXPOSE 9000
+CMD ["php-fpm"]
