@@ -25,7 +25,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - .:/var/www/inventario
+      - .:/var/www/inventario/public
       - ./docker-compose/nginx:/etc/nginx/conf.d/
     networks:
       - app-network

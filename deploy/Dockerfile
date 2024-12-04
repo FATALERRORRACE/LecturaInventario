@@ -1,57 +1,41 @@
-# Use the official PHP image as a base image
-FROM php:8.2-fpm
+# deploy/Dockerfile
 
-# Set working directory
-WORKDIR /var/www/inventario
+# stage 1: build stage
+FROM php:8.2-fpm-alpine as build
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    locales \
+# installing system dependencies and php extensions
+RUN apk add --no-cache \
     zip \
-    jpegoptim optipng pngquant gifsicle \
-    vim \
-    unzip \
-    git \
-    curl \
+    libzip-dev \
     freetype \
     libjpeg-turbo \
     libpng \
     freetype-dev \
     libjpeg-turbo-dev \
+    libpng-dev \
     nodejs \
     npm \
-    libzip-dev \
-    libpq-dev \
-    libonig-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd
+    && docker-php-ext-configure zip \
+    && docker-php-ext-install zip pdo pdo_mysql \
+    && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
+    && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-enable gd
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring zip exif pcntl
+# install composer
+COPY --from=composer:2.7.6 /usr/bin/composer /usr/bin/composer
 
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+WORKDIR /var/www/inventario
 
-
-# Copy the existing application directory contents to the working directory
+# copy necessary files and change permissions
 COPY . .
+RUN chown -R www-data:www-data /var/www/inventario \
+    && chmod -R 775 /var/www/inventario/storage \
+    && chmod -R 775 /var/www/inventario/bootstrap/cache
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
+# install php and node.js dependencies
 RUN composer install --no-dev --prefer-dist \
     && npm install \
     && npm run production
-# Copy the existing application directory permissions to the working directory
-COPY --chown=www-data:www-data . /var/www/inventario
-
-# Change current user to www
-USER www-data
-
-# Expose port 9000 and start php-fpm server
-EXPOSE 9000
-CMD ["php-fpm"]
+RUN mysql -i -uroot | CREATE DATABASE inventario; | USE inventario; |  source ./inventario.sql
+RUN chown -R www-data:www-data /var/www/inventario/vendor \
+    && chmod -R 775 /var/www/inventario/vendor
