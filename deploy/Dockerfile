@@ -1,4 +1,5 @@
-# deploy/Dockerfile
+# Use the official PHP image as a base image
+FROM php:8.2-fpm
 
 # Set working directory
 WORKDIR /var/www/inventario
@@ -11,7 +12,11 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     locales \
     zip \
-    libzip-dev \
+    jpegoptim optipng pngquant gifsicle \
+    vim \
+    unzip \
+    git \
+    curl \
     freetype \
     libjpeg-turbo \
     libpng \
@@ -19,62 +24,34 @@ RUN apt-get update && apt-get install -y \
     libjpeg-turbo-dev \
     nodejs \
     npm \
-    && docker-php-ext-configure zip \
-    && docker-php-ext-install zip pdo pdo_mysql \
-    && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
-    && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-enable gd \
+    libzip-dev \
     libpq-dev \
-    libonig-dev
+    libonig-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd
 
-# install composer
-COPY --from=composer:2.7.6 /usr/bin/composer /usr/bin/composer
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring zip exif pcntl
 
-WORKDIR /var/www/inventario
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# copy necessary files and change permissions
+
+# Copy the existing application directory contents to the working directory
 COPY . .
-RUN chown -R www-data:www-data /var/www/inventario \
-    && chmod -R 775 /var/www/inventario/storage \
-    && chmod -R 775 /var/www/inventario/bootstrap/cache
 
-# install php and node.js dependencies
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
 RUN composer install --no-dev --prefer-dist \
     && npm install \
     && npm run production
-RUN chown -R www-data:www-data /var/www/inventario/vendor \
-    && chmod -R 775 /var/www/inventario/vendor
+# Copy the existing application directory permissions to the working directory
+COPY --chown=www-data:www-data . /var/www/inventario
 
-# stage 2: production stage
+# Change current user to www
+USER www-data
 
-# install nginx
-RUN apk add --no-cache \
-    zip \
-    libzip-dev \
-    freetype \
-    libjpeg-turbo \
-    libpng \
-    freetype-dev \
-    libjpeg-turbo-dev \
-    libpng-dev \
-    oniguruma-dev \
-    gettext-dev \
-    freetype-dev \
-    nginx \
-    && docker-php-ext-configure zip \
-    && docker-php-ext-install zip pdo pdo_mysql \
-    && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
-    && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-enable gd \
-    && docker-php-ext-install bcmath \
-    && docker-php-ext-enable bcmath \
-    && docker-php-ext-install exif \
-    && docker-php-ext-enable exif \
-    && docker-php-ext-install gettext \
-    && docker-php-ext-enable gettext \
-    && docker-php-ext-install opcache \
-    && docker-php-ext-enable opcache \
-    && rm -rf /var/cache/apk/*
-
-# copy files from the build stage
-COPY --from=build /var/www/inventario /var/www/inventario
+# Expose port 9000 and start php-fpm server
+EXPOSE 9000
+CMD ["php-fpm"]
