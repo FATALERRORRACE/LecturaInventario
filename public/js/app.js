@@ -110,6 +110,7 @@ var Administracion = /*#__PURE__*/function () {
         },
         data: []
       }).render(document.getElementById("dialog-form"));
+      headers.append("Content-Type", "multipart/form-data");
       fetch("api/admin/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val()), {
         method: "GET",
         headers: headers,
@@ -17852,12 +17853,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _administracion__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./administracion */ "./resources/js/administracion.js");
 /* harmony import */ var select2__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! select2 */ "./node_modules/select2/dist/js/select2.js");
 /* harmony import */ var select2__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(select2__WEBPACK_IMPORTED_MODULE_5__);
-function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
-function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
-function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 
 
 
@@ -17892,30 +17887,21 @@ window.dropHandler = function (ev) {
   ev.preventDefault();
   jquery__WEBPACK_IMPORTED_MODULE_0___default()("#drop_zone").removeClass('blur-sm');
   jquery__WEBPACK_IMPORTED_MODULE_0___default()("#messagedraganddrop").hide();
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").hide();
   if (ev.dataTransfer.items) {
-    console.log(ev.dataTransfer.items);
-    var data = new FormData();
-    data.append('file', input.files[0]);
-    data.append('user', 'hubot');
-    fetch("api/inventario", {
-      method: "GET",
-      headers: headers,
-      redirect: "follow",
-      body: data
-    }).then(function (response) {
-      return response.text().then(function (text) {});
-    });
-    _toConsumableArray(ev.dataTransfer.items).forEach(function (item, i) {
-      if (item.kind === "file") {
-        var file = item.getAsFile();
-        console.log("\u2026 file[".concat(i, "].name = ").concat(file.name));
-      }
-    });
-  } else {
-    // Use DataTransfer interface to access the file(s)
-    _toConsumableArray(ev.dataTransfer.files).forEach(function (file, i) {
-      console.log("\u2026 file[".concat(i, "].name = ").concat(file.name));
-    });
+    if (ev.dataTransfer.items[0].kind === "file") {
+      var file = ev.dataTransfer.items[0].getAsFile();
+      var data = new FormData();
+      data.append('file', file);
+      fetch("api/inventario/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/datafile"), {
+        method: "POST",
+        headers: headers,
+        redirect: "follow",
+        body: data
+      }).then(function (response) {
+        return response.text().then(function (text) {});
+      });
+    }
   }
 };
 })();

@@ -111,4 +111,17 @@ class InventarioController extends Controller
             return $dataRecord;
         }
     }
+
+    public function setFileData($id, Request $request){
+        $filePathName = $request->file('file')->getPathname();
+        dump($filePathName);die;
+        $handle = fopen("inputfile.txt", "r");
+        if ($filePathName) {
+            while (($line = fgets($handle)) !== false) {
+                $line = str_replace("\n", "", $line);
+                dump($line);die;
+            }
+            fclose($handle);
+        }
+    }
 }

@@ -69,7 +69,7 @@ export class Administracion {
                 data: []
             }).render(document.getElementById("dialog-form"));
 
-
+        headers.append("Content-Type", "multipart/form-data");
         fetch(`api/admin/${$("#espacio").val()}`,
             {
                 method: "GET",
