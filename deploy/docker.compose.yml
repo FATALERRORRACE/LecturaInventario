@@ -3,6 +3,19 @@
 version: '3.8'
 
 services:
+  nginx:
+    build:
+        context: .
+        dockerfile: ./docker/nginx.Dockerfile
+    depends_on:
+        - php
+        - mysql
+    container_name: laravel_nginx
+    ports:
+        - 80:80
+        - 443:443
+    volumes:
+        - ./src:/var/www/inventario/public
   laravel:
     restart: unless-stopped
     container_name: inventario
