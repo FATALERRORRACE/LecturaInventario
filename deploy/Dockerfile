@@ -4,30 +4,32 @@ FROM php:8.2-fpm
 # Set working directory
 WORKDIR /var/www/inventario
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    locales \
-    zip \
-    jpegoptim optipng pngquant gifsicle \
-    vim \
-    unzip \
-    git \
-    curl \
-    libzip-dev \
-    libpq-dev \
-    libonig-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd
+# install composer
+COPY --from=composer:2.7.6 /usr/bin/composer /usr/bin/composer
 
+# Install system dependencies
+RUN apk add --no-cache \
+    zip \
+    libzip-dev \
+    freetype \
+    libjpeg-turbo \
+    libpng \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libpng-dev \
+    nodejs \
+    npm \
+    && docker-php-ext-configure zip \
+    && docker-php-ext-install zip pdo pdo_mysql \
+    && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
+    && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-enable gd
+    
 RUN composer install --no-dev --prefer-dist \
     && npm install \
     && npm run production
 # Install PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring zip exif pcntl
+RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring zip exif pcntl  zip \ libzip-dev \ freetype \ libjpeg-turbo \ libpng \ freetype-dev \ libjpeg-turbo-dev \ libpng-dev \ oniguruma-dev \ gettext-dev \ freetype-dev \ nginx
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -36,7 +38,9 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Copy the existing application directory contents to the working directory
-COPY . /var/www/inventario
+COPY . .
+
+COPY /var/www/inventario/deploy/nginx.conf /etc/nginx/sites-enabled/default.conf
 
 # Copy the existing application directory permissions to the working directory
 COPY --chown=www-data:www-data . /var/www/inventario
