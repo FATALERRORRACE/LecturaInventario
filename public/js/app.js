@@ -137,7 +137,6 @@ var Administracion = /*#__PURE__*/function () {
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#create-items").click(function () {
             jquery__WEBPACK_IMPORTED_MODULE_0___default()("#loader-adm").show();
             jquery__WEBPACK_IMPORTED_MODULE_0___default()("#txt-create-items").hide();
-            jquery__WEBPACK_IMPORTED_MODULE_0___default()("#create-items").hide();
             fetch('/api/admin/biblioteca/set', {
               method: "POST",
               headers: headers,

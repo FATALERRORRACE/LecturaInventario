@@ -99,7 +99,6 @@ export class Administracion {
             $("#create-items").click(() => {
                 $("#loader-adm").show();
                 $("#txt-create-items").hide();
-                $("#create-items").hide();
                 fetch('/api/admin/biblioteca/set',
                     {
                         method: "POST",

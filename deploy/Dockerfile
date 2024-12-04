@@ -34,7 +34,8 @@ RUN chown -R www-data:www-data /var/www/inventario \
 RUN composer install --no-dev --prefer-dist \
     && npm install \
     && npm run production \
-    php artisan key:generate 
+    && php artisan key:generate \
+    && php artisan migrate
 
 RUN chown -R www-data:www-data /var/www/inventario/vendor \
     && chmod -R 775 /var/www/inventario/vendor

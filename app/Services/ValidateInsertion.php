@@ -1,33 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Services;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Bibliotecas;
 use App\Models\Master;
 use Illuminate\Support\Facades\DB;
 
-class InventarioController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request)
-    {
-        return view(
-            'index.lectura',
-        );
-    }
+class ValidateInsertion{
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Bootstrap services.
      */
-    public function set($id, Request $request){
+    public function set($id, $request){
         $cbarras = $request->cbarras;
         $date = new \DateTime();
         $library = Bibliotecas::where("id", $id)->first();
@@ -35,9 +19,7 @@ class InventarioController extends Controller
         $username = $request->user()->username;
         try {
             $record = DB::table($library['Tabla'])->where('C_Barras', $cbarras)->first();
-        } catch (\Throwable $th) {
-            
-        }
+        } catch (\Throwable $th) {}
         if(!isset($record)){
             $findInAnotherLibrary = Master::where('C_Barras', $cbarras)->first();
             if ($findInAnotherLibrary) {
@@ -108,23 +90,6 @@ class InventarioController extends Controller
                 'Fecha' => $date->format('Y-m-d'),
             ];
             return $dataRecord;
-        }
-    }
-
-    public function setFileData($id, Request $request){
-
-        $library = Bibliotecas::where("id", $id)->first();
-        try {
-            $record = DB::table($library['Tabla'])->where('C_Barras', $cbarras)->first();
-        } catch (\Throwable $th) {}
-        $filePathName = $request->file('file')->getPathname();
-        $handle = fopen($filePathName, "r");
-        if ($filePathName) {
-            while (($line = fgets($handle)) !== false) {
-                $line = str_replace("\n", "", $line);
-                dump($line);die;
-            }
-            fclose($handle);
         }
     }
 }
