@@ -3,19 +3,7 @@
 version: '3.8'
 
 services:
-  nginx:
-    build:
-        context: .
-        dockerfile: ./docker/nginx.Dockerfile
-    depends_on:
-        - php
-        - mysql
-    container_name: laravel_nginx
-    ports:
-        - 80:80
-        - 443:443
-    volumes:
-        - ./src:/var/www/inventario/public
+
   laravel:
     restart: unless-stopped
     container_name: inventario
@@ -59,13 +47,25 @@ services:
     volumes:
       - v-database:/var/lib/mysql
     environment:
-      MARIADB_DATABASE: ${DB_DATABASE}
-      MARIADB_USER: ${DB_USERNAME}
-      MARIADB_PASSWORD: ${DB_PASSWORD}
-      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: inventario
+      MARIADB_USER: root
+      MARIADB_PASSWORD:
+      MARIADB_ROOT_PASSWORD:
     networks:
       - n-laravel
-
+  nginx:
+    build:
+      context: .
+      dockerfile: ./docker/nginx.Dockerfile
+    depends_on:
+      - php
+      - mysql
+    container_name: laravel_nginx
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./src:/var/www/inventario/public
 volumes:
   v-database:
 
