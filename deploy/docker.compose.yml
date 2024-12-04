@@ -1,55 +1,62 @@
-version: '3.8'
-services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: inventario
-    container_name: inventario
-    restart: unless-stopped
-    tty: true
-    environment:
-      SERVICE_NAME: app
-      SERVICE_TAGS: dev
-    working_dir: /var/www/inventario
-    volumes:
-      - .:/var/www/inventario
-      - ./docker-compose/php/local.ini:/usr/local/etc/php/conf.d/local.ini
-    networks:
-      - app-network
+# deploy/docker-compose.yml
 
-  webserver:
-    image: nginx:alpine
-    container_name: nginx-webserver
+version: '3.8'
+
+services:
+  laravel:
     restart: unless-stopped
+    container_name: laravelapp
+    build:
+      context: ../
+      dockerfile: ./deploy/Dockerfile
+    # allocate as many volumes as necessary, if needed.
+    volumes:
+      - ../storage/app:/var/www/inventario/storage/app
+    environment:
+      APP_NAME: ${APP_NAME}
+      APP_ENV: ${APP_ENV}
+      APP_DEBUG: ${APP_DEBUG}
+      APP_KEY: ${APP_KEY}
+      APP_VERSION: ${APP_VERSION}
+      APP_URL: ${APP_URL}
+      DB_CONNECTION: mysql
+      DB_HOST: database
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      MAIL_MAILER: ${MAIL_MAILER}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_ENCRYPTION: ${MAIL_ENCRYPTION}
+      MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME}
     ports:
       - "8080:80"
-    volumes:
-      - .:/var/www/inventario/public
-      - ./docker-compose/nginx:/etc/nginx/conf.d/
     networks:
-      - app-network
+      - n-laravel
+    depends_on:
+      - database
 
-  db:
-    image: mysql:5.7
-    container_name: mysql
+  database:
     restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: inventario
-      MYSQL_ROOT_PASSWORD: 
-      MYSQL_PASSWORD: 
-      MYSQL_USER: root
-    ports:
-      - "3306:3306"
+    image: mariadb:lts-jammy
     volumes:
-      - dbdata:/var/lib/mysql
+      - v-database:/var/lib/mysql
+    environment:
+      MARIADB_DATABASE: ${DB_DATABASE}
+      MARIADB_USER: ${DB_USERNAME}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
+      - n-laravel
 
 volumes:
-  dbdata:
-    driver: local
+  v-database:
+
+
+networks:
+  n-laravel:
+    driver: bridge
