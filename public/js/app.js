@@ -17893,9 +17893,19 @@ window.dropHandler = function (ev) {
   jquery__WEBPACK_IMPORTED_MODULE_0___default()("#drop_zone").removeClass('blur-sm');
   jquery__WEBPACK_IMPORTED_MODULE_0___default()("#messagedraganddrop").hide();
   if (ev.dataTransfer.items) {
-    // Use DataTransferItemList interface to access the file(s)
+    console.log(ev.dataTransfer.items);
+    var data = new FormData();
+    data.append('file', input.files[0]);
+    data.append('user', 'hubot');
+    fetch("api/inventario", {
+      method: "GET",
+      headers: headers,
+      redirect: "follow",
+      body: data
+    }).then(function (response) {
+      return response.text().then(function (text) {});
+    });
     _toConsumableArray(ev.dataTransfer.items).forEach(function (item, i) {
-      // If dropped items aren't files, reject them
       if (item.kind === "file") {
         var file = item.getAsFile();
         console.log("\u2026 file[".concat(i, "].name = ").concat(file.name));

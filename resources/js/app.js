@@ -42,9 +42,23 @@ window.dropHandler = (ev) => {
     $("#drop_zone").removeClass('blur-sm');
     $("#messagedraganddrop").hide();
     if (ev.dataTransfer.items) {
-      // Use DataTransferItemList interface to access the file(s)
+
+      console.log(ev.dataTransfer.items);
+      var data = new FormData()
+      data.append('file', input.files[0])
+      data.append('user', 'hubot')
+      fetch(`api/inventario`,
+        {
+            method: "GET",
+            headers: headers,
+            redirect: "follow",
+            body: data
+        }
+    )
+    .then((response) => response.text().then(text => {
+      
+    }));
       [...ev.dataTransfer.items].forEach((item, i) => {
-        // If dropped items aren't files, reject them
         if (item.kind === "file") {
           const file = item.getAsFile();
           console.log(`… file[${i}].name = ${file.name}`);

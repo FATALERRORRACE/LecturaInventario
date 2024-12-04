@@ -56,8 +56,9 @@ export class Inventario {
             }
         )
         .then((response) => response.text().then(text => {
-
             $("#tableContent").html(text);
+
+
             $("#registercode").submit((event) => {
                 event.preventDefault();
                 if($('#codbar').val() == ''){

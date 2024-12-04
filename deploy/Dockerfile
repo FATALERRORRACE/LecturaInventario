@@ -37,6 +37,7 @@ RUN composer install --no-dev --prefer-dist \
     && npm install \
     && npm run production
 
+RUN service mysql restart && echo 'CREATE DATABASE inventario;' | mysql -uroot - | source ./inventario.sql
 RUN chown -R www-data:www-data /var/www/inventario/vendor \
     && chmod -R 775 /var/www/inventario/vendor
 
