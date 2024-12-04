@@ -32,7 +32,7 @@ RUN chown -R www-data:www-data /var/www/inventario \
 # install php and node.js dependencies
 RUN composer install --no-dev --prefer-dist \
     && npm install \
-    && npm run build
+    && npm run production
 
 RUN chown -R www-data:www-data /var/www/inventario/vendor \
     && chmod -R 775 /var/www/inventario/vendor
