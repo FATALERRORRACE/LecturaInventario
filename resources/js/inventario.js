@@ -5,35 +5,41 @@ import toastr from "toastr";
 
 export class Inventario {
 
+//" Estado":0,
+
+
+
+
+
+
+
+
+
     columns = [
-        { id: 'InsercionEstado', name: 'InserciónEstado', hidden: true },
-        { id: 'Inserción', name: 'Inserción',
-            formatter: (_, row) => 
-                html(
-                `<div class="flex justify-center">
-                    <button class="py-1 px-2 border rounded-md text-white ${(row['_cells'][0]['data'] == 0 ? 'bg-red-600' : 'bg-invented-300' )}" onclick="editUser(${row._cells[0].data})">
-                        ${row['_cells'][6]['data']}
-                    </button>
-                </div>`)
-            ,
-        },
-        { id: 'C_Barras', name: 'C_Barras'},
-        { id: 'Biblioteca_L', name: 'Biblioteca_L'},
-        { id: 'Biblioteca_O', name: 'Biblioteca_O'},
-        { id: 'Fecha', name: 'Fecha'},
-        { id: 'Situacion', name: 'Situacion'},
-        { id: 'Usuario', name: 'Usuario'},
+
+        { id: "Insercion", name: "Insercion"},
+        { id: "C_Barras", name: "C_Barras"},
+        { id: "Situacion", name: "Situacion"},
+        { id: "Biblioteca_L", name: "Biblioteca_L"},
+        { id: "Biblioteca_O", name: "Biblioteca_O"},
+        { id: "Estado", name: "Estado"},
+        { id: "Usuario", name: "Usuario"},
+        { id: "Fecha", name: "Fecha"},
     ];
 
     actionInventario(eve) {
         var context = this;
+        
         if(gridInstance){
+            console.log('gridInstance');
             gridInstance.config.data = [];
             gridInstance.updateConfig({
                 data: [],
                 columns: context.columns,
             }).forceRender();
+            return;
         }else{
+            console.log('gr2idInstance');
             gridInstance = new Grid({
                 className: {
                     tr: 'table-tr-custom',
@@ -43,7 +49,6 @@ export class Inventario {
                 pagination: true,
                 language: esES,
                 resizable: true,
-                selector: (cell, rowIndex, cellIndex) => cellIndex === 0 ? cell.firstName : cell,
                 data: []
             }).render(document.getElementById("dialog-form"));
         }
@@ -57,8 +62,6 @@ export class Inventario {
         )
         .then((response) => response.text().then(text => {
             $("#tableContent").html(text);
-
-
             $("#registercode").submit((event) => {
                 event.preventDefault();
                 if($('#codbar').val() == ''){

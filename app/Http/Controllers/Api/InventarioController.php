@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Bibliotecas;
 use App\Models\Master;
+use App\Services\ValidateInsertion;
 use Illuminate\Support\Facades\DB;
+
+use function PHPUnit\Framework\throwException;
 
 class InventarioController extends Controller
 {
@@ -46,7 +49,7 @@ class InventarioController extends Controller
                     'C_Barras' => $cbarras,
                     'Biblioteca_L' => $library['Nombre'], //lectora
                     'Biblioteca_O' => $originalLibrary->Nombre,
-                    'Fecha' => $date->format('Y-m-d'),
+                    'Fecha' => $date,
                     'Situacion' => 'Encontrado en otra biblioteca',
                     'Usuario' => $username,
                 ];
@@ -60,7 +63,7 @@ class InventarioController extends Controller
                     'C_Barras' => $cbarras,
                     'Biblioteca_L' =>  NULL,
                     'Biblioteca_O' => NULL,
-                    'Fecha' => $date->format('Y-m-d'),
+                    'Fecha' => $date,
                     'Situacion' => 'No encontrado',
                     'Usuario' => $username,
                 ];
@@ -79,7 +82,7 @@ class InventarioController extends Controller
                 'Situacion' => 'Normal',
                 'Estado' => 'I',
                 'Usuario' => $username,
-                'Fecha' => $date->format('Y-m-d'),
+                'Fecha' => $date,
             ]);
             $dataRecord = [
                 'InsercionEstado' => 1,
@@ -91,7 +94,7 @@ class InventarioController extends Controller
                 'Biblioteca_O' => $library['Nombre'],
                 'Estado' => 'I',
                 'Usuario' => $username,
-                'Fecha' => $date->format('Y-m-d'),
+                'Fecha' => $date,
             ];
             return $dataRecord;
         } else if ($record->Situacion != 'Normal') {
@@ -105,26 +108,37 @@ class InventarioController extends Controller
                 'Biblioteca_O' => NULL,
                 'Estado' => $record->Estado,
                 'Usuario' => $username,
-                'Fecha' => $date->format('Y-m-d'),
+                'Fecha' => $date,
             ];
             return $dataRecord;
         }
     }
 
     public function setFileData($id, Request $request){
-
+        $date = new \DateTime();
+        $date = $date;
+        $data = [];
+        $validateInsertion = new ValidateInsertion;
         $library = Bibliotecas::where("id", $id)->first();
+        $username = $request->user()->username;
         try {
-            $record = DB::table($library['Tabla'])->where('C_Barras', $cbarras)->first();
-        } catch (\Throwable $th) {}
-        $filePathName = $request->file('file')->getPathname();
-        $handle = fopen($filePathName, "r");
-        if ($filePathName) {
-            while (($line = fgets($handle)) !== false) {
-                $line = str_replace("\n", "", $line);
-                dump($line);die;
-            }
-            fclose($handle);
+            DB::table($library['Tabla'])->first();
+        } catch (\Throwable $th) {
+            throw new \Exception("Tabla de la bibloteca {$library['nombre']} no ha sido creada", 1);
         }
+        try {
+            $filePathName = $request->file('file')->getPathname();
+            $handle = fopen($filePathName, "r");
+            if ($filePathName) {
+                while (($line = fgets($handle)) !== false) {
+                    $line = str_replace("\n", "", $line);
+                    $line = str_replace("\r", "", $line);
+                    $line = str_replace(" ", "", $line);
+                    $data[] = $validateInsertion->set($library['Tabla'], $date, $username, $line, $library);
+                }
+                fclose($handle);
+            }
+        } catch (\Throwable $th) {}
+        return (array)$data;
     }
 }

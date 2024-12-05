@@ -5,6 +5,7 @@ import { Inventario } from "./inventario";
 import { Administracion } from "./administracion";
 import "select2";
 
+
 var inventarioInstance = new Inventario;
 var adminInstance = new Administracion;
 
@@ -41,7 +42,6 @@ window.dropHandler = (ev) => {
   ev.preventDefault();
   $("#drop_zone").removeClass('blur-sm');
   $("#messagedraganddrop").hide();
-  $("#codbar").hide();
   if (ev.dataTransfer.items) {
     if (ev.dataTransfer.items[0].kind === "file") {
       var file = ev.dataTransfer.items[0].getAsFile();
@@ -55,10 +55,25 @@ window.dropHandler = (ev) => {
           body: data
         }
       )
-      .then((response) => response.text().then(text => {
-
+      .then((response) => response.json().then(json => {
+        Object.values(json).forEach(element => {
+          console.log(element);
+          gridInstance.config.data.unshift(  {
+            'Biblioteca_L': element.Biblioteca_L,
+            'Biblioteca_O': element.Biblioteca_O,
+            'C_Barras': element.C_Barras,
+            'Fecha': element.Fecha,
+            'Insercion': element.Insercion,
+            'InsercionEstado': element.InsercionEstado,
+            'Situacion': element.Situacion,
+            'Usuario': element.Usuario,
+            'Estado': element.Estado,
+          });
+        });
+        gridInstance.updateConfig({
+          data: gridInstance.config.data
+        }).forceRender();
       }));
     }
-
   }
 }

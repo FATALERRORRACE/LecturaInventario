@@ -110,7 +110,6 @@ var Administracion = /*#__PURE__*/function () {
         },
         data: []
       }).render(document.getElementById("dialog-form"));
-      headers.append("Content-Type", "multipart/form-data");
       fetch("api/admin/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val()), {
         method: "GET",
         headers: headers,
@@ -144,7 +143,8 @@ var Administracion = /*#__PURE__*/function () {
                 'table': jquery__WEBPACK_IMPORTED_MODULE_0___default()('#espacio').find(":selected").text()
               })
             }).then(function (response) {
-              return response.json().then(function (json) {
+              console.log(response);
+              response.json().then(function (json) {
                 toastr__WEBPACK_IMPORTED_MODULE_4___default().success(json.message);
                 jquery__WEBPACK_IMPORTED_MODULE_0___default()("#submenu-4").trigger('click');
                 jquery__WEBPACK_IMPORTED_MODULE_0___default()("#loader-adm").hide();
@@ -190,34 +190,31 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 var Inventario = /*#__PURE__*/function () {
   function Inventario() {
     _classCallCheck(this, Inventario);
+    //" Estado":0,
     _defineProperty(this, "columns", [{
-      id: 'InsercionEstado',
-      name: 'InserciónEstado',
-      hidden: true
+      id: "Insercion",
+      name: "Insercion"
     }, {
-      id: 'Inserción',
-      name: 'Inserción',
-      formatter: function formatter(_, row) {
-        return (0,gridjs__WEBPACK_IMPORTED_MODULE_1__.html)("<div class=\"flex justify-center\">\n                    <button class=\"py-1 px-2 border rounded-md text-white ".concat(row['_cells'][0]['data'] == 0 ? 'bg-red-600' : 'bg-invented-300', "\" onclick=\"editUser(").concat(row._cells[0].data, ")\">\n                        ").concat(row['_cells'][6]['data'], "\n                    </button>\n                </div>"));
-      }
+      id: "C_Barras",
+      name: "C_Barras"
     }, {
-      id: 'C_Barras',
-      name: 'C_Barras'
+      id: "Situacion",
+      name: "Situacion"
     }, {
-      id: 'Biblioteca_L',
-      name: 'Biblioteca_L'
+      id: "Biblioteca_L",
+      name: "Biblioteca_L"
     }, {
-      id: 'Biblioteca_O',
-      name: 'Biblioteca_O'
+      id: "Biblioteca_O",
+      name: "Biblioteca_O"
     }, {
-      id: 'Fecha',
-      name: 'Fecha'
+      id: "Estado",
+      name: "Estado"
     }, {
-      id: 'Situacion',
-      name: 'Situacion'
+      id: "Usuario",
+      name: "Usuario"
     }, {
-      id: 'Usuario',
-      name: 'Usuario'
+      id: "Fecha",
+      name: "Fecha"
     }]);
   }
   return _createClass(Inventario, [{
@@ -225,12 +222,15 @@ var Inventario = /*#__PURE__*/function () {
     value: function actionInventario(eve) {
       var context = this;
       if (gridInstance) {
+        console.log('gridInstance');
         gridInstance.config.data = [];
         gridInstance.updateConfig({
           data: [],
           columns: context.columns
         }).forceRender();
+        return;
       } else {
+        console.log('gr2idInstance');
         gridInstance = new gridjs__WEBPACK_IMPORTED_MODULE_1__.Grid({
           className: {
             tr: 'table-tr-custom'
@@ -240,9 +240,6 @@ var Inventario = /*#__PURE__*/function () {
           pagination: true,
           language: gridjs_l10n__WEBPACK_IMPORTED_MODULE_2__.esES,
           resizable: true,
-          selector: function selector(cell, rowIndex, cellIndex) {
-            return cellIndex === 0 ? cell.firstName : cell;
-          },
           data: []
         }).render(document.getElementById("dialog-form"));
       }
@@ -17886,7 +17883,6 @@ window.dropHandler = function (ev) {
   ev.preventDefault();
   jquery__WEBPACK_IMPORTED_MODULE_0___default()("#drop_zone").removeClass('blur-sm');
   jquery__WEBPACK_IMPORTED_MODULE_0___default()("#messagedraganddrop").hide();
-  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").hide();
   if (ev.dataTransfer.items) {
     if (ev.dataTransfer.items[0].kind === "file") {
       var file = ev.dataTransfer.items[0].getAsFile();
@@ -17898,7 +17894,25 @@ window.dropHandler = function (ev) {
         redirect: "follow",
         body: data
       }).then(function (response) {
-        return response.text().then(function (text) {});
+        return response.json().then(function (json) {
+          Object.values(json).forEach(function (element) {
+            console.log(element);
+            gridInstance.config.data.unshift({
+              'Biblioteca_L': element.Biblioteca_L,
+              'Biblioteca_O': element.Biblioteca_O,
+              'C_Barras': element.C_Barras,
+              'Fecha': element.Fecha,
+              'Insercion': element.Insercion,
+              'InsercionEstado': element.InsercionEstado,
+              'Situacion': element.Situacion,
+              'Usuario': element.Usuario,
+              'Estado': element.Estado
+            });
+          });
+          gridInstance.updateConfig({
+            data: gridInstance.config.data
+          }).forceRender();
+        });
       });
     }
   }

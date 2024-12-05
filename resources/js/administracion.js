@@ -69,7 +69,6 @@ export class Administracion {
                 data: []
             }).render(document.getElementById("dialog-form"));
 
-        headers.append("Content-Type", "multipart/form-data");
         fetch(`api/admin/${$("#espacio").val()}`,
             {
                 method: "GET",
@@ -108,13 +107,15 @@ export class Administracion {
                         }),
                     }
                 )
-                .then((response) => response.json().then( json => {
-                    toastr.success(json.message);
-                    $("#submenu-4").trigger('click');
-                    $("#loader-adm").hide();
-                }));
+                .then((response) => {
+                    console.log(response);
+                    response.json().then(json => {
+                        toastr.success(json.message);
+                        $("#submenu-4").trigger('click');
+                        $("#loader-adm").hide();
+                    })
+                });
             });
-
         }));
     }
 }
