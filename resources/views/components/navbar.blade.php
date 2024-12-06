@@ -11,12 +11,16 @@
         </div>
         <div id="contain-e-t" class="flex-1 w-64 rounded bg-white">
             <div class="flex justify-center margin-50 mt-5">
-                <select id="espacio" class="base-1-color js-example-basic-single border-bblr-1">
+                <select id="espacio" class="base-1-color js-example-basic-single border-bblr-1" {{ session("admin") == 1 ? '' : 'disabled' }}>
                     <option value="">Asigne una biblioteca</option>
                     @foreach ($bibliotecas as $biblioteca)
                         <option value="{{$biblioteca['Id']}}" {{(session('espacio') == $biblioteca['Id'] ? 'selected' : '' )}}>{{$biblioteca['Nombre']}}</option>
                     @endforeach
                 </select>
+                <div class="block mx-3" id="enableDate">
+                    <p class="text-center">Fecha de habilitación</p>
+                    <input id="calendar" class="border px-3 base-1-color rounded-lg p-2" type="date">
+                </div>
             </div>
         </div>
         <div class="flex-none w-64">

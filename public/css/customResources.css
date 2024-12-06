@@ -328,3 +328,11 @@ td.gridjs-td {
     font-weight: 600;
     letter-spacing: 1px;
 }
+
+#contain-e-t p {
+    margin-top: -20px; 
+}
+
+#contain-e-t input {
+    height: 35px;
+}

@@ -18,12 +18,10 @@ class AdministracionController extends Controller{
      * @return \Illuminate\Http\Response
      */
     public function index( $id ,Request $request){
-        $dataTable = [];
         $data = Bibliotecas::where('id', $id)->first();
-
         $tableExists = true;
         try {
-            $dataTable = DB::table($data['Tabla'])->first();
+            DB::table($data['Tabla'])->first();
         } catch (\Throwable $th) {
             $tableExists = false;
         }
@@ -32,15 +30,12 @@ class AdministracionController extends Controller{
             'index.administracion',
             [
                 'tableExists' => $tableExists,
-                
+                'date' => $data['Fecha_Inventario'],
             ]
         );
     }
 
     public function createJob(Request $request){
-        $request->validate([
-            'table' => ['required'],
-        ]);
         $username = $request->user()->username;
         $tableName = $request->table;
         $this->processTable($tableName, $username);
@@ -53,9 +48,33 @@ class AdministracionController extends Controller{
 
     public function getData($id ,Request $request){
         $data = Bibliotecas::where('id', $id)->first();
-        return DB::table($data['Tabla'])->get()->toArray();
+        $query = DB::table($data['Tabla']);
+        switch ((int)$request->categoria) {
+            case 1:
+                $query->where('Estado');
+                'Nivel Central';
+                break;
+            case 2:
+                $query->where();
+                'Normal No Displonible';
+                break;
+            case 3:
+                $query->where();
+                'En catalogación';
+                break;
+        }
+        return [
+            "fecha" => $data['Fecha_Inventario'],
+            "data" => DB::table($data['Tabla'])->get()->toArray()
+        ];
     }
 
+    public function getDataAdvance($id ,Request $request){
+        $data = Bibliotecas::where('id', $id)->first();
+        return [
+            "data" => DB::table($data['Tabla'])->where('Estado',"!=", "")->get()->toArray()
+        ];
+    }
 
     public function createXls(int $id, Request $request){
         $data = Bibliotecas::where('id', $id)->first();

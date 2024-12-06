@@ -4,7 +4,7 @@ import { esES } from "gridjs/l10n";
 import "select2";
 import toastr from "toastr";
 
-export class Administracion {
+export class Avances {
 
     columns = [
         { id: "C_Barras", name: "C_Barras", width: '100px' },
@@ -15,16 +15,20 @@ export class Administracion {
         { id: "Estado", name: "Estado", width: '100px' },
     ];
 
-    actionAdmin(){
+    actionAvances(){
         var context = this;
         $('#enableDate').show();
-        $("#espacio").off('change.espacio2').off('change.espacio1').on('change.espacio1', () => {
+        $("#espacio")
+        .off('change.espacio3')
+        .off('change.espacio2')
+        .off('change.espacio1')
+        .on('change.espacio3', () => {
             $("#sel-bbl").text($("#espacio").find(':selected').text());
-            fetch(`api/admin/${$("#espacio").val()}/data`,
+            fetch(`api/admin/${$("#espacio").val()}/dataadvance`,
             {
                 method: "POST",
                 headers: headers,
-                redirect: "follow"
+                redirect: "follow",
             })
             .then((response) => {
                 if (response.status == 500) {
@@ -69,54 +73,7 @@ export class Administracion {
                 data: []
             }).render(document.getElementById("dialog-form"));
 
-        fetch(`api/admin/${$("#espacio").val()}`,
-            {
-                method: "GET",
-                headers: headers,
-                redirect: "follow"
-            }
-        )
-        .then((response) => response.text().then(text => {
-            $("#tableContent").html(text);
-            $("#espacio").trigger("change");
-            $("#calendar").val($("#datehidden").val());
-            $("#expordata").click(()=>{
-                window.open(`${location.href}api/admin/data/${$("#espacio").val()}/xls`);
-            })
-            $("#registercode").submit((event) => {
-                event.preventDefault();
-                gridInstance.config.data.push({
-                    'alias': $("#codbar").val(),
-                    'bibloteca': $('#espacio').find(":selected").text()
-                });
-                gridInstance.updateConfig({
-                    columns: columns,
-                    data: gridInstance.config.data
-                }).forceRender();
-                $("#codbar").val('');
-            });
-            
-            $("#create-items").click(() => {
-                $("#loader-adm").show();
-                $("#txt-create-items").hide();
-                fetch('/api/admin/biblioteca/set',
-                    {
-                        method: "POST",
-                        headers: headers,
-                        body: JSON.stringify({
-                            'table': $('#espacio').find(":selected").text()
-                        }),
-                    }
-                )
-                .then((response) => {
-                    console.log(response);
-                    response.json().then(json => {
-                        toastr.success(json.message);
-                        $("#submenu-4").trigger('click');
-                        $("#loader-adm").hide();
-                    })
-                });
-            });
-        }));
+        $("#tableContent").html('');
+        $("#espacio").trigger("change");
     }
 }

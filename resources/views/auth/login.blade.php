@@ -18,7 +18,7 @@
                 <div class="opt-log-radio">
                     <div class="mt-1">
                         <x-label for="espacio" :value="__('Espacio')" class="text-white"/>
-                        <select name="espacio" id="espacio" class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 block mt-1">
+                        <select name="espacio" id="espacio" class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 block mt-1" required>
                             <option value="">Seleccione primero</option>
                             @foreach ($bibliotecas as $biblioteca)
                                 <option value="{{$biblioteca['Id']}}">{{$biblioteca['Nombre']}}</option>

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str; 
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -48,7 +49,8 @@ class AuthController extends Controller
             'senha_pessoa' => $request->password,
             'chave' => env('CHAVE')
         );
-
+        if(!$request->espacio)
+            return back()->with('error', 'Seleccione un espacio');
         $result = $client->call('ws_autentica_usuario', $xmlr);
         $result = iconv('ISO-8859-1', 'UTF-8', $result);
         $result = (array)new \SimpleXMLElement($result);
@@ -56,6 +58,7 @@ class AuthController extends Controller
             $result['usuario'] = (array)$result['usuario'];
             Log::info('User Logged: ' . json_encode($result['usuario']));
             $user = User::first();
+            
             $credetials = [
                 'username' => $user->username,
                 'password' => env('USER_PASS'),
@@ -68,6 +71,12 @@ class AuthController extends Controller
                     'api_token' => hash('sha256', $token),
                 ])->save();
                 
+                $adminFind = DB::table('usuariosAdministradores')->where('username', $request->alias)->first();
+                if($adminFind)
+                    $request->session()->put('admin', 1);
+                else
+                    $request->session()->put('admin', 0);
+
                 $request->session()->put('apiToken', $token);
                 $request->session()->put('espacio', $request->espacio);
                 $request->session()->put('username', $result['usuario']['nome_pessoa']);
@@ -78,7 +87,7 @@ class AuthController extends Controller
                 return redirect('/')->with('success', 'Login Success');
             }
         }elseif($result['erro']){
-            return back()->with('error', 'Credenciales invalidas');    
+            return back()->with('error', 'Credenciales invalidas');
         }
         return back()->with('error', 'Error Email or Password');
     }

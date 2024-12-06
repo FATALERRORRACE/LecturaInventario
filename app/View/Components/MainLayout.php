@@ -13,11 +13,10 @@ class MainLayout extends Component
      * @return \Illuminate\View\View
      */
     public function render(){
-        //$request->
         return view(
             'layouts.main',
             [
-                'menu' => Menu::get()->toArray(),
+                'menu' => Menu::where('activo', 1)->get()->toArray(),
                 'bibliotecas' => Bibliotecas::get()->toArray()
             ]
         );

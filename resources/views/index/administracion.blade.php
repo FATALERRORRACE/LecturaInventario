@@ -21,4 +21,5 @@
             </div>
         </div>
     </form>
+    <input type="hidden" id="datehidden" value="{{$date}}">
 </div>

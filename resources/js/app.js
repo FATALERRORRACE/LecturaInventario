@@ -1,13 +1,13 @@
 import $ from 'jquery';
-import { Grid, html } from "gridjs";
-import { esES } from "gridjs/l10n";
 import { Inventario } from "./inventario";
 import { Administracion } from "./administracion";
+import { Avances } from "./avances";
 import "select2";
 
 
 var inventarioInstance = new Inventario;
 var adminInstance = new Administracion;
+var avances = new Avances;
 
 $(document).ready(() => {
 
@@ -18,10 +18,16 @@ $(document).ready(() => {
     inventarioInstance.actionInventario(eve);
   });
 
+  $("#submenu-2").click((eve) => {
+    eve.preventDefault();
+    avances.actionAvances();
+  });
+
   $("#submenu-4").click((eve) => {
     eve.preventDefault();
     adminInstance.actionAdmin();
   });
+
   $("#submenu-1").trigger('click');
 });
 
@@ -50,7 +56,7 @@ window.dropHandler = (ev) => {
       fetch(`api/inventario/${$("#espacio").val()}/datafile`,
         {
           method: "POST",
-          headers: headers,
+          headers: headersMultipart,
           redirect: "follow",
           body: data
         }
