@@ -203,9 +203,21 @@ input.gridjs-input {
     border: 1px solid #4B4F54 !important;
 }
 
-th.gridjs-th {
-    color: #4B4F54 !important;
-    background-color: #DDE5ED !important;
+[data-column-id="archivosCargados"] {
+    background-color: white !important;
+    text-align: center;
+    color: #262D9E !important;
+    font-size: 1.2em;
+    font-weight: 400;
+}
+
+
+[data-column-id="códigosEscaneados"] {
+    background-color: white !important;
+    text-align: center;
+    color: #6D9E26 !important;
+    font-size: 1.2em;
+    font-weight: 400;
 }
 
 .bg-invented-300 {
@@ -335,4 +347,12 @@ td.gridjs-td {
 
 #contain-e-t input {
     height: 35px;
+}
+
+.invt-1{
+    background-color: #446fbd;
+}
+
+th.gridjs-th {
+    padding: 8px 24px !important;
 }

@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Bibliotecas;
-use App\Models\Master;
 use Illuminate\Support\Facades\DB;
 
 class ValidateInsertion{
@@ -11,10 +9,18 @@ class ValidateInsertion{
     /**
      * Bootstrap services.
      */
-    public function set($tabla, $date, $username, $cbarras, $library){
-
+    public function set($tabla, $date, $username, $cbarras, $library, $categoria, $filename)
+    {
         $record = DB::table($tabla)->where('C_Barras', $cbarras)->first();
-        if( !$record ){
+        $found = [];
+        foreach ($record as $key => $value) {
+            if($value->C_Barras == $cbarras){
+                $found = $value;
+                unset($record[$key]);
+                return;
+            }
+        }
+        if (!$found) {
             $dataRecord = [
                 'C_Barras' => $cbarras,
                 'Biblioteca_L' => '',
@@ -25,41 +31,57 @@ class ValidateInsertion{
                 'InsercionEstado' => 0,
                 'Insercion' => "Fallido, No encontrado",
             ];
-        }else if ($record->Situacion == 'Normal') {
-            //dump('Situacion == Normal');
-            DB::table($library['Tabla'])->where('id', $record->id)
-            ->update([
-                'Situacion' => 'Normal',
-                'Estado' => 'I',
-                'Usuario' => $username,
-                'Fecha' => $date->format('Y-m-d'),
-            ]);
-            $dataRecord = [
-                'InsercionEstado' => 1,
-                'Insercion' => "Inventareado exitosamente",
-                'C_Barras' => $record->C_Barras,
-                'Situacion' => $record->Situacion,
-                'Situacion' => $record->Situacion,
-                'Biblioteca_L' =>  $library['Nombre'],
-                'Biblioteca_O' => $library['Nombre'],
-                'Estado' => 'I',
-                'Usuario' => $username,
-                'Fecha' => $date->format('Y-m-d'),
-            ];
-        } else if ($record->Situacion != 'Normal') {
-            $dataRecord = [
-                'InsercionEstado' => 0,
-                'Insercion' => "Fallido, Estado distinto a normal",
-                'C_Barras' => $record->C_Barras,
-                'Situacion' => $record->Situacion,
-                'Situacion' => $record->Situacion,
-                'Biblioteca_L' =>  $library['Nombre'],
-                'Biblioteca_O' => $library['Nombre'],
-                'Estado' => $record->Estado,
-                'Usuario' => $username,
-                'Fecha' => $date->format('Y-m-d'),
-            ];
-            
+        } else {
+            $estadoMatch = false;
+            switch ((int)$categoria) {
+                case 1:
+                    $estado = 'Nivel Central';
+                    $estadoMatch = $found->Situacion == $estado;
+                    break;
+                case 2:
+                    $estado = 'Normal o No Displonible';
+                    $estadoMatch = $found->Situacion == 'Normal' || $found->Situacion == 'No Displonible';
+                    break;
+                case 3:
+                    $estado = 'En catalogación';
+                    $estadoMatch = $found->Situacion == $estado;
+                    break;
+            }
+            if ($estadoMatch) {
+                DB::table($library['Tabla'])->where('id', $found->id)
+                    ->update([
+                        'Situacion' => 'Normal',
+                        'Estado' => 'I',
+                        'Comentario' => "Cargado por archivo: {$filename}, {$date->format('Y-m-d h:s:i')}",
+                        'Usuario' => $username,
+                        'Fecha' => $date->format('Y-m-d'),
+                    ]);
+                $dataRecord = [
+                    'InsercionEstado' => 1,
+                    'Insercion' => "Inventareado exitosamente",
+                    'C_Barras' => $found->C_Barras,
+                    'Situacion' => $found->Situacion,
+                    'Situacion' => $found->Situacion,
+                    'Biblioteca_L' =>  $library['Nombre'],
+                    'Biblioteca_O' => $library['Nombre'],
+                    'Estado' => 'I',
+                    'Usuario' => $username,
+                    'Fecha' => $date->format('Y-m-d'),
+                ];
+            } else if (!$estadoMatch) {
+                $dataRecord = [
+                    'InsercionEstado' => 0,
+                    'Insercion' => "Fallido, Estado distinto a $estado",
+                    'C_Barras' => $found->C_Barras,
+                    'Situacion' => $found->Situacion,
+                    'Situacion' => $found->Situacion,
+                    'Biblioteca_L' =>  $library['Nombre'],
+                    'Biblioteca_O' => $library['Nombre'],
+                    'Estado' => $found->Estado,
+                    'Usuario' => $username,
+                    'Fecha' => $date->format('Y-m-d'),
+                ];
+            }
         }
         return $dataRecord;
     }

@@ -14,6 +14,8 @@ Route::middleware('auth:api')->get('/inventario',                   [InventarioC
 Route::middleware('auth:api')->post('/inventario/{espacio}/new',    [InventarioController::class, 'set']);
 Route::middleware('auth:api')->post('/inventario/{espacio}/date',   [InventarioController::class, 'setDate']);
 Route::middleware('auth:api')->post('/inventario/{id}/datafile',    [InventarioController::class, 'setFileData']);
+Route::post('/inventario/report', [AdministracionController::class, 'getDataAdvance']);
+
 // ADMIN MODULE
 Route::middleware('auth:api')->get('/admin/{id}',            [AdministracionController::class, 'index']);
 Route::middleware('auth:api')->post('/admin/biblioteca/set', [AdministracionController::class, 'createJob']);

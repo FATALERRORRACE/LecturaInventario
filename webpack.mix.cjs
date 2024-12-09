@@ -13,6 +13,7 @@ const mix = require('laravel-mix');
 mix
 .js('resources/js/login.js', 'public/js')
 .js('resources/js/app.js', 'public/js')
+.js('resources/js/dragAndDrop.js', 'public/js')
 .js('resources/js/mdb.umd.min.js', 'public/js')
 .postCss('resources/css/app.css',  'public/css')
 .postCss('resources/css/customResources.css',  'public/css')

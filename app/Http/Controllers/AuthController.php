@@ -92,10 +92,18 @@ class AuthController extends Controller
         return back()->with('error', 'Error Email or Password');
     }
  
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::logout();
- 
+        $request->session()->invalidate();
+        $request->session()->forget('admin');
+        $request->session()->forget('apiToken');
+        $request->session()->forget('espacio');
+        $request->session()->forget('username');
+        $request->session()->forget('nome_pessoa');
+        $request->session()->forget('email');
+        $request->session()->forget('cod_documento');
+        $request->session()->forget('unidade_informacao');   
         return redirect()->route('login');
     }
 }
