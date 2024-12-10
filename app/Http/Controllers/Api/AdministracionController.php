@@ -99,22 +99,26 @@ class AdministracionController extends Controller{
             $table->string('Estado', 1);
             $table->date('Fecha')->nullable();
         });
-        $registros = Master::where("Biblioteca", $tableName)->get()->toArray();
-        $sum = 1;
-        foreach ($registros as $key => $val) {
-            $sum++;
-            $insert[] = [
-                'C_Barras' => $val['C_Barras'],
-                'Situacion' => $val['Proceso'],
-                'Comentario' => '',
-                'Usuario' => $username,
-                'Estado' => '',
-                'Fecha' => $date->format('Y-m-d'),
-            ];
-            if ($sum % 1000 == 0) {
-                DB::table($data['Tabla'])
-                    ->insert($insert);
-                $insert = [];
+
+        $registrosCount = Master::where("Biblioteca", $tableName)->count();
+        for ($i=0; $i < (($registrosCount / 10000)+1); $i++) {
+            $registros = Master::where("Biblioteca", $tableName)->skip($i*10000)->take(10000)->get()->toArray();
+            $sum = 1;
+            foreach ($registros as $key => $val) {
+                $sum++;
+                $insert[] = [
+                    'C_Barras' => $val['C_Barras'],
+                    'Situacion' => $val['Proceso'],
+                    'Comentario' => '',
+                    'Usuario' => $username,
+                    'Estado' => '',
+                    'Fecha' => $date->format('Y-m-d'),
+                ];
+                if ($sum % 1000 == 0) {
+                    DB::table($data['Tabla'])
+                        ->insert($insert);
+                    $insert = [];
+                }
             }
         }
         if ($insert)

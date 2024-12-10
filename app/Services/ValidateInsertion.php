@@ -11,15 +11,7 @@ class ValidateInsertion{
      */
     public function set($tabla, $date, $username, $cbarras, $library, $categoria, $filename)
     {
-        $record = DB::table($tabla)->where('C_Barras', $cbarras)->first();
-        $found = [];
-        foreach ($record as $key => $value) {
-            if($value->C_Barras == $cbarras){
-                $found = $value;
-                unset($record[$key]);
-                return;
-            }
-        }
+        $found = DB::table($tabla)->where('C_Barras', $cbarras)->first();
         if (!$found) {
             $dataRecord = [
                 'C_Barras' => $cbarras,

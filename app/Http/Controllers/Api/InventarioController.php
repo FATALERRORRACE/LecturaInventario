@@ -172,6 +172,9 @@ class InventarioController extends Controller
         $filePathName = $request->file('file')->getPathname();
         $handle = fopen($filePathName, "r");
         $filename = $request->file('file')->getClientOriginalName();
+        $newfilename = $date->format('Ymdhsi').$filename.".csv";
+        $newfileData = '';
+        
         if ($filePathName) {
             $temp = tmpfile();
             $inserted = 0;
@@ -186,19 +189,33 @@ class InventarioController extends Controller
                 else
                     $failed++;
 
-                fwrite($temp, implode(';', $tmpData));
+                $newfileData.= (empty($newfileData) ? '' : '\r\n' );
+                $newfileData.= implode(';', $tmpData);
             }
             fclose($handle);
             fseek($temp, 0);
         }
-
+        file_put_contents("/tmp/".$newfilename, $newfileData);
         return [
             'filename' => $filename,
             'total' => (int)$failed + (int)$inserted,
             'inserted' => $inserted,
             'failed' => $failed,
             'date' => $date->format('Y-m-d h:s:i'),
-            'summaryFile' => explode("\\", stream_get_meta_data($temp)['uri'])[6],
+            'summaryFile' => $newfilename,
         ];
+    }
+
+    public function downloadReport(Request $request){
+        header('Content-Description: File Transfer');
+        header('Content-Disposition: attachment; filename="' . basename("/tmp/{$request->name}") . '"');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize("/tmp/{$request->name}"));
+        header('Content-Type: application/octet-stream');
+        header("Content-Transfer-Encoding: Binary"); 
+        readfile("/tmp/{$request->name}");
+        exit();
     }
 }
