@@ -29,7 +29,7 @@ class ValidateInsertion{
                 'Situacion' => 'No encontrado',
                 'Usuario' => $username,
                 'InsercionEstado' => 0,
-                'Insercion' => "Fallido, No encontrado",
+                'Insercion' => "Material No encontrado",
             ];
         } else {
             $estadoMatch = false;
@@ -39,7 +39,7 @@ class ValidateInsertion{
                     $estadoMatch = $found->Situacion == $estado;
                     break;
                 case 2:
-                    $estado = 'Normal o No Displonible';
+                    $estado = 'Normal o No Disponible';
                     $estadoMatch = $found->Situacion == 'Normal' || $found->Situacion == 'No Displonible';
                     break;
                 case 3:
@@ -71,7 +71,7 @@ class ValidateInsertion{
             } else if (!$estadoMatch) {
                 $dataRecord = [
                     'InsercionEstado' => 0,
-                    'Insercion' => "Fallido, Estado distinto a $estado",
+                    'Insercion' => "Estado del material distinto a $estado",
                     'C_Barras' => $found->C_Barras,
                     'Situacion' => $found->Situacion,
                     'Situacion' => $found->Situacion,

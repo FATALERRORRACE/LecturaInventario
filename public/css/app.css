@@ -1278,9 +1278,6 @@ video {
 .w-4 {
   width: 1rem;
 }
-.w-40 {
-  width: 10rem;
-}
 .w-48 {
   width: 12rem;
 }
@@ -1314,8 +1311,18 @@ video {
 .w-screen {
   width: 100vw;
 }
+.w-2\/5 {
+  width: 40%;
+}
+.w-3\/5 {
+  width: 60%;
+}
 .min-w-0 {
   min-width: 0px;
+}
+.min-w-max {
+  min-width: -moz-max-content;
+  min-width: max-content;
 }
 .max-w-6xl {
   max-width: 72rem;
@@ -1343,6 +1350,9 @@ video {
 }
 .basis-2\/5 {
   flex-basis: 40%;
+}
+.table-auto {
+  table-layout: auto;
 }
 .origin-top {
   transform-origin: top;

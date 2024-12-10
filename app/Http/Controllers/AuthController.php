@@ -54,6 +54,13 @@ class AuthController extends Controller
         $result = $client->call('ws_autentica_usuario', $xmlr);
         $result = iconv('ISO-8859-1', 'UTF-8', $result);
         $result = (array)new \SimpleXMLElement($result);
+        // $result['usuario'] = [];
+        // $result['usuario']['nome_pessoa'] = "test";
+        // $result['usuario']['nome_pessoa'] = "test";
+        // $result['usuario']['email'] = "test";
+        // $result['usuario']['cod_documento'] = "test";
+        // $result['usuario']['unidade_informacao'] = "test";
+
         if(isset($result['usuario'])){
             $result['usuario'] = (array)$result['usuario'];
             Log::info('User Logged: ' . json_encode($result['usuario']));

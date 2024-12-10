@@ -1,10 +1,14 @@
 <?php 
+$servername = "host.docker.internal:3307";
+$username = "root";
+$password = "Admin123";
 
+// Create connection
+$conn = new mysqli($servername, $username, $password);
 
-require_once("modelo/process.php"); 
-require_once("modelo/model.php"); 
-require_once("control/controller.php");
-
-$inv = new Inventario();
-$inv -> plantilla();
+// Check connection
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+echo "Connected successfully";
 ?>

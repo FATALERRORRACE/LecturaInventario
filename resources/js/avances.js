@@ -18,6 +18,17 @@ export class Avances {
     actionAvances(){
         var context = this;
         $('#enableDate').show();
+        fetch(`api/avances/${$("#espacio").val()}/info`,
+            {
+                method: "GET",
+                headers: headers,
+                redirect: "follow"
+            }
+        )
+        .then((response) => response.text().then(text => {
+            $('#tableContent').html(text);
+        }));
+
         $("#espacio")
         .off('change.espacio3')
         .off('change.espacio2')

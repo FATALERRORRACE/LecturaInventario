@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\InventarioController;
 use App\Http\Controllers\Api\AdministracionController;
+use App\Http\Controllers\Api\AvancesController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -22,3 +23,6 @@ Route::middleware('auth:api')->post('/admin/biblioteca/set', [AdministracionCont
 Route::middleware('auth:api')->post('/admin/{espacio}/data', [AdministracionController::class, 'getData']);
 Route::middleware('auth:api')->post('/admin/{espacio}/dataadvance', [AdministracionController::class, 'getDataAdvance']);
 Route::get('/admin/data/{id}/xls',   [AdministracionController::class, 'createXls']);
+
+//AVANCES
+Route::middleware('auth:api')->get('/avances/{espacio}/info',    [AvancesController::class, 'getInfo']);

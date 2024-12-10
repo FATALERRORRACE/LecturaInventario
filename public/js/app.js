@@ -227,6 +227,15 @@ var Avances = /*#__PURE__*/function () {
     value: function actionAvances() {
       var context = this;
       jquery__WEBPACK_IMPORTED_MODULE_0___default()('#enableDate').show();
+      fetch("api/avances/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/info"), {
+        method: "GET",
+        headers: headers,
+        redirect: "follow"
+      }).then(function (response) {
+        return response.text().then(function (text) {
+          jquery__WEBPACK_IMPORTED_MODULE_0___default()('#tableContent').html(text);
+        });
+      });
       jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").off('change.espacio3').off('change.espacio2').off('change.espacio1').on('change.espacio3', function () {
         jquery__WEBPACK_IMPORTED_MODULE_0___default()("#sel-bbl").text(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").find(':selected').text());
         fetch("api/admin/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/dataadvance"), {
@@ -20644,14 +20653,17 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).ready(function () {
   jquery__WEBPACK_IMPORTED_MODULE_0___default()('#espacio').select2();
   jquery__WEBPACK_IMPORTED_MODULE_0___default()("#submenu-1").click(function (eve) {
     eve.preventDefault();
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()("#sub-content").show();
     inventarioInstance.actionInventario(eve);
   });
   jquery__WEBPACK_IMPORTED_MODULE_0___default()("#submenu-2").click(function (eve) {
     eve.preventDefault();
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()("#sub-content").hide();
     avances.actionAvances();
   });
   jquery__WEBPACK_IMPORTED_MODULE_0___default()("#submenu-4").click(function (eve) {
     eve.preventDefault();
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()("#sub-content").hide();
     adminInstance.actionAdmin();
   });
   jquery__WEBPACK_IMPORTED_MODULE_0___default()("#submenu-1").trigger('click');
