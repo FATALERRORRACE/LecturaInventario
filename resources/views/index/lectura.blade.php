@@ -42,10 +42,8 @@
                 <button class="rounded p-2 hover:bg-sky-600 btn-md text-white invt-1" id="invent">
                     Inventariar
                 </button>
-                <button id="loadfile"
+                <input  id="loadfile" type="file" onchange="dropHandler(event);"
                     class="border rounded p-2 bg-slate-200 hover:bg-slate-400 btn-md ml-2 hover:text-white">
-                    Cargar Archivo
-                </button>
             </div>
 
         </form>

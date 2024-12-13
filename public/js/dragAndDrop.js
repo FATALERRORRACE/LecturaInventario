@@ -10826,7 +10826,33 @@ window.dropHandler = function (ev) {
   jquery__WEBPACK_IMPORTED_MODULE_0___default()(".txt-cdbab").hide();
   jquery__WEBPACK_IMPORTED_MODULE_0___default()("#loadfile").hide();
   jquery__WEBPACK_IMPORTED_MODULE_0___default()("#loader-adm").show();
-  if (ev.dataTransfer.items) {
+  console.log(ev);
+  console.log(ev.currentTarget.files);
+  if (ev.currentTarget && ev.currentTarget.files) {
+    var file = ev.currentTarget.files[0];
+    var data = new FormData();
+    data.append('file', file);
+    fetch("api/inventario/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/datafile?categoria=").concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("input[name=clasificacion]:checked").val()), {
+      method: "POST",
+      headers: headersMultipart,
+      redirect: "follow",
+      body: data
+    }).then(function (response) {
+      return response.json().then(function (json) {
+        subgridInstance.config.data.unshift(json);
+        subgridInstance.updateConfig({
+          data: subgridInstance.config.data
+        }).forceRender();
+        localStorage.setItem('filesUploaded', JSON.stringify(subgridInstance.config.data));
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()("#loader-adm").hide();
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").show();
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()(".txt-cdbab").show();
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()("#invent").show();
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()("#loadfile").show();
+      });
+    });
+  }
+  if (ev.dataTransfer && ev.dataTransfer.items) {
     if (ev.dataTransfer.items[0].kind === "file") {
       var file = ev.dataTransfer.items[0].getAsFile();
       var data = new FormData();

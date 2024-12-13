@@ -65,7 +65,7 @@ class InventarioController extends Controller
         $date = $date->format("Y-m-d");
         $library = Bibliotecas::where("id", $id)->first();
         $username = $request->user()->username;
-
+        $record = false;
         try {
             $record = DB::table($library['Tabla'])->where('C_Barras', $cbarras)->first();
         } catch (\Throwable $th) {}
@@ -174,7 +174,19 @@ class InventarioController extends Controller
         $filename = $request->file('file')->getClientOriginalName();
         $newfilename = $date->format('Ymdhsi').$filename.".csv";
         $newfileData = '';
-        
+        $newfileData.= implode(';', 
+            [
+                'InsercionEstado',
+                'Insercion',
+                'C_Barras',
+                'Situacion',
+                'Biblioteca_L',
+                'Biblioteca_O',
+                'Estado',
+                'Usuario',
+                'Fecha'
+            ]
+        );
         if ($filePathName) {
             $temp = tmpfile();
             $inserted = 0;
@@ -189,7 +201,7 @@ class InventarioController extends Controller
                 else
                     $failed++;
 
-                $newfileData.= (empty($newfileData) ? '' : '\r\n' );
+                $newfileData.= "\n";
                 $newfileData.= implode(';', $tmpData);
             }
             fclose($handle);

@@ -14,14 +14,15 @@ class ValidateInsertion{
         $found = DB::table($tabla)->where('C_Barras', $cbarras)->first();
         if (!$found) {
             $dataRecord = [
-                'C_Barras' => $cbarras,
-                'Biblioteca_L' => '',
-                'Biblioteca_O' => '',
-                'Fecha' => $date->format('Y-m-d'),
-                'Situacion' => 'No encontrado',
-                'Usuario' => $username,
                 'InsercionEstado' => 0,
                 'Insercion' => "Material No encontrado",
+                'C_Barras' => $cbarras,
+                'Situacion' => 'No encontrado',
+                'Biblioteca_L' => '',
+                'Biblioteca_O' => '',
+                'Estado' => '',
+                'Usuario' => $username,
+                'Fecha' => $date->format('Y-m-d'),
             ];
         } else {
             $estadoMatch = false;
@@ -53,7 +54,6 @@ class ValidateInsertion{
                     'Insercion' => "Inventareado exitosamente",
                     'C_Barras' => $found->C_Barras,
                     'Situacion' => $found->Situacion,
-                    'Situacion' => $found->Situacion,
                     'Biblioteca_L' =>  $library['Nombre'],
                     'Biblioteca_O' => $library['Nombre'],
                     'Estado' => 'I',
@@ -65,7 +65,6 @@ class ValidateInsertion{
                     'InsercionEstado' => 0,
                     'Insercion' => "Estado del material distinto a $estado",
                     'C_Barras' => $found->C_Barras,
-                    'Situacion' => $found->Situacion,
                     'Situacion' => $found->Situacion,
                     'Biblioteca_L' =>  $library['Nombre'],
                     'Biblioteca_O' => $library['Nombre'],
