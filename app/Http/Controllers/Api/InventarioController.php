@@ -173,8 +173,7 @@ class InventarioController extends Controller
         $handle = fopen($filePathName, "r");
         $filename = $request->file('file')->getClientOriginalName();
         $newfilename = $date->format('Ymdhsi').$filename.".csv";
-        $newfileData = '';
-        $newfileData.= implode(';', 
+        $newfileData[] = implode(';', 
             [
                 'InsercionEstado',
                 'Insercion',
@@ -201,13 +200,12 @@ class InventarioController extends Controller
                 else
                     $failed++;
 
-                $newfileData.= "\n";
-                $newfileData.= implode(';', $tmpData);
+                $newfileData[] = implode(';', $tmpData);
             }
             fclose($handle);
             fseek($temp, 0);
         }
-        file_put_contents("/tmp/".$newfilename, $newfileData);
+        file_put_contents("/tmp/".$newfilename, implode(PHP_EOL, $newfileData) );
         return [
             'filename' => $filename,
             'total' => (int)$failed + (int)$inserted,
