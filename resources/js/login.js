@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import "select2";
 localStorage.removeItem('alerts');
+localStorage.removeItem('filesUploaded');
 $(document).ready(() => {
     $('#espacio').select2();
     $(".radio-lg").change((ev) => {
