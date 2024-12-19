@@ -78,7 +78,7 @@ class AuthController extends Controller
                     'api_token' => hash('sha256', $token),
                 ])->save();
                 
-                $adminFind = DB::table('usuariosAdministradores')->where('username', $request->alias)->first();
+                $adminFind = DB::table('usuariosadministradores')->where('username', $request->alias)->first();
                 if($adminFind)
                     $request->session()->put('admin', 1);
                 else

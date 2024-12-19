@@ -24,7 +24,6 @@
             </div>
         </div>
         <div class="flex-none w-64">
-            <div class="flex justify-center">11:11</div>
             <div class="flex justify-center">
                 <div class="dropdown dropdown-hover">
                     <button data-mdb-button-init data-mdb-ripple-init data-mdb-dropdown-init class="rounded-lg dropdown-toggle btn rounded-lg" type="button" id="user" data-mdb-toggle="dropdown" aria-expanded="false">
