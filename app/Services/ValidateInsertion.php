@@ -9,9 +9,8 @@ class ValidateInsertion{
     /**
      * Bootstrap services.
      */
-    public function set($tabla, $date, $username, $cbarras, $library, $categoria, $filename)
+    public function set($found, $date, $username, $cbarras, $library, $categoria, $filename)
     {
-        $found = DB::table($tabla)->where('C_Barras', $cbarras)->first();
         if (!$found) {
             $dataRecord = [
                 'InsercionEstado' => 0,
@@ -22,7 +21,7 @@ class ValidateInsertion{
                 'Biblioteca_O' => '',
                 'Estado' => '',
                 'Usuario' => $username,
-                'Fecha' => $date->format('Y-m-d'),
+                'Fecha' => $date,
             ];
         } else {
             $estadoMatch = false;
@@ -41,13 +40,10 @@ class ValidateInsertion{
                     break;
             }
             if ($estadoMatch) {
-                DB::table($library['Tabla'])->where('id', $found->id)
+                DB::table($library['Tabla'])->where('Id', $found->Id)
                     ->update([
-                        'Situacion' => 'Normal',
+                        'Fecha' => $date,
                         'Estado' => 'I',
-                        'Comentario' => "Cargado por archivo: {$filename}, {$date->format('Y-m-d h:s:i')}",
-                        'Usuario' => $username,
-                        'Fecha' => $date->format('Y-m-d'),
                     ]);
                 $dataRecord = [
                     'InsercionEstado' => 1,
@@ -58,7 +54,7 @@ class ValidateInsertion{
                     'Biblioteca_O' => $library['Nombre'],
                     'Estado' => 'I',
                     'Usuario' => $username,
-                    'Fecha' => $date->format('Y-m-d'),
+                    'Fecha' => $date,
                 ];
             } else if (!$estadoMatch) {
                 $dataRecord = [
@@ -70,7 +66,7 @@ class ValidateInsertion{
                     'Biblioteca_O' => $library['Nombre'],
                     'Estado' => $found->Estado,
                     'Usuario' => $username,
-                    'Fecha' => $date->format('Y-m-d'),
+                    'Fecha' => $date,
                 ];
             }
         }

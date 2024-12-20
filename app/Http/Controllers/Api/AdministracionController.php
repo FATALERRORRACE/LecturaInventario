@@ -94,10 +94,10 @@ class AdministracionController extends Controller{
             $table->id();
             $table->string('C_Barras', 20);
             $table->string('Situacion', 60);
-            $table->string('Comentario', 250);
+            $table->string('Comentario', 75);
             $table->string('Usuario', 15);
             $table->string('Estado', 1);
-            $table->date('Fecha')->nullable();
+            $table->dateTime('Fecha')->nullable();
         });
 
         $registrosCount = Master::where("Biblioteca", $tableName)->count();

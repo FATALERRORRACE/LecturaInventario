@@ -9,7 +9,6 @@ use App\Models\Master;
 use App\Services\ValidateInsertion;
 use Illuminate\Support\Facades\DB;
 
-use function PHPUnit\Framework\throwException;
 
 class InventarioController extends Controller
 {
@@ -158,7 +157,7 @@ class InventarioController extends Controller
 
     public function setFileData($id, Request $request){
         $date = new \DateTime();
-
+        $dateF = $date->format('Y-m-d h:i:s');
         $validateInsertion = new ValidateInsertion;
         $library = Bibliotecas::where("id", $id)->first();
         $username = $request->user()->username;
@@ -168,7 +167,6 @@ class InventarioController extends Controller
         } catch (\Throwable $th) {
             throw new \Exception("Tabla de la bibloteca {$library['nombre']} no ha sido creada", 1);
         }
-        $record = (array)DB::table($library['Tabla'])->select('C_Barras', 'Estado', 'Situacion', 'id')->get()->toArray();
         $filePathName = $request->file('file')->getPathname();
         $handle = fopen($filePathName, "r");
         $filename = $request->file('file')->getClientOriginalName();
@@ -188,13 +186,24 @@ class InventarioController extends Controller
         );
         if ($filePathName) {
             $temp = tmpfile();
+            $count = 0;
             $inserted = 0;
             $failed = 0;
+            $allRecords = DB::table($library['Tabla'])->select('Id', 'C_Barras', 'Situacion','Estado')->get()->keyBy('C_Barras')->toArray();
             while (($line = fgets($handle)) !== false) {
                 $line = str_replace("\n", "", $line);
                 $line = str_replace("\r", "", $line);
                 $line = str_replace(" ", "", $line);
-                $tmpData = $validateInsertion->set($library['Tabla'], $date, $username, $line, $library, (int)$request->categoria, $filename);
+
+                $tmpData = $validateInsertion->set(
+                    isset($allRecords[$line]) ? $allRecords[$line] : null , 
+                    $dateF, 
+                    $username, 
+                    $line, 
+                    $library, 
+                    (int)$request->categoria, 
+                    $filename
+                );
                 if ($tmpData['InsercionEstado'] == 1)
                     $inserted++;
                 else
@@ -205,6 +214,11 @@ class InventarioController extends Controller
             fclose($handle);
             fseek($temp, 0);
         }
+        DB::table($library['Tabla'])->where('Fecha', $dateF)
+        ->update([
+            'Comentario' => 'Origen:'.$filename,
+            'Usuario' => $username,
+        ]);
         file_put_contents("/tmp/".$newfilename, implode(PHP_EOL, $newfileData) );
         return [
             'filename' => $filename,
