@@ -42,7 +42,7 @@ class AuthController extends Controller
     }
  
     public function loginPost(Request $request)
-    {
+    {   
         include(__DIR__.'/nusoap_a.php');
         $xmlr = array(
             'cod_pessoa' => $request->alias,
@@ -53,22 +53,27 @@ class AuthController extends Controller
             return back()->with('error', 'Seleccione un espacio');
         $result = $client->call('ws_autentica_usuario', $xmlr);
         $result = iconv('ISO-8859-1', 'UTF-8', $result);
-        $result = (array)new \SimpleXMLElement($result);
-        // $result['usuario'] = [];
-        // $result['usuario']['nome_pessoa'] = "test";
-        // $result['usuario']['nome_pessoa'] = "test";
-        // $result['usuario']['email'] = "test";
-        // $result['usuario']['cod_documento'] = "test";
-        // $result['usuario']['unidade_informacao'] = "test";
+        try {
+            $result = (array)new \SimpleXMLElement($result);
+            $password = env('USER_PASS');
+            $user = User::first();
+        } catch (\Throwable $th) {
+            $user = User::where('username', $request->alias)->first();
+            $password = $request->password;
+            $result = [];
+            $result['usuario'] = [];
+            $result['usuario']['nome_pessoa'] = $user->name;
+            $result['usuario']['email'] = $user->email;
+            $result['usuario']['cod_documento'] = $user->username;
+            $result['usuario']['unidade_informacao'] = "test";
+        }
 
         if(isset($result['usuario'])){
             $result['usuario'] = (array)$result['usuario'];
             Log::info('User Logged: ' . json_encode($result['usuario']));
-            $user = User::first();
-            
             $credetials = [
                 'username' => $user->username,
-                'password' => env('USER_PASS'),
+                'password' => $password,
             ];
             if (Auth::attempt($credetials)) {
 

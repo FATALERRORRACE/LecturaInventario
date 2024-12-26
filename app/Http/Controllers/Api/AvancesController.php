@@ -5,11 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Bibliotecas;
-use App\Models\Master;
-use App\Services\ValidateInsertion;
 use Illuminate\Support\Facades\DB;
 
-use function PHPUnit\Framework\throwException;
 
 class AvancesController extends Controller
 {
@@ -18,20 +15,20 @@ class AvancesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getInfo($id, Request $request){
+    public function getInfo($id, Request $request)
+    {
         $library = Bibliotecas::where("id", $id)->first();
 
         $tableExists = true;
-        
+        try {
             DB::table($library['Tabla'])->first();
             $situaciones = DB::table($library['Tabla'])->distinct()->get(['Situacion']);
             $situacionesArray = [];
             $countInventariado = DB::table($library['Tabla'])->where('Estado', 'I')->count();
-            $countNoInventariado = DB::table($library['Tabla'])->where('Estado', '<>','I')->count();
-            foreach ($situaciones as $key => $value) {
+            $countNoInventariado = DB::table($library['Tabla'])->where('Estado', '<>', 'I')->count();
+            foreach ($situaciones as $value) {
                 $situacionesArray[$value->Situacion] = DB::table($library['Tabla'])->where('Situacion', $value->Situacion)->count();
             }
-            try {    
         } catch (\Throwable $th) {
             $tableExists = false;
         }
@@ -39,12 +36,11 @@ class AvancesController extends Controller
             'index.avances',
             [
                 'tableExists' => $tableExists,
-                'total' => ($countInventariado + $countNoInventariado),
-                'inventariado' => $countInventariado,
-                'noInventariado' => $countNoInventariado,
-                'situaciones' => $situacionesArray
+                'total' => $tableExists ? ($countInventariado + $countNoInventariado) : null,
+                'inventariado' => $tableExists ? $countInventariado : null,
+                'noInventariado' => $tableExists ? $countNoInventariado : null,
+                'situaciones' => $tableExists ? $situacionesArray : null
             ]
         );
     }
-
 }
