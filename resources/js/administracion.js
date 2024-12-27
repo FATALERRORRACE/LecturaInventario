@@ -18,56 +18,6 @@ export class Administracion {
     actionAdmin(){
         var context = this;
         $('#enableDate').show();
-        $("#espacio").off('change.espacio2').off('change.espacio1').on('change.espacio1', () => {
-            $("#sel-bbl").text($("#espacio").find(':selected').text());
-            fetch(`api/admin/${$("#espacio").val()}/data`,
-            {
-                method: "POST",
-                headers: headers,
-                redirect: "follow"
-            })
-            .then((response) => {
-                if (response.status == 500) {
-                    $('#calendar').val('');
-                    $('#dialog-form').hide();
-                    gridInstance.updateConfig({
-                        columns: context.columns,
-                        data: []
-                    }).forceRender();
-                    $('#alert-no-exist').show();
-                    return;
-                }
-                response.json().then(json => {
-                    $('#dialog-form').show();
-                    $('#alert-no-exist').hide();
-                    $('#calendar').val(json.fecha);
-                    gridInstance.updateConfig({
-                        columns: context.columns,
-                        data: json.data
-                    }).forceRender();
-                });
-            });
-        });
-
-        if(gridInstance)
-            gridInstance.updateConfig({
-                columns: context.columns,
-                search: true,
-            });
-        else
-            gridInstance = new Grid({
-                search: true,
-                className: {
-                    tr: 'table-tr-custom',
-                },
-                columns: context.columns,
-                sort: true,
-                pagination: true,
-                language: esES,
-                resizable: true,
-                selector: (cell, rowIndex, cellIndex) => cellIndex === 0 ? cell.firstName : cell,
-                data: []
-            }).render(document.getElementById("dialog-form"));
 
         fetch(`api/admin/${$("#espacio").val()}`,
             {
@@ -78,6 +28,7 @@ export class Administracion {
         )
         .then((response) => response.text().then(text => {
             $("#tableContent").html(text);
+            context.actionAdminUtils();
             $("#espacio").trigger("change");
             $("#calendar").val($("#datehidden").val());
             $("#expordata").click(()=>{
@@ -118,5 +69,56 @@ export class Administracion {
                 });
             });
         }));
+    }
+
+    actionAdminUtils(){
+        var context = this;
+        $("#espacio").off('change.espacio2').off('change.espacio1').on('change.espacio1', () => {
+            $("#sel-bbl").text($("#espacio").find(':selected').text());
+            fetch(`api/admin/${$("#espacio").val()}/data`,
+            {
+                method: "POST",
+                headers: headers,
+                redirect: "follow"
+            })
+            .then((response) => {
+                if (response.status == 500) {
+                    $('#calendar').val('');
+                    $('#dialog-form').hide();
+                    gridInstance.updateConfig({
+                        columns: context.columns,
+                        data: []
+                    }).forceRender();
+                    $('#alert-no-exist').show();
+                    $('#expordata').hide();
+                    return;
+                }
+                response.json().then(json => {
+                    $('#dialog-form').show();
+                    $('#alert-no-exist').hide();
+                    $('#expordata').show();
+                    $('#calendar').val(json.fecha);
+                    gridInstance.updateConfig({
+                        columns: context.columns,
+                        data: json.data
+                    }).forceRender();
+                });
+            });
+        });
+
+        gridInstance = new Grid({
+            search: true,
+            className: {
+                tr: 'table-tr-custom',
+            },
+            columns: context.columns,
+            sort: true,
+            pagination: true,
+            language: esES,
+            resizable: true,
+            selector: (cell, rowIndex, cellIndex) => cellIndex === 0 ? cell.firstName : cell,
+            data: []
+        }).render(document.getElementById("table-adm"));
+
     }
 }

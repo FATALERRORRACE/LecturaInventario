@@ -57,9 +57,14 @@ class ValidateInsertion{
                     'Fecha' => $date,
                 ];
             } else if (!$estadoMatch) {
+                DB::table($library['Tabla'])->where('Id', $found->Id)
+                ->update([
+                    'Fecha' => $date,
+                    'Estado' => 'I',
+                ]);
                 $dataRecord = [
                     'InsercionEstado' => 0,
-                    'Insercion' => "Estado del material distinto a $estado",
+                    'Insercion' => "Inventareado - Estado del material distinto a $estado",
                     'C_Barras' => $found->C_Barras,
                     'Situacion' => $found->Situacion,
                     'Biblioteca_L' =>  $library['Nombre'],

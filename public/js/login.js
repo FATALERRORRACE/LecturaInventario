@@ -16,6 +16,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 localStorage.removeItem('alerts');
+localStorage.removeItem('filesUploaded');
 jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).ready(function () {
   jquery__WEBPACK_IMPORTED_MODULE_0___default()('#espacio').select2();
   jquery__WEBPACK_IMPORTED_MODULE_0___default()(".radio-lg").change(function (ev) {

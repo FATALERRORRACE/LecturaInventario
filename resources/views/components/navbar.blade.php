@@ -26,7 +26,7 @@
         <div class="flex-none w-64">
             <div class="flex justify-center">
                 <div class="dropdown dropdown-hover">
-                    <button data-mdb-button-init data-mdb-ripple-init data-mdb-dropdown-init class="rounded-lg dropdown-toggle btn rounded-lg" type="button" id="user" data-mdb-toggle="dropdown" aria-expanded="false">
+                    <button data-mdb-button-init data-mdb-ripple-init data-mdb-dropdown-init class="rounded-lg dropdown-toggle btn rounded-lg mt-4" type="button" id="user" data-mdb-toggle="dropdown" aria-expanded="false">
                         <i class="fa-solid fa-user"></i> {{ session('username') }}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-hover" aria-labelledby="">

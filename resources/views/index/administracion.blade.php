@@ -1,7 +1,7 @@
 <div class="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
     <div class="text-center border-t border-gray-1 text-4B3863 px-4 pt-3" role="alert">
         <p class="font-bold text-xl">Bibloteca Seleccionada: <span id="sel-bbl"></span></p>
-        <button id="expordata" class="border px-3 mx-3 base-1-color btn rounded-lg p-2">
+        <button id="expordata" class="border px-3 mx-3 base-1-color btn rounded-lg p-2" style="{{ $tableExists == false ? 'display:none;' : '' }}">
             <i class="fa-solid fa-file-excel"></i> Exportar .XLSS
         </button>
     </div>
@@ -23,3 +23,4 @@
     </form>
     <input type="hidden" id="datehidden" value="{{$date}}">
 </div>
+<div id="table-adm"></div>

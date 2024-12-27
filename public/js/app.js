@@ -66,52 +66,6 @@ var Administracion = /*#__PURE__*/function () {
     value: function actionAdmin() {
       var context = this;
       jquery__WEBPACK_IMPORTED_MODULE_0___default()('#enableDate').show();
-      jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").off('change.espacio2').off('change.espacio1').on('change.espacio1', function () {
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()("#sel-bbl").text(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").find(':selected').text());
-        fetch("api/admin/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/data"), {
-          method: "POST",
-          headers: headers,
-          redirect: "follow"
-        }).then(function (response) {
-          if (response.status == 500) {
-            jquery__WEBPACK_IMPORTED_MODULE_0___default()('#calendar').val('');
-            jquery__WEBPACK_IMPORTED_MODULE_0___default()('#dialog-form').hide();
-            gridInstance.updateConfig({
-              columns: context.columns,
-              data: []
-            }).forceRender();
-            jquery__WEBPACK_IMPORTED_MODULE_0___default()('#alert-no-exist').show();
-            return;
-          }
-          response.json().then(function (json) {
-            jquery__WEBPACK_IMPORTED_MODULE_0___default()('#dialog-form').show();
-            jquery__WEBPACK_IMPORTED_MODULE_0___default()('#alert-no-exist').hide();
-            jquery__WEBPACK_IMPORTED_MODULE_0___default()('#calendar').val(json.fecha);
-            gridInstance.updateConfig({
-              columns: context.columns,
-              data: json.data
-            }).forceRender();
-          });
-        });
-      });
-      if (gridInstance) gridInstance.updateConfig({
-        columns: context.columns,
-        search: true
-      });else gridInstance = new gridjs__WEBPACK_IMPORTED_MODULE_1__.Grid({
-        search: true,
-        className: {
-          tr: 'table-tr-custom'
-        },
-        columns: context.columns,
-        sort: true,
-        pagination: true,
-        language: gridjs_l10n__WEBPACK_IMPORTED_MODULE_2__.esES,
-        resizable: true,
-        selector: function selector(cell, rowIndex, cellIndex) {
-          return cellIndex === 0 ? cell.firstName : cell;
-        },
-        data: []
-      }).render(document.getElementById("dialog-form"));
       fetch("api/admin/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val()), {
         method: "GET",
         headers: headers,
@@ -119,6 +73,7 @@ var Administracion = /*#__PURE__*/function () {
       }).then(function (response) {
         return response.text().then(function (text) {
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#tableContent").html(text);
+          context.actionAdminUtils();
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").trigger("change");
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#calendar").val(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#datehidden").val());
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#expordata").click(function () {
@@ -156,6 +111,56 @@ var Administracion = /*#__PURE__*/function () {
           });
         });
       });
+    }
+  }, {
+    key: "actionAdminUtils",
+    value: function actionAdminUtils() {
+      var context = this;
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").off('change.espacio2').off('change.espacio1').on('change.espacio1', function () {
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()("#sel-bbl").text(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").find(':selected').text());
+        fetch("api/admin/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/data"), {
+          method: "POST",
+          headers: headers,
+          redirect: "follow"
+        }).then(function (response) {
+          if (response.status == 500) {
+            jquery__WEBPACK_IMPORTED_MODULE_0___default()('#calendar').val('');
+            jquery__WEBPACK_IMPORTED_MODULE_0___default()('#dialog-form').hide();
+            gridInstance.updateConfig({
+              columns: context.columns,
+              data: []
+            }).forceRender();
+            jquery__WEBPACK_IMPORTED_MODULE_0___default()('#alert-no-exist').show();
+            jquery__WEBPACK_IMPORTED_MODULE_0___default()('#expordata').hide();
+            return;
+          }
+          response.json().then(function (json) {
+            jquery__WEBPACK_IMPORTED_MODULE_0___default()('#dialog-form').show();
+            jquery__WEBPACK_IMPORTED_MODULE_0___default()('#alert-no-exist').hide();
+            jquery__WEBPACK_IMPORTED_MODULE_0___default()('#expordata').show();
+            jquery__WEBPACK_IMPORTED_MODULE_0___default()('#calendar').val(json.fecha);
+            gridInstance.updateConfig({
+              columns: context.columns,
+              data: json.data
+            }).forceRender();
+          });
+        });
+      });
+      gridInstance = new gridjs__WEBPACK_IMPORTED_MODULE_1__.Grid({
+        search: true,
+        className: {
+          tr: 'table-tr-custom'
+        },
+        columns: context.columns,
+        sort: true,
+        pagination: true,
+        language: gridjs_l10n__WEBPACK_IMPORTED_MODULE_2__.esES,
+        resizable: true,
+        selector: function selector(cell, rowIndex, cellIndex) {
+          return cellIndex === 0 ? cell.firstName : cell;
+        },
+        data: []
+      }).render(document.getElementById("table-adm"));
     }
   }]);
 }();
@@ -251,11 +256,13 @@ var Avances = /*#__PURE__*/function () {
               data: []
             }).forceRender();
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#alert-no-exist').show();
+            jquery__WEBPACK_IMPORTED_MODULE_0___default()('#expordata').hide();
             return;
           }
           response.json().then(function (json) {
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#dialog-form').show();
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#alert-no-exist').hide();
+            jquery__WEBPACK_IMPORTED_MODULE_0___default()('#expordata').show();
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#calendar').val(json.fecha);
             gridInstance.updateConfig({
               columns: context.columns,
@@ -311,7 +318,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery_ui__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(jquery_ui__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var jquery_ui_ui_effects_effect_shake__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! jquery-ui/ui/effects/effect-shake */ "./node_modules/jquery-ui/ui/effects/effect-shake.js");
 /* harmony import */ var jquery_ui_ui_effects_effect_shake__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(jquery_ui_ui_effects_effect_shake__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var jquery_ui_ui_widgets_tabs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! jquery-ui/ui/widgets/tabs */ "./node_modules/jquery-ui/ui/widgets/tabs.js");
+/* harmony import */ var jquery_ui_ui_widgets_tabs__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(jquery_ui_ui_widgets_tabs__WEBPACK_IMPORTED_MODULE_6__);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -324,50 +336,57 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 
 
 
+
 var Inventario = /*#__PURE__*/function () {
   function Inventario() {
     _classCallCheck(this, Inventario);
-    _defineProperty(this, "columns", [{
-      name: "Códigos Escaneados",
-      columns: [{
-        id: "C_Barras",
-        name: "Placa"
-      }, {
-        id: "Situacion",
-        name: "Situación"
-      }, {
-        id: "Biblioteca_L",
-        name: "Biblioteca"
-      }, {
-        id: "Insercion",
-        name: "Nota"
-      }]
-    }]);
-    _defineProperty(this, "subcolumns", [{
-      name: "Archivos Cargados",
-      columns: [{
-        id: "filename",
-        name: "Nombre de archivo"
-      }, {
-        id: "total",
-        name: "Total Registros"
-      }, {
-        id: "inserted",
-        name: "Registros Insertados"
-      }, {
-        id: "failed",
-        name: "Registros Fallidos"
-      }, {
-        id: "date",
-        name: "Fecha"
-      }, {
-        id: "summaryFile",
-        name: "Archivo Resumen",
-        formatter: function formatter(_, row) {
-          return (0,gridjs__WEBPACK_IMPORTED_MODULE_1__.html)("<div class=\"flex justify-center\">\n                                <a class=\"py-1 px-2 border rounded-md text-white \" href=\"api/inventario/report?name=".concat(row._cells[5].data, "\" style=\"background-color:#262D9E;\">\n                                    <i class=\"fa-solid fa-download\"></i>\n                                </a>\n                            </div>"));
-        }
-      }]
-    }]);
+    _defineProperty(this, "columns", [
+    //{
+    //name: "Códigos Escaneados", columns: [
+    {
+      id: "C_Barras",
+      name: "Placa"
+    }, {
+      id: "Situacion",
+      name: "Situación"
+    }, {
+      id: "Biblioteca_L",
+      name: "Biblioteca"
+    }, {
+      id: "Insercion",
+      name: "Nota"
+    }
+    //]
+    //}
+    ]);
+    _defineProperty(this, "subcolumns", [
+    //{
+    //name: "Archivos Cargados", columns: [
+    {
+      id: "filename",
+      name: "Nombre de archivo"
+    }, {
+      id: "total",
+      name: "Total Registros"
+    }, {
+      id: "inserted",
+      name: "Registros Insertados"
+    }, {
+      id: "failed",
+      name: "Registros Fallidos"
+    }, {
+      id: "date",
+      name: "Fecha"
+    }, {
+      id: "summaryFile",
+      name: "Archivo Resumen",
+      formatter: function formatter(_, row) {
+        return (0,gridjs__WEBPACK_IMPORTED_MODULE_1__.html)("<div class=\"flex justify-center\">\n                        <a class=\"py-1 px-2 border rounded-md text-white \" href=\"api/inventario/report?name=".concat(row._cells[5].data, "\" style=\"background-color:#262D9E;\">\n                            <i class=\"fa-solid fa-download\"></i>\n                        </a>\n                    </div>"));
+      }
+    }
+    //]
+    //}
+    ]);
   }
   return _createClass(Inventario, [{
     key: "actionInventario",
@@ -375,56 +394,6 @@ var Inventario = /*#__PURE__*/function () {
       var context = this;
       jquery__WEBPACK_IMPORTED_MODULE_0___default()('#dialog-form').show();
       jquery__WEBPACK_IMPORTED_MODULE_0___default()('#enableDate').hide();
-      if (gridInstance) {
-        gridInstance.updateConfig({
-          data: localStorage.getItem('alerts') ? JSON.parse(localStorage.getItem('alerts')) : [],
-          columns: context.columns
-        }).forceRender();
-        subgridInstance.updateConfig({
-          data: localStorage.getItem('filesUploaded') ? JSON.parse(localStorage.getItem('filesUploaded')) : [],
-          columns: context.subcolumns
-        }).forceRender();
-      } else {
-        subgridInstance = new gridjs__WEBPACK_IMPORTED_MODULE_1__.Grid({
-          className: {
-            th: 'table-tr-custom'
-          },
-          style: {
-            th: {
-              'border': '1px solid #ccc',
-              'color': '#4B4F54',
-              'background-color': '#DDE5ED'
-            }
-          },
-          columns: context.subcolumns,
-          sort: true,
-          pagination: true,
-          language: gridjs_l10n__WEBPACK_IMPORTED_MODULE_2__.esES,
-          resizable: true,
-          data: localStorage.getItem('filesUploaded') ? JSON.parse(localStorage.getItem('filesUploaded')) : []
-        }).render(document.getElementById("sub-content"));
-        gridInstance = new gridjs__WEBPACK_IMPORTED_MODULE_1__.Grid({
-          className: {
-            th: 'table-tr-custom'
-          },
-          style: {
-            th: {
-              'border': '1px solid #ccc',
-              'color': '#4B4F54',
-              'background-color': '#DDE5ED'
-            }
-          },
-          columns: context.columns,
-          sort: true,
-          pagination: true,
-          language: gridjs_l10n__WEBPACK_IMPORTED_MODULE_2__.esES,
-          resizable: true,
-          data: localStorage.getItem('alerts') ? JSON.parse(localStorage.getItem('alerts')) : []
-        }).render(document.getElementById("dialog-form"));
-      }
-      jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").off('change.espacio1').off('change.espacio2').on('change.espacio2', function () {
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()("#submenu-1").trigger("click");
-      });
       fetch("api/inventario?bbltc=".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val()), {
         method: "GET",
         headers: headers,
@@ -432,6 +401,7 @@ var Inventario = /*#__PURE__*/function () {
       }).then(function (response) {
         return response.text().then(function (text) {
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#tableContent").html(text);
+          context.inventarioUtils();
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#registercode").submit(function (event) {
             event.preventDefault();
             if (!jquery__WEBPACK_IMPORTED_MODULE_0___default()(jquery__WEBPACK_IMPORTED_MODULE_0___default()(".clasificacion")[0]).prop('checked') && !jquery__WEBPACK_IMPORTED_MODULE_0___default()(jquery__WEBPACK_IMPORTED_MODULE_0___default()(".clasificacion")[1]).prop('checked') && !jquery__WEBPACK_IMPORTED_MODULE_0___default()(jquery__WEBPACK_IMPORTED_MODULE_0___default()(".clasificacion")[2]).prop('checked')) {
@@ -491,11 +461,79 @@ var Inventario = /*#__PURE__*/function () {
           })
         }).then(function (response) {
           return response.json().then(function (json) {
-            toastr__WEBPACK_IMPORTED_MODULE_3___default().success(json.message);
+            if (json.status == 'ok') toastr__WEBPACK_IMPORTED_MODULE_3___default().success(json.message);else toastr__WEBPACK_IMPORTED_MODULE_3___default().error(json.message);
           });
         });
       });
     }
+  }, {
+    key: "inventarioUtils",
+    value: function () {
+      var _inventarioUtils = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+        var context;
+        return _regeneratorRuntime().wrap(function _callee$(_context) {
+          while (1) switch (_context.prev = _context.next) {
+            case 0:
+              context = this;
+              _context.next = 3;
+              return new gridjs__WEBPACK_IMPORTED_MODULE_1__.Grid({
+                className: {
+                  th: 'table-tr-custom'
+                },
+                style: {
+                  th: {
+                    'border': '1px solid #ccc',
+                    'color': '#4B4F54',
+                    'background-color': '#DDE5ED'
+                  }
+                },
+                columns: context.subcolumns,
+                sort: true,
+                pagination: true,
+                language: gridjs_l10n__WEBPACK_IMPORTED_MODULE_2__.esES,
+                resizable: true,
+                data: localStorage.getItem('filesUploaded') ? JSON.parse(localStorage.getItem('filesUploaded')) : []
+              }).render(document.getElementById("table-1-inventory"));
+            case 3:
+              subgridInstance = _context.sent;
+              _context.next = 6;
+              return new gridjs__WEBPACK_IMPORTED_MODULE_1__.Grid({
+                className: {
+                  th: 'table-tr-custom'
+                },
+                style: {
+                  th: {
+                    'border': '1px solid #ccc',
+                    'color': '#4B4F54',
+                    'background-color': '#DDE5ED'
+                  }
+                },
+                columns: context.columns,
+                sort: true,
+                pagination: true,
+                language: gridjs_l10n__WEBPACK_IMPORTED_MODULE_2__.esES,
+                resizable: true,
+                data: localStorage.getItem('alerts') ? JSON.parse(localStorage.getItem('alerts')) : []
+              }).render(document.getElementById("table-2-inventory"));
+            case 6:
+              gridInstance = _context.sent;
+              _context.next = 9;
+              return jquery__WEBPACK_IMPORTED_MODULE_0___default()("#tabs").tabs();
+            case 9:
+              jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").off('change.espacio1').off('change.espacio2').on('change.espacio2', function () {
+                jquery__WEBPACK_IMPORTED_MODULE_0___default()("#submenu-1").trigger("click");
+              });
+            case 10:
+            case "end":
+              return _context.stop();
+          }
+        }, _callee, this);
+      }));
+      function inventarioUtils() {
+        return _inventarioUtils.apply(this, arguments);
+      }
+      return inventarioUtils;
+    }()
   }]);
 }();
 
@@ -1639,6 +1677,125 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 // This module is a noop if used as a regular AMD module.
 // eslint-disable-next-line no-unused-vars
 var jQuery = $;
+
+} );
+
+
+/***/ }),
+
+/***/ "./node_modules/jquery-ui/ui/keycode.js":
+/*!**********************************************!*\
+  !*** ./node_modules/jquery-ui/ui/keycode.js ***!
+  \**********************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+ * jQuery UI Keycode 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+//>>label: Keycode
+//>>group: Core
+//>>description: Provide keycodes as keynames
+//>>docs: https://api.jqueryui.com/jQuery.ui.keyCode/
+
+( function( factory ) {
+	"use strict";
+
+	if ( true ) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"), __webpack_require__(/*! ./version */ "./node_modules/jquery-ui/ui/version.js") ], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+		(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+} )( function( $ ) {
+"use strict";
+
+return $.ui.keyCode = {
+	BACKSPACE: 8,
+	COMMA: 188,
+	DELETE: 46,
+	DOWN: 40,
+	END: 35,
+	ENTER: 13,
+	ESCAPE: 27,
+	HOME: 36,
+	LEFT: 37,
+	PAGE_DOWN: 34,
+	PAGE_UP: 33,
+	PERIOD: 190,
+	RIGHT: 39,
+	SPACE: 32,
+	TAB: 9,
+	UP: 38
+};
+
+} );
+
+
+/***/ }),
+
+/***/ "./node_modules/jquery-ui/ui/unique-id.js":
+/*!************************************************!*\
+  !*** ./node_modules/jquery-ui/ui/unique-id.js ***!
+  \************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+ * jQuery UI Unique ID 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+//>>label: uniqueId
+//>>group: Core
+//>>description: Functions to generate and remove uniqueId's
+//>>docs: https://api.jqueryui.com/uniqueId/
+
+( function( factory ) {
+	"use strict";
+
+	if ( true ) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"), __webpack_require__(/*! ./version */ "./node_modules/jquery-ui/ui/version.js") ], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+		(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+} )( function( $ ) {
+"use strict";
+
+return $.fn.extend( {
+	uniqueId: ( function() {
+		var uuid = 0;
+
+		return function() {
+			return this.each( function() {
+				if ( !this.id ) {
+					this.id = "ui-id-" + ( ++uuid );
+				}
+			} );
+		};
+	} )(),
+
+	removeUniqueId: function() {
+		return this.each( function() {
+			if ( /^ui-id-\d+$/.test( this.id ) ) {
+				$( this ).removeAttr( "id" );
+			}
+		} );
+	}
+} );
 
 } );
 
@@ -3136,6 +3293,907 @@ $.each( { show: "fadeIn", hide: "fadeOut" }, function( method, defaultEffect ) {
 } );
 
 return $.widget;
+
+} );
+
+
+/***/ }),
+
+/***/ "./node_modules/jquery-ui/ui/widgets/tabs.js":
+/*!***************************************************!*\
+  !*** ./node_modules/jquery-ui/ui/widgets/tabs.js ***!
+  \***************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+ * jQuery UI Tabs 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+//>>label: Tabs
+//>>group: Widgets
+//>>description: Transforms a set of container elements into a tab structure.
+//>>docs: https://api.jqueryui.com/tabs/
+//>>demos: https://jqueryui.com/tabs/
+//>>css.structure: ../../themes/base/core.css
+//>>css.structure: ../../themes/base/tabs.css
+//>>css.theme: ../../themes/base/theme.css
+
+( function( factory ) {
+	"use strict";
+
+	if ( true ) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+			__webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"),
+			__webpack_require__(/*! ../keycode */ "./node_modules/jquery-ui/ui/keycode.js"),
+			__webpack_require__(/*! ../unique-id */ "./node_modules/jquery-ui/ui/unique-id.js"),
+			__webpack_require__(/*! ../version */ "./node_modules/jquery-ui/ui/version.js"),
+			__webpack_require__(/*! ../widget */ "./node_modules/jquery-ui/ui/widget.js")
+		], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+		(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+} )( function( $ ) {
+"use strict";
+
+$.widget( "ui.tabs", {
+	version: "1.14.1",
+	delay: 300,
+	options: {
+		active: null,
+		classes: {
+			"ui-tabs": "ui-corner-all",
+			"ui-tabs-nav": "ui-corner-all",
+			"ui-tabs-panel": "ui-corner-bottom",
+			"ui-tabs-tab": "ui-corner-top"
+		},
+		collapsible: false,
+		event: "click",
+		heightStyle: "content",
+		hide: null,
+		show: null,
+
+		// Callbacks
+		activate: null,
+		beforeActivate: null,
+		beforeLoad: null,
+		load: null
+	},
+
+	_isLocal: ( function() {
+		var rhash = /#.*$/;
+
+		return function( anchor ) {
+			var anchorUrl, locationUrl;
+
+			anchorUrl = anchor.href.replace( rhash, "" );
+			locationUrl = location.href.replace( rhash, "" );
+
+			// Decoding may throw an error if the URL isn't UTF-8 (#9518)
+			try {
+				anchorUrl = decodeURIComponent( anchorUrl );
+			} catch ( error ) {}
+			try {
+				locationUrl = decodeURIComponent( locationUrl );
+			} catch ( error ) {}
+
+			return anchor.hash.length > 1 && anchorUrl === locationUrl;
+		};
+	} )(),
+
+	_create: function() {
+		var that = this,
+			options = this.options;
+
+		this.running = false;
+
+		this._addClass( "ui-tabs", "ui-widget ui-widget-content" );
+		this._toggleClass( "ui-tabs-collapsible", null, options.collapsible );
+
+		this._processTabs();
+		options.active = this._initialActive();
+
+		// Take disabling tabs via class attribute from HTML
+		// into account and update option properly.
+		if ( Array.isArray( options.disabled ) ) {
+			options.disabled = $.uniqueSort( options.disabled.concat(
+				$.map( this.tabs.filter( ".ui-state-disabled" ), function( li ) {
+					return that.tabs.index( li );
+				} )
+			) ).sort();
+		}
+
+		// Check for length avoids error when initializing empty list
+		if ( this.options.active !== false && this.anchors.length ) {
+			this.active = this._findActive( options.active );
+		} else {
+			this.active = $();
+		}
+
+		this._refresh();
+
+		if ( this.active.length ) {
+			this.load( options.active );
+		}
+	},
+
+	_initialActive: function() {
+		var active = this.options.active,
+			collapsible = this.options.collapsible,
+			locationHashDecoded = decodeURIComponent( location.hash.substring( 1 ) );
+
+		if ( active === null ) {
+
+			// check the fragment identifier in the URL
+			if ( locationHashDecoded ) {
+				this.tabs.each( function( i, tab ) {
+					if ( $( tab ).attr( "aria-controls" ) === locationHashDecoded ) {
+						active = i;
+						return false;
+					}
+				} );
+			}
+
+			// Check for a tab marked active via a class
+			if ( active === null ) {
+				active = this.tabs.index( this.tabs.filter( ".ui-tabs-active" ) );
+			}
+
+			// No active tab, set to false
+			if ( active === null || active === -1 ) {
+				active = this.tabs.length ? 0 : false;
+			}
+		}
+
+		// Handle numbers: negative, out of range
+		if ( active !== false ) {
+			active = this.tabs.index( this.tabs.eq( active ) );
+			if ( active === -1 ) {
+				active = collapsible ? false : 0;
+			}
+		}
+
+		// Don't allow collapsible: false and active: false
+		if ( !collapsible && active === false && this.anchors.length ) {
+			active = 0;
+		}
+
+		return active;
+	},
+
+	_getCreateEventData: function() {
+		return {
+			tab: this.active,
+			panel: !this.active.length ? $() : this._getPanelForTab( this.active )
+		};
+	},
+
+	_tabKeydown: function( event ) {
+		var focusedTab = $( this.document[ 0 ].activeElement ).closest( "li" ),
+			selectedIndex = this.tabs.index( focusedTab ),
+			goingForward = true;
+
+		if ( this._handlePageNav( event ) ) {
+			return;
+		}
+
+		switch ( event.keyCode ) {
+		case $.ui.keyCode.RIGHT:
+		case $.ui.keyCode.DOWN:
+			selectedIndex++;
+			break;
+		case $.ui.keyCode.UP:
+		case $.ui.keyCode.LEFT:
+			goingForward = false;
+			selectedIndex--;
+			break;
+		case $.ui.keyCode.END:
+			selectedIndex = this.anchors.length - 1;
+			break;
+		case $.ui.keyCode.HOME:
+			selectedIndex = 0;
+			break;
+		case $.ui.keyCode.SPACE:
+
+			// Activate only, no collapsing
+			event.preventDefault();
+			clearTimeout( this.activating );
+			this._activate( selectedIndex );
+			return;
+		case $.ui.keyCode.ENTER:
+
+			// Toggle (cancel delayed activation, allow collapsing)
+			event.preventDefault();
+			clearTimeout( this.activating );
+
+			// Determine if we should collapse or activate
+			this._activate( selectedIndex === this.options.active ? false : selectedIndex );
+			return;
+		default:
+			return;
+		}
+
+		// Focus the appropriate tab, based on which key was pressed
+		event.preventDefault();
+		clearTimeout( this.activating );
+		selectedIndex = this._focusNextTab( selectedIndex, goingForward );
+
+		// Navigating with control/command key will prevent automatic activation
+		if ( !event.ctrlKey && !event.metaKey ) {
+
+			// Update aria-selected immediately so that AT think the tab is already selected.
+			// Otherwise AT may confuse the user by stating that they need to activate the tab,
+			// but the tab will already be activated by the time the announcement finishes.
+			focusedTab.attr( "aria-selected", "false" );
+			this.tabs.eq( selectedIndex ).attr( "aria-selected", "true" );
+
+			this.activating = this._delay( function() {
+				this.option( "active", selectedIndex );
+			}, this.delay );
+		}
+	},
+
+	_panelKeydown: function( event ) {
+		if ( this._handlePageNav( event ) ) {
+			return;
+		}
+
+		// Ctrl+up moves focus to the current tab
+		if ( event.ctrlKey && event.keyCode === $.ui.keyCode.UP ) {
+			event.preventDefault();
+			this.active.trigger( "focus" );
+		}
+	},
+
+	// Alt+page up/down moves focus to the previous/next tab (and activates)
+	_handlePageNav: function( event ) {
+		if ( event.altKey && event.keyCode === $.ui.keyCode.PAGE_UP ) {
+			this._activate( this._focusNextTab( this.options.active - 1, false ) );
+			return true;
+		}
+		if ( event.altKey && event.keyCode === $.ui.keyCode.PAGE_DOWN ) {
+			this._activate( this._focusNextTab( this.options.active + 1, true ) );
+			return true;
+		}
+	},
+
+	_findNextTab: function( index, goingForward ) {
+		var lastTabIndex = this.tabs.length - 1;
+
+		function constrain() {
+			if ( index > lastTabIndex ) {
+				index = 0;
+			}
+			if ( index < 0 ) {
+				index = lastTabIndex;
+			}
+			return index;
+		}
+
+		while ( $.inArray( constrain(), this.options.disabled ) !== -1 ) {
+			index = goingForward ? index + 1 : index - 1;
+		}
+
+		return index;
+	},
+
+	_focusNextTab: function( index, goingForward ) {
+		index = this._findNextTab( index, goingForward );
+		this.tabs.eq( index ).trigger( "focus" );
+		return index;
+	},
+
+	_setOption: function( key, value ) {
+		if ( key === "active" ) {
+
+			// _activate() will handle invalid values and update this.options
+			this._activate( value );
+			return;
+		}
+
+		this._super( key, value );
+
+		if ( key === "collapsible" ) {
+			this._toggleClass( "ui-tabs-collapsible", null, value );
+
+			// Setting collapsible: false while collapsed; open first panel
+			if ( !value && this.options.active === false ) {
+				this._activate( 0 );
+			}
+		}
+
+		if ( key === "event" ) {
+			this._setupEvents( value );
+		}
+
+		if ( key === "heightStyle" ) {
+			this._setupHeightStyle( value );
+		}
+	},
+
+	refresh: function() {
+		var options = this.options,
+			lis = this.tablist.children( ":has(a[href])" );
+
+		// Get disabled tabs from class attribute from HTML
+		// this will get converted to a boolean if needed in _refresh()
+		options.disabled = $.map( lis.filter( ".ui-state-disabled" ), function( tab ) {
+			return lis.index( tab );
+		} );
+
+		this._processTabs();
+
+		// Was collapsed or no tabs
+		if ( options.active === false || !this.anchors.length ) {
+			options.active = false;
+			this.active = $();
+
+		// was active, but active tab is gone
+		} else if ( this.active.length && !$.contains( this.tablist[ 0 ], this.active[ 0 ] ) ) {
+
+			// all remaining tabs are disabled
+			if ( this.tabs.length === options.disabled.length ) {
+				options.active = false;
+				this.active = $();
+
+			// activate previous tab
+			} else {
+				this._activate( this._findNextTab( Math.max( 0, options.active - 1 ), false ) );
+			}
+
+		// was active, active tab still exists
+		} else {
+
+			// make sure active index is correct
+			options.active = this.tabs.index( this.active );
+		}
+
+		this._refresh();
+	},
+
+	_refresh: function() {
+		this._setOptionDisabled( this.options.disabled );
+		this._setupEvents( this.options.event );
+		this._setupHeightStyle( this.options.heightStyle );
+
+		this.tabs.not( this.active ).attr( {
+			"aria-selected": "false",
+			"aria-expanded": "false",
+			tabIndex: -1
+		} );
+		this.panels.not( this._getPanelForTab( this.active ) )
+			.hide()
+			.attr( {
+				"aria-hidden": "true"
+			} );
+
+		// Make sure one tab is in the tab order
+		if ( !this.active.length ) {
+			this.tabs.eq( 0 ).attr( "tabIndex", 0 );
+		} else {
+			this.active
+				.attr( {
+					"aria-selected": "true",
+					"aria-expanded": "true",
+					tabIndex: 0
+				} );
+			this._addClass( this.active, "ui-tabs-active", "ui-state-active" );
+			this._getPanelForTab( this.active )
+				.show()
+				.attr( {
+					"aria-hidden": "false"
+				} );
+		}
+	},
+
+	_processTabs: function() {
+		var that = this,
+			prevTabs = this.tabs,
+			prevAnchors = this.anchors,
+			prevPanels = this.panels;
+
+		this.tablist = this._getList().attr( "role", "tablist" );
+		this._addClass( this.tablist, "ui-tabs-nav",
+			"ui-helper-reset ui-helper-clearfix ui-widget-header" );
+
+		// Prevent users from focusing disabled tabs via click
+		this.tablist
+			.on( "mousedown" + this.eventNamespace, "> li", function( event ) {
+				if ( $( this ).is( ".ui-state-disabled" ) ) {
+					event.preventDefault();
+				}
+			} );
+
+		this.tabs = this.tablist.find( "> li:has(a[href])" )
+			.attr( {
+				role: "tab",
+				tabIndex: -1
+			} );
+		this._addClass( this.tabs, "ui-tabs-tab", "ui-state-default" );
+
+		this.anchors = this.tabs.map( function() {
+			return $( "a", this )[ 0 ];
+		} )
+			.attr( {
+				tabIndex: -1
+			} );
+		this._addClass( this.anchors, "ui-tabs-anchor" );
+
+		this.panels = $();
+
+		this.anchors.each( function( i, anchor ) {
+			var selector, panel, panelId,
+				anchorId = $( anchor ).uniqueId().attr( "id" ),
+				tab = $( anchor ).closest( "li" ),
+				originalAriaControls = tab.attr( "aria-controls" );
+
+			// Inline tab
+			if ( that._isLocal( anchor ) ) {
+				selector = decodeURIComponent( anchor.hash );
+				panelId = selector.substring( 1 );
+				panel = that.element.find( "#" + CSS.escape( panelId ) );
+
+			// remote tab
+			} else {
+
+				// If the tab doesn't already have aria-controls,
+				// generate an id by using a throw-away element
+				panelId = tab.attr( "aria-controls" ) || $( {} ).uniqueId()[ 0 ].id;
+				selector = "#" + panelId;
+				panel = that.element.find( selector );
+				if ( !panel.length ) {
+					panel = that._createPanel( panelId );
+					panel.insertAfter( that.panels[ i - 1 ] || that.tablist );
+				}
+				panel.attr( "aria-live", "polite" );
+			}
+
+			if ( panel.length ) {
+				that.panels = that.panels.add( panel );
+			}
+			if ( originalAriaControls ) {
+				tab.data( "ui-tabs-aria-controls", originalAriaControls );
+			}
+			tab.attr( {
+				"aria-controls": panelId,
+				"aria-labelledby": anchorId
+			} );
+			panel.attr( "aria-labelledby", anchorId );
+		} );
+
+		this.panels.attr( "role", "tabpanel" );
+		this._addClass( this.panels, "ui-tabs-panel", "ui-widget-content" );
+
+		// Avoid memory leaks (#10056)
+		if ( prevTabs ) {
+			this._off( prevTabs.not( this.tabs ) );
+			this._off( prevAnchors.not( this.anchors ) );
+			this._off( prevPanels.not( this.panels ) );
+		}
+	},
+
+	// Allow overriding how to find the list for rare usage scenarios (#7715)
+	_getList: function() {
+		return this.tablist || this.element.find( "ol, ul" ).eq( 0 );
+	},
+
+	_createPanel: function( id ) {
+		return $( "<div>" )
+			.attr( "id", id )
+			.data( "ui-tabs-destroy", true );
+	},
+
+	_setOptionDisabled: function( disabled ) {
+		var currentItem, li, i;
+
+		if ( Array.isArray( disabled ) ) {
+			if ( !disabled.length ) {
+				disabled = false;
+			} else if ( disabled.length === this.anchors.length ) {
+				disabled = true;
+			}
+		}
+
+		// Disable tabs
+		for ( i = 0; ( li = this.tabs[ i ] ); i++ ) {
+			currentItem = $( li );
+			if ( disabled === true || $.inArray( i, disabled ) !== -1 ) {
+				currentItem.attr( "aria-disabled", "true" );
+				this._addClass( currentItem, null, "ui-state-disabled" );
+			} else {
+				currentItem.removeAttr( "aria-disabled" );
+				this._removeClass( currentItem, null, "ui-state-disabled" );
+			}
+		}
+
+		this.options.disabled = disabled;
+
+		this._toggleClass( this.widget(), this.widgetFullName + "-disabled", null,
+			disabled === true );
+	},
+
+	_setupEvents: function( event ) {
+		var events = {};
+		if ( event ) {
+			$.each( event.split( " " ), function( index, eventName ) {
+				events[ eventName ] = "_eventHandler";
+			} );
+		}
+
+		this._off( this.anchors.add( this.tabs ).add( this.panels ) );
+
+		// Always prevent the default action, even when disabled
+		this._on( true, this.anchors, {
+			click: function( event ) {
+				event.preventDefault();
+			}
+		} );
+		this._on( this.anchors, events );
+		this._on( this.tabs, { keydown: "_tabKeydown" } );
+		this._on( this.panels, { keydown: "_panelKeydown" } );
+
+		this._focusable( this.tabs );
+		this._hoverable( this.tabs );
+	},
+
+	_setupHeightStyle: function( heightStyle ) {
+		var maxHeight,
+			parent = this.element.parent();
+
+		if ( heightStyle === "fill" ) {
+			maxHeight = parent.height();
+			maxHeight -= this.element.outerHeight() - this.element.height();
+
+			this.element.siblings( ":visible" ).each( function() {
+				var elem = $( this ),
+					position = elem.css( "position" );
+
+				if ( position === "absolute" || position === "fixed" ) {
+					return;
+				}
+				maxHeight -= elem.outerHeight( true );
+			} );
+
+			this.element.children().not( this.panels ).each( function() {
+				maxHeight -= $( this ).outerHeight( true );
+			} );
+
+			this.panels.each( function() {
+				$( this ).height( Math.max( 0, maxHeight -
+					$( this ).innerHeight() + $( this ).height() ) );
+			} )
+				.css( "overflow", "auto" );
+		} else if ( heightStyle === "auto" ) {
+			maxHeight = 0;
+			this.panels.each( function() {
+				maxHeight = Math.max( maxHeight, $( this ).height( "" ).height() );
+			} ).height( maxHeight );
+		}
+	},
+
+	_eventHandler: function( event ) {
+		var options = this.options,
+			active = this.active,
+			anchor = $( event.currentTarget ),
+			tab = anchor.closest( "li" ),
+			clickedIsActive = tab[ 0 ] === active[ 0 ],
+			collapsing = clickedIsActive && options.collapsible,
+			toShow = collapsing ? $() : this._getPanelForTab( tab ),
+			toHide = !active.length ? $() : this._getPanelForTab( active ),
+			eventData = {
+				oldTab: active,
+				oldPanel: toHide,
+				newTab: collapsing ? $() : tab,
+				newPanel: toShow
+			};
+
+		event.preventDefault();
+
+		if ( tab.hasClass( "ui-state-disabled" ) ||
+
+				// tab is already loading
+				tab.hasClass( "ui-tabs-loading" ) ||
+
+				// can't switch durning an animation
+				this.running ||
+
+				// click on active header, but not collapsible
+				( clickedIsActive && !options.collapsible ) ||
+
+				// allow canceling activation
+				( this._trigger( "beforeActivate", event, eventData ) === false ) ) {
+			return;
+		}
+
+		options.active = collapsing ? false : this.tabs.index( tab );
+
+		this.active = clickedIsActive ? $() : tab;
+		if ( this.xhr ) {
+			this.xhr.abort();
+		}
+
+		if ( !toHide.length && !toShow.length ) {
+			$.error( "jQuery UI Tabs: Mismatching fragment identifier." );
+		}
+
+		if ( toShow.length ) {
+			this.load( this.tabs.index( tab ), event );
+		}
+		this._toggle( event, eventData );
+	},
+
+	// Handles show/hide for selecting tabs
+	_toggle: function( event, eventData ) {
+		var that = this,
+			toShow = eventData.newPanel,
+			toHide = eventData.oldPanel;
+
+		this.running = true;
+
+		function complete() {
+			that.running = false;
+			that._trigger( "activate", event, eventData );
+		}
+
+		function show() {
+			that._addClass( eventData.newTab.closest( "li" ), "ui-tabs-active", "ui-state-active" );
+
+			if ( toShow.length && that.options.show ) {
+				that._show( toShow, that.options.show, complete );
+			} else {
+				toShow.show();
+				complete();
+			}
+		}
+
+		// Start out by hiding, then showing, then completing
+		if ( toHide.length && this.options.hide ) {
+			this._hide( toHide, this.options.hide, function() {
+				that._removeClass( eventData.oldTab.closest( "li" ),
+					"ui-tabs-active", "ui-state-active" );
+				show();
+			} );
+		} else {
+			this._removeClass( eventData.oldTab.closest( "li" ),
+				"ui-tabs-active", "ui-state-active" );
+			toHide.hide();
+			show();
+		}
+
+		toHide.attr( "aria-hidden", "true" );
+		eventData.oldTab.attr( {
+			"aria-selected": "false",
+			"aria-expanded": "false"
+		} );
+
+		// If we're switching tabs, remove the old tab from the tab order.
+		// If we're opening from collapsed state, remove the previous tab from the tab order.
+		// If we're collapsing, then keep the collapsing tab in the tab order.
+		if ( toShow.length && toHide.length ) {
+			eventData.oldTab.attr( "tabIndex", -1 );
+		} else if ( toShow.length ) {
+			this.tabs.filter( function() {
+				return $( this ).attr( "tabIndex" ) === 0;
+			} )
+				.attr( "tabIndex", -1 );
+		}
+
+		toShow.attr( "aria-hidden", "false" );
+		eventData.newTab.attr( {
+			"aria-selected": "true",
+			"aria-expanded": "true",
+			tabIndex: 0
+		} );
+	},
+
+	_activate: function( index ) {
+		var anchor,
+			active = this._findActive( index );
+
+		// Trying to activate the already active panel
+		if ( active[ 0 ] === this.active[ 0 ] ) {
+			return;
+		}
+
+		// Trying to collapse, simulate a click on the current active header
+		if ( !active.length ) {
+			active = this.active;
+		}
+
+		anchor = active.find( ".ui-tabs-anchor" )[ 0 ];
+		this._eventHandler( {
+			target: anchor,
+			currentTarget: anchor,
+			preventDefault: $.noop
+		} );
+	},
+
+	_findActive: function( index ) {
+		return index === false ? $() : this.tabs.eq( index );
+	},
+
+	_getIndex: function( index ) {
+
+		// meta-function to give users option to provide a href string instead of a numerical index.
+		if ( typeof index === "string" ) {
+			index = this.anchors.index( this.anchors.filter( "[href$='" +
+				CSS.escape( index ) + "']" ) );
+		}
+
+		return index;
+	},
+
+	_destroy: function() {
+		if ( this.xhr ) {
+			this.xhr.abort();
+		}
+
+		this.tablist
+			.removeAttr( "role" )
+			.off( this.eventNamespace );
+
+		this.anchors
+			.removeAttr( "role tabIndex" )
+			.removeUniqueId();
+
+		this.tabs.add( this.panels ).each( function() {
+			if ( $.data( this, "ui-tabs-destroy" ) ) {
+				$( this ).remove();
+			} else {
+				$( this ).removeAttr( "role tabIndex " +
+					"aria-live aria-busy aria-selected aria-labelledby aria-hidden aria-expanded" );
+			}
+		} );
+
+		this.tabs.each( function() {
+			var li = $( this ),
+				prev = li.data( "ui-tabs-aria-controls" );
+			if ( prev ) {
+				li
+					.attr( "aria-controls", prev )
+					.removeData( "ui-tabs-aria-controls" );
+			} else {
+				li.removeAttr( "aria-controls" );
+			}
+		} );
+
+		this.panels.show();
+
+		if ( this.options.heightStyle !== "content" ) {
+			this.panels.css( "height", "" );
+		}
+	},
+
+	enable: function( index ) {
+		var disabled = this.options.disabled;
+		if ( disabled === false ) {
+			return;
+		}
+
+		if ( index === undefined ) {
+			disabled = false;
+		} else {
+			index = this._getIndex( index );
+			if ( Array.isArray( disabled ) ) {
+				disabled = $.map( disabled, function( num ) {
+					return num !== index ? num : null;
+				} );
+			} else {
+				disabled = $.map( this.tabs, function( li, num ) {
+					return num !== index ? num : null;
+				} );
+			}
+		}
+		this._setOptionDisabled( disabled );
+	},
+
+	disable: function( index ) {
+		var disabled = this.options.disabled;
+		if ( disabled === true ) {
+			return;
+		}
+
+		if ( index === undefined ) {
+			disabled = true;
+		} else {
+			index = this._getIndex( index );
+			if ( $.inArray( index, disabled ) !== -1 ) {
+				return;
+			}
+			if ( Array.isArray( disabled ) ) {
+				disabled = $.merge( [ index ], disabled ).sort();
+			} else {
+				disabled = [ index ];
+			}
+		}
+		this._setOptionDisabled( disabled );
+	},
+
+	load: function( index, event ) {
+		index = this._getIndex( index );
+		var that = this,
+			tab = this.tabs.eq( index ),
+			anchor = tab.find( ".ui-tabs-anchor" ),
+			panel = this._getPanelForTab( tab ),
+			eventData = {
+				tab: tab,
+				panel: panel
+			},
+			complete = function( jqXHR, status ) {
+				if ( status === "abort" ) {
+					that.panels.stop( false, true );
+				}
+
+				that._removeClass( tab, "ui-tabs-loading" );
+				panel.removeAttr( "aria-busy" );
+
+				if ( jqXHR === that.xhr ) {
+					delete that.xhr;
+				}
+			};
+
+		// Not remote
+		if ( this._isLocal( anchor[ 0 ] ) ) {
+			return;
+		}
+
+		this.xhr = $.ajax( this._ajaxSettings( anchor, event, eventData ) );
+
+		if ( this.xhr.statusText !== "canceled" ) {
+			this._addClass( tab, "ui-tabs-loading" );
+			panel.attr( "aria-busy", "true" );
+
+			this.xhr
+				.done( function( response, status, jqXHR ) {
+					panel.html( response );
+					that._trigger( "load", event, eventData );
+
+					complete( jqXHR, status );
+				} )
+				.fail( function( jqXHR, status ) {
+					complete( jqXHR, status );
+				} );
+		}
+	},
+
+	_ajaxSettings: function( anchor, event, eventData ) {
+		var that = this;
+		return {
+			url: anchor.attr( "href" ),
+			beforeSend: function( jqXHR, settings ) {
+				return that._trigger( "beforeLoad", event,
+					$.extend( { jqXHR: jqXHR, ajaxSettings: settings }, eventData ) );
+			}
+		};
+	},
+
+	_getPanelForTab: function( tab ) {
+		var id = $( tab ).attr( "aria-controls" );
+		return this.element.find( "#" + CSS.escape( id ) );
+	}
+} );
+
+// DEPRECATED
+// TODO: Switch return back to widget declaration at top of file when this is removed
+if ( $.uiBackCompat === true ) {
+
+	// Backcompat for ui-tab class (now ui-tabs-tab)
+	$.widget( "ui.tabs", $.ui.tabs, {
+		_processTabs: function() {
+			this._superApply( arguments );
+			this._addClass( this.tabs, "ui-tab" );
+		}
+	} );
+}
+
+return $.ui.tabs;
 
 } );
 

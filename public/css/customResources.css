@@ -296,11 +296,11 @@ input.gridjs-input {
 .ui-tabs-nav {
     background-color: #fff !important;
     border: none !important;
-    border-bottom: 1px solid #009F4D !important;
+    border-bottom: 1px solid #446fbd !important;
 }
 .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
     border: 2px solid #009f4d2e !important;
-    background-color: #009F4D !important;
+    background-color: #446fbd !important;
 }
 #filter-submenu{
     padding-left: 10px;

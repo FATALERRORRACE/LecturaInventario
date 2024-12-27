@@ -11,8 +11,7 @@
         </div>
     </div>
 @else
-    <div id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);"
-        ondragleave="dragLeaveHandler(event);">
+    <div id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);" ondragleave="dragLeaveHandler(event);">
 
         <div class="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="text-center border-t text-4B3863 px-4 pt-2" role="alert">
@@ -24,7 +23,7 @@
                 <div id="container-xyz" class=" opt-log-radio w-50">
                     <input type="radio" value="1" name="clasificacion" class="clasificacion">
                     <label class="mr-3">Nivel Central</label>
-                    <input type="radio" value="2" name="clasificacion" class="clasificacion" checked>
+                    <input type="radio" value="2" name="clasificacion" class="clasificacion">
                     <label class="mr-3">Auxiliar</label>
                     <input type="radio" value="3" name="clasificacion" class="clasificacion">
                     <label class="mr-3">Catalogación</label>
@@ -38,15 +37,28 @@
                     <span class="loader"></span>
                     <p style="color: #9E4A24;">Cargando el archivo...</p>
                 </div>
-                <x-input id="codbar" placeholder="Ingresa aquí el código de barras" class="form-control mr-2 w-64" type="text" name="codbar" />
+                <x-input id="codbar" placeholder="Ingresa aquí el código de barras" class="form-control mr-2 w-64"
+                    type="text" name="codbar" />
                 <button class="rounded p-2 hover:bg-sky-600 btn-md text-white invt-1" id="invent">
                     Inventariar
                 </button>
-                <input  id="loadfile" type="file" onchange="dropHandler(event);"
+                <input id="loadfile" type="file" onchange="dropHandler(event);"
                     class="border rounded p-2 bg-slate-200 hover:bg-slate-400 btn-md ml-2 hover:text-white">
             </div>
 
         </form>
+    </div>
 
+    <div id="tabs">
+        <ul>
+            <li><a href="#tabs-1">Archivos Cargados</a></li>
+            <li><a href="#tabs-2">Códigos Escaneados</a></li>
+        </ul>
+        <div id="tabs-1">
+            <div id="table-1-inventory"></div>
+        </div>
+        <div id="tabs-2">
+            <div id="table-2-inventory"></div>
+        </div>
     </div>
 @endif

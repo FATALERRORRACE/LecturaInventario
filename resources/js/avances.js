@@ -50,11 +50,13 @@ export class Avances {
                         data: []
                     }).forceRender();
                     $('#alert-no-exist').show();
+                    $('#expordata').hide();
                     return;
                 }
                 response.json().then(json => {
                     $('#dialog-form').show();
                     $('#alert-no-exist').hide();
+                    $('#expordata').show();
                     $('#calendar').val(json.fecha);
                     gridInstance.updateConfig({
                         columns: context.columns,

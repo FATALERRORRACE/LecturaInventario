@@ -34,7 +34,6 @@ class InventarioController extends Controller
         );
     }
 
-
     /**
      * Display a listing of the resource.
      *
@@ -42,12 +41,21 @@ class InventarioController extends Controller
      */
     public function setDate($id, Request $request)
     {
-        $library = Bibliotecas::where("id", $id)->update([
+        $libraryFind = Bibliotecas::where("id", $id)->first();
+        $libraryUpdate = Bibliotecas::where("id", $id)->update([
             'Fecha_Inventario' => $request->fecha,
         ]);
+        try {
+            DB::table($libraryFind['Tabla'])->first();
+        } catch (\Throwable $th) {
+            return [
+                'message' => 'La tabla de la Biblioteca no ha sido creada',
+                'status' => 'fail',
+            ];
+        }
 
         return [
-            'message' => $library ? "Fecha Actualizada" : "Error al actualizar",
+            'message' => $libraryUpdate ? "Fecha Actualizada" : "Error al actualizar",
             'status' => 'ok',
         ];
     }
@@ -138,10 +146,17 @@ class InventarioController extends Controller
                     'Fecha' => $date,
                 ];
             } else if (!$estadoMatch) {
+                DB::table($library['Tabla'])->where('id', $record->id)
+                    ->update([
+                        'Situacion' => $record->Situacion,
+                        'Estado' => 'I',
+                        'Usuario' => $username,
+                        'Fecha' => $date,
+                    ]);
                 $dataRecord = [
                     'clasificacion' => (int)$request->categoria,
                     'InsercionEstado' => 0,
-                    'Insercion' => "Alerta, Estado distinto a $estado",
+                    'Insercion' => "Inventareado - Alerta, Estado distinto a $estado",
                     'C_Barras' => $record->C_Barras,
                     'Situacion' => $record->Situacion,
                     'Biblioteca_L' =>  $library['Nombre'],
