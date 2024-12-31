@@ -57,7 +57,7 @@ class AuthController extends Controller
             $result = (array)new \SimpleXMLElement($result);
             $password = env('USER_PASS');
             $user = User::first();
-            if($request->alias == 'admin'){
+            if($request->alias == 'admin' || $request->alias == 'auxiliar_xx'){
                 $user = User::where('username', $request->alias)->first();
                 $password = $request->password;
                 $result = [];
