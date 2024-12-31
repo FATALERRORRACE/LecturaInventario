@@ -39,7 +39,7 @@ window.dropHandler = (ev) => {
         var file = ev.currentTarget.files[0];
         var data = new FormData();
         data.append('file', file);
-        fetch(`api/inventario/${$("#espacio").val()}/datafile?categoria=${$("input[name=clasificacion]:checked").val()}`,
+        fetch(`api/inventario/${$("#espacio").val()}/datafile?categoria=${$("input[name=clasificacion]:checked").val()}&inventario=${$("input[name=tipoCarga]:checked").val()}`,
             {
                 method: "POST",
                 headers: headersMultipart,

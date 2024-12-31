@@ -10840,7 +10840,7 @@ window.dropHandler = function (ev) {
     var file = ev.currentTarget.files[0];
     var data = new FormData();
     data.append('file', file);
-    fetch("api/inventario/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/datafile?categoria=").concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("input[name=clasificacion]:checked").val()), {
+    fetch("api/inventario/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/datafile?categoria=").concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("input[name=clasificacion]:checked").val(), "&inventario=").concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("input[name=tipoCarga]:checked").val()), {
       method: "POST",
       headers: headersMultipart,
       redirect: "follow",
