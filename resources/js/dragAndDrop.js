@@ -34,8 +34,16 @@ window.dropHandler = (ev) => {
     $("#drop_zone").removeClass('blur-sm');
     $("#messagedraganddrop").hide();
     hideElements();
+    if (
+        !$($(".clasificacion")[0]).prop('checked') &&
+        !$($(".clasificacion")[1]).prop('checked') &&
+        !$($(".clasificacion")[2]).prop('checked')
+    ) {
+        $("#container-xyz").effect('shake');
+        toastr.error('Seleccione una clasificación');
+        return;
+    }
     if (ev.currentTarget && ev.currentTarget.files) {
-        
         var file = ev.currentTarget.files[0];
         var data = new FormData();
         data.append('file', file);
