@@ -47,7 +47,7 @@ export class Inventario {
         $('#dialog-form').show();
         $('#enableDate').hide();
 
-        fetch(`api/inventario?bbltc=${$("#espacio").val()}`,
+        fetch(`api/inventario?bbltc=${$("#espacio").val()}&active=${$("#espacio").val()}`,
             {
                 method: "GET",
                 headers: headers,

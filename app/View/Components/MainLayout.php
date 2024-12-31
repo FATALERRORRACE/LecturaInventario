@@ -16,7 +16,7 @@ class MainLayout extends Component
         return view(
             'layouts.main',
             [
-                'menu' => Menu::where('activo', 1)->get()->toArray(),
+                'menu' => Menu::where('activo', 1)->orderBy('orden','ASC')->get()->toArray(),
                 'bibliotecas' => Bibliotecas::get()->toArray()
             ]
         );

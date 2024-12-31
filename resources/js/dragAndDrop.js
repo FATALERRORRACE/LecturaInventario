@@ -1,6 +1,22 @@
 
 import $ from 'jquery';
 
+function hideElements() {
+    $("#loader-adm").show();
+    $("#codbar").hide();
+    $("#invent").hide();
+    $(".txt-cdbab").hide();
+    $("#loadfile").hide();
+}
+
+function showElements() {
+    $("#loader-adm").hide();
+    $("#codbar").show();
+    $(".txt-cdbab").show();
+    $("#invent").show();
+    $("#loadfile").show();
+}
+
 window.dragOverHandler = (ev) => {
     ev.preventDefault();
     $("#drop_zone").addClass('blur-sm');
@@ -17,13 +33,7 @@ window.dropHandler = (ev) => {
     ev.preventDefault();
     $("#drop_zone").removeClass('blur-sm');
     $("#messagedraganddrop").hide();
-    $("#codbar").hide();
-    $("#invent").hide();
-    $(".txt-cdbab").hide();
-    $("#loadfile").hide();
-    $("#loader-adm").show();
-    console.log(ev);
-    console.log(ev.currentTarget.files);
+    hideElements();
     if (ev.currentTarget && ev.currentTarget.files) {
         
         var file = ev.currentTarget.files[0];
@@ -43,11 +53,7 @@ window.dropHandler = (ev) => {
                 data: subgridInstance.config.data
             }).forceRender();
             localStorage.setItem('filesUploaded', JSON.stringify(subgridInstance.config.data));
-            $("#loader-adm").hide();
-            $("#codbar").show();
-            $(".txt-cdbab").show();
-            $("#invent").show();
-            $("#loadfile").show();
+            showElements();
         }));
 }
     if (ev.dataTransfer && ev.dataTransfer.items) {
@@ -55,7 +61,7 @@ window.dropHandler = (ev) => {
             var file = ev.dataTransfer.items[0].getAsFile();
             var data = new FormData();
             data.append('file', file);
-            fetch(`api/inventario/${$("#espacio").val()}/datafile?categoria=${$("input[name=clasificacion]:checked").val()}`,
+            fetch(`api/inventario/${$("#espacio").val()}/datafile?categoria=${$("input[name=clasificacion]:checked").val()}&inventario=${$("input[name=tipoCarga]:checked").val()}`,
                 {
                     method: "POST",
                     headers: headersMultipart,
@@ -69,11 +75,7 @@ window.dropHandler = (ev) => {
                     data: subgridInstance.config.data
                 }).forceRender();
                 localStorage.setItem('filesUploaded', JSON.stringify(subgridInstance.config.data));
-                $("#loader-adm").hide();
-                $("#codbar").show();
-                $(".txt-cdbab").show();
-                $("#invent").show();
-                $("#loadfile").show();
+                showElements();
             }));
         }
     }

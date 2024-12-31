@@ -3,5 +3,6 @@
 @tailwind utilities;
 @import 'toastr';
 @import "select2";
+@import "jstree/dist/themes/default/style.min.css";
 @import 'gridjs/dist/theme/mermaid.min.css';
 @import 'jquery-ui/dist/themes/base/jquery-ui.min.css';

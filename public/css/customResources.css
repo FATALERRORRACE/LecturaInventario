@@ -184,7 +184,7 @@ input:checked+.slider:before {
 .select2-selection__rendered,
 .select2-selection--single {
     height: 43px !important;
-    
+
     align-content: center;
 }
 
@@ -261,52 +261,73 @@ input.gridjs-input {
 #save-new-user {
     font-size: 0.8em !important;
 }
+
 .ui-dialog-title {
     color: #4B4F54;
 }
+
 .ui-dialog-titlebar {
     border: none;
     background-color: white;
 }
+
 .ui-dialog {
     border-radius: 0.25rem;
     padding: 8px;
 }
+
 .switch {
     scale: 60%;
 }
-.ui-dialog .btn{
+
+.ui-dialog .btn {
     text-transform: capitalize !important;
 }
-.select2-dropdown, .select2-search__field {
+
+.select2-dropdown,
+.select2-search__field {
     z-index: 10060 !important;
 }
-.select2-container--open, .select2-container--open {
+
+.select2-container--open,
+.select2-container--open {
     z-index: 9999999
 }
+
 .ui-dialog-title {
-    color:#009F4D;
+    color: #009F4D;
 }
+
 .ui-tabs .ui-tabs-panel {
     padding: 0em !important;
 }
+
 .ui-widget.ui-widget-content {
     border: none;
 }
+
 .ui-tabs-nav {
     background-color: #fff !important;
     border: none !important;
     border-bottom: 1px solid #446fbd !important;
 }
-.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
+
+.ui-state-active,
+.ui-widget-content .ui-state-active,
+.ui-widget-header .ui-state-active,
+a.ui-button:active,
+.ui-button:active,
+.ui-button.ui-state-active:hover {
     border: 2px solid #009f4d2e !important;
     background-color: #446fbd !important;
 }
-#filter-submenu{
+
+#filter-submenu {
     padding-left: 10px;
     padding-right: 7px;
-}   
-.text-4B3863{
+}
+
+.text-4B3863 {
     border-color: #9284A3;
     color: #4B3863;
 }
@@ -315,13 +336,15 @@ p {
     margin-bottom: 0rem !important;
 }
 
-button{
+button {
     background-color: #446fbd;
     background-image: none;
 }
+
 .border-gray-1 {
     border-color: #4B4F54;
 }
+
 td.gridjs-td {
     padding: 6px 24px !important;
 }
@@ -329,7 +352,8 @@ td.gridjs-td {
 #tableContent .btn {
     box-shadow: none !important;
 }
-#messagedraganddrop p{
+
+#messagedraganddrop p {
     position: absolute;
     text-align: center;
 }
@@ -342,17 +366,29 @@ td.gridjs-td {
 }
 
 #contain-e-t p {
-    margin-top: -20px; 
+    margin-top: -20px;
 }
 
 #contain-e-t input {
     height: 35px;
 }
 
-.invt-1{
+.invt-1 {
     background-color: #446fbd;
 }
 
 th.gridjs-th {
     padding: 8px 24px !important;
+}
+
+.dropdown-smenu {
+    margin-left: 1em;
+    margin-top: 2.3em;
+    z-index: 1000;
+    display: none;
+}
+
+.jstree-default{
+    height: 18em;
+    overflow-y: auto;
 }

@@ -20,8 +20,26 @@ $(document).ready(() => {
 
   $("#submenu-2").click((eve) => {
     eve.preventDefault();
-    $("#sub-content").hide()
+    $("#modal-menu-2").attr('data-open') == 1 ?
+      $("#modal-menu-2").hide(200):
+      $("#modal-menu-2").show(200);
+    $("#modal-menu-2").attr('data-open', $("#modal-menu-2").attr('data-open') == 1 ? 0 : 1);
+    return
+  });
+  $("#menu-item-2").click((eve) => {
+    eve.preventDefault();
+    $("#sub-content").hide();
+    $("#modal-menu-2").hide(200);
+    $("#modal-menu-2").attr('data-open', 0);
     avances.actionAvances();
+  });
+
+  $("#menu-item-5").click((eve) => {
+    eve.preventDefault();
+    $("#sub-content").hide();
+    $("#modal-menu-2").hide(200);
+    $("#modal-menu-2").attr('data-open', 0);
+    avances.openDialogTree();
   });
 
   $("#submenu-4").click((eve) => {

@@ -10807,6 +10807,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 
+function hideElements() {
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#loader-adm").show();
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").hide();
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#invent").hide();
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()(".txt-cdbab").hide();
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#loadfile").hide();
+}
+function showElements() {
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#loader-adm").hide();
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").show();
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()(".txt-cdbab").show();
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#invent").show();
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#loadfile").show();
+}
 window.dragOverHandler = function (ev) {
   ev.preventDefault();
   jquery__WEBPACK_IMPORTED_MODULE_0___default()("#drop_zone").addClass('blur-sm');
@@ -10821,13 +10835,7 @@ window.dropHandler = function (ev) {
   ev.preventDefault();
   jquery__WEBPACK_IMPORTED_MODULE_0___default()("#drop_zone").removeClass('blur-sm');
   jquery__WEBPACK_IMPORTED_MODULE_0___default()("#messagedraganddrop").hide();
-  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").hide();
-  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#invent").hide();
-  jquery__WEBPACK_IMPORTED_MODULE_0___default()(".txt-cdbab").hide();
-  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#loadfile").hide();
-  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#loader-adm").show();
-  console.log(ev);
-  console.log(ev.currentTarget.files);
+  hideElements();
   if (ev.currentTarget && ev.currentTarget.files) {
     var file = ev.currentTarget.files[0];
     var data = new FormData();
@@ -10844,11 +10852,7 @@ window.dropHandler = function (ev) {
           data: subgridInstance.config.data
         }).forceRender();
         localStorage.setItem('filesUploaded', JSON.stringify(subgridInstance.config.data));
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()("#loader-adm").hide();
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").show();
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()(".txt-cdbab").show();
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()("#invent").show();
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()("#loadfile").show();
+        showElements();
       });
     });
   }
@@ -10857,7 +10861,7 @@ window.dropHandler = function (ev) {
       var file = ev.dataTransfer.items[0].getAsFile();
       var data = new FormData();
       data.append('file', file);
-      fetch("api/inventario/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/datafile?categoria=").concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("input[name=clasificacion]:checked").val()), {
+      fetch("api/inventario/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/datafile?categoria=").concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("input[name=clasificacion]:checked").val(), "&inventario=").concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("input[name=tipoCarga]:checked").val()), {
         method: "POST",
         headers: headersMultipart,
         redirect: "follow",
@@ -10869,11 +10873,7 @@ window.dropHandler = function (ev) {
             data: subgridInstance.config.data
           }).forceRender();
           localStorage.setItem('filesUploaded', JSON.stringify(subgridInstance.config.data));
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()("#loader-adm").hide();
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").show();
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()(".txt-cdbab").show();
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()("#invent").show();
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()("#loadfile").show();
+          showElements();
         });
       });
     }

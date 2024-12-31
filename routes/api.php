@@ -26,4 +26,6 @@ Route::middleware('auth:api')->post('/admin/{espacio}/dataadvance', [Administrac
 Route::get('/admin/data/{id}/xls',   [AdministracionController::class, 'createXls']);
 
 //AVANCES
-Route::middleware('auth:api')->get('/avances/{espacio}/info',    [AvancesController::class, 'getInfo']);
+Route::middleware('auth:api')->get('/avances/{espacio}/info',   [AvancesController::class, 'getInfo']);
+Route::middleware('auth:api')->get('/avances/{id}/tree',   [AvancesController::class, 'getTreeTemplate']);
+Route::middleware('auth:api')->get('/avances/{id}/tree/clasificacion',   [AvancesController::class, 'getClasificacionData']);

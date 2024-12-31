@@ -9,7 +9,7 @@ class ValidateInsertion{
     /**
      * Bootstrap services.
      */
-    public function set($found, $date, $username, $cbarras, $library, $categoria, $filename)
+    public function set($found, $date, $username, $cbarras, $library, $categoria, $tipoInventario )
     {
         if (!$found) {
             $dataRecord = [
@@ -43,7 +43,7 @@ class ValidateInsertion{
                 DB::table($library['Tabla'])->where('Id', $found->Id)
                     ->update([
                         'Fecha' => $date,
-                        'Estado' => 'I',
+                        'Estado' => $tipoInventario,
                     ]);
                 $dataRecord = [
                     'InsercionEstado' => 1,
@@ -60,7 +60,7 @@ class ValidateInsertion{
                 DB::table($library['Tabla'])->where('Id', $found->Id)
                 ->update([
                     'Fecha' => $date,
-                    'Estado' => 'I',
+                    'Estado' => $tipoInventario,
                 ]);
                 $dataRecord = [
                     'InsercionEstado' => 0,

@@ -8,10 +8,9 @@ use App\Models\Bibliotecas;
 use App\Models\Master;
 use App\Services\ValidateInsertion;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
-
-class InventarioController extends Controller
-{
+class InventarioController extends Controller{
     /**
      * Display a listing of the resource.
      *
@@ -29,6 +28,7 @@ class InventarioController extends Controller
         return view(
             'index.lectura',
             [
+                'admin' => DB::table('usuariosadministradores')->where('username', Auth::user()->username)->first() ? 1 : 0 ,
                 'tableExists' => $tableExists
             ]
         );
@@ -176,7 +176,9 @@ class InventarioController extends Controller
         $validateInsertion = new ValidateInsertion;
         $library = Bibliotecas::where("id", $id)->first();
         $username = $request->user()->username;
-
+        // $request->inventario = 1 // INVENTARIO;
+        // $request->inventario = 2 // PRESTAMO;
+        $tipoInventario = $request->inventario == 1 ? 'I' : 'P';
         try {
             DB::table($library['Tabla'])->first();
         } catch (\Throwable $th) {
@@ -217,7 +219,7 @@ class InventarioController extends Controller
                     $line, 
                     $library, 
                     (int)$request->categoria, 
-                    $filename
+                    $tipoInventario
                 );
                 if ($tmpData['InsercionEstado'] == 1)
                     $inserted++;

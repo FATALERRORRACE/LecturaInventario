@@ -76,13 +76,10 @@ class AuthController extends Controller
                 'password' => $password,
             ];
             if (Auth::attempt($credetials)) {
-
                 $token = Str::random(60);
-
                 $user->forceFill([
                     'api_token' => hash('sha256', $token),
                 ])->save();
-                
                 $adminFind = DB::table('usuariosadministradores')->where('username', $request->alias)->first();
                 if($adminFind)
                     $request->session()->put('admin', 1);

@@ -18,7 +18,7 @@
                 <p class="font-bold text-2xl">Lectura de códigos de barras</p>
                 <span class="">
                     <span class="text-bold text-red-700">*</span>
-                    Asegurese de tener la biblioteca correcta para iniciar el inventario
+                    Asegurese de tener la biblioteca correcta para iniciar el inventario 
                 </span>
                 <div id="container-xyz" class=" opt-log-radio w-50">
                     <input type="radio" value="1" name="clasificacion" class="clasificacion">
@@ -30,6 +30,14 @@
                 </div>
             </div>
         </div>
+        @if ($admin)
+            <div id="container-in-de" class="justify-center text-center w-full mt-2" >
+                <input type="radio" value="1" name="tipoCarga" class="tipoCarga" checked>
+                <label class="mr-3">Inventario</label>
+                <input type="radio" value="2" name="tipoCarga" class="tipoCarga">
+                <label class="mr-3">Prestamo</label>
+            </div>
+        @endif
         <form class="justify-center text-center" id="registercode">
             <small class="text-secondary block txt-cdbab mt-2">puedes soltar archivos en este espacio para subir</small>
             <div class="mt-1 flex justify-center text-center">
