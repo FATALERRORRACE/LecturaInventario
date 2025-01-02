@@ -178,7 +178,7 @@ class InventarioController extends Controller{
         $username = $request->user()->username;
         // $request->inventario = 1 // INVENTARIO;
         // $request->inventario = 2 // PRESTAMO;
-        $tipoInventario = $request->inventario == 1 ? 'I' : 'P';
+        $tipoInventario = $request->inventario == 1 || $request->inventario == 'undefined' ? 'I' : 'P';
         try {
             DB::table($library['Tabla'])->first();
         } catch (\Throwable $th) {

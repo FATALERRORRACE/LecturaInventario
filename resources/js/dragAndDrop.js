@@ -1,5 +1,7 @@
 
 import $ from 'jquery';
+import toastr from "toastr";
+import 'jquery-ui/ui/effects/effect-shake';
 
 function hideElements() {
     $("#loader-adm").show();
@@ -40,6 +42,7 @@ window.dropHandler = (ev) => {
         !$($(".clasificacion")[2]).prop('checked')
     ) {
         $("#container-xyz").effect('shake');
+        showElements();
         toastr.error('Seleccione una clasificación');
         return;
     }

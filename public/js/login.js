@@ -10821,6 +10821,16 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/css/all.min.css":
+/*!***********************************!*\
+  !*** ./resources/css/all.min.css ***!
+  \***********************************/
+/***/ (() => {
+
+throw new Error("Module build failed (from ./node_modules/mini-css-extract-plugin/dist/loader.js):\nModuleBuildError: Module build failed (from ./node_modules/css-loader/dist/cjs.js):\nError: Can't resolve '../webfonts/fa-brands-400.woff2' in 'C:\\laragon\\www\\inventario\\resources\\css'\n    at finishWithoutResolve (C:\\laragon\\www\\inventario\\node_modules\\enhanced-resolve\\lib\\Resolver.js:564:18)\n    at C:\\laragon\\www\\inventario\\node_modules\\enhanced-resolve\\lib\\Resolver.js:656:15\n    at C:\\laragon\\www\\inventario\\node_modules\\enhanced-resolve\\lib\\Resolver.js:718:5\n    at eval (eval at create (C:\\laragon\\www\\inventario\\node_modules\\tapable\\lib\\HookCodeFactory.js:33:10), <anonymous>:16:1)\n    at C:\\laragon\\www\\inventario\\node_modules\\enhanced-resolve\\lib\\Resolver.js:718:5\n    at eval (eval at create (C:\\laragon\\www\\inventario\\node_modules\\tapable\\lib\\HookCodeFactory.js:33:10), <anonymous>:27:1)\n    at C:\\laragon\\www\\inventario\\node_modules\\enhanced-resolve\\lib\\DescriptionFilePlugin.js:89:43\n    at C:\\laragon\\www\\inventario\\node_modules\\enhanced-resolve\\lib\\Resolver.js:718:5\n    at eval (eval at create (C:\\laragon\\www\\inventario\\node_modules\\tapable\\lib\\HookCodeFactory.js:33:10), <anonymous>:15:1)\n    at C:\\laragon\\www\\inventario\\node_modules\\enhanced-resolve\\lib\\Resolver.js:718:5\n    at eval (eval at create (C:\\laragon\\www\\inventario\\node_modules\\tapable\\lib\\HookCodeFactory.js:33:10), <anonymous>:16:1)\n    at C:\\laragon\\www\\inventario\\node_modules\\enhanced-resolve\\lib\\Resolver.js:718:5\n    at eval (eval at create (C:\\laragon\\www\\inventario\\node_modules\\tapable\\lib\\HookCodeFactory.js:33:10), <anonymous>:16:1)\n    at C:\\laragon\\www\\inventario\\node_modules\\enhanced-resolve\\lib\\Resolver.js:718:5\n    at eval (eval at create (C:\\laragon\\www\\inventario\\node_modules\\tapable\\lib\\HookCodeFactory.js:33:10), <anonymous>:27:1)\n    at C:\\laragon\\www\\inventario\\node_modules\\enhanced-resolve\\lib\\DescriptionFilePlugin.js:89:43\n    at C:\\laragon\\www\\inventario\\node_modules\\enhanced-resolve\\lib\\Resolver.js:718:5\n    at eval (eval at create (C:\\laragon\\www\\inventario\\node_modules\\tapable\\lib\\HookCodeFactory.js:33:10), <anonymous>:16:1)\n    at C:\\laragon\\www\\inventario\\node_modules\\enhanced-resolve\\lib\\Resolver.js:718:5\n    at eval (eval at create (C:\\laragon\\www\\inventario\\node_modules\\tapable\\lib\\HookCodeFactory.js:33:10), <anonymous>:15:1)\n    at C:\\laragon\\www\\inventario\\node_modules\\enhanced-resolve\\lib\\DirectoryExistsPlugin.js:41:15\n    at process.processTicksAndRejections (node:internal/process/task_queues:81:21)\n    at processResult (C:\\laragon\\www\\inventario\\node_modules\\webpack\\lib\\NormalModule.js:890:19)\n    at C:\\laragon\\www\\inventario\\node_modules\\webpack\\lib\\NormalModule.js:1036:5\n    at C:\\laragon\\www\\inventario\\node_modules\\loader-runner\\lib\\LoaderRunner.js:400:11\n    at C:\\laragon\\www\\inventario\\node_modules\\loader-runner\\lib\\LoaderRunner.js:252:18\n    at context.callback (C:\\laragon\\www\\inventario\\node_modules\\loader-runner\\lib\\LoaderRunner.js:124:13)\n    at Object.loader (C:\\laragon\\www\\inventario\\node_modules\\css-loader\\dist\\index.js:155:5)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)");
+
+/***/ }),
+
 /***/ "./node_modules/select2/dist/js/select2.js":
 /*!*************************************************!*\
   !*** ./node_modules/select2/dist/js/select2.js ***!
@@ -17190,7 +17200,8 @@ S2.define('jquery.select2',[
 /******/ 	__webpack_require__.O(undefined, ["css/app","css/loader","css/mdb.min","css/customResources"], () => (__webpack_require__("./resources/css/app.css")))
 /******/ 	__webpack_require__.O(undefined, ["css/app","css/loader","css/mdb.min","css/customResources"], () => (__webpack_require__("./resources/css/customResources.css")))
 /******/ 	__webpack_require__.O(undefined, ["css/app","css/loader","css/mdb.min","css/customResources"], () => (__webpack_require__("./resources/css/mdb.min.css")))
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/app","css/loader","css/mdb.min","css/customResources"], () => (__webpack_require__("./resources/css/loader.css")))
+/******/ 	__webpack_require__.O(undefined, ["css/app","css/loader","css/mdb.min","css/customResources"], () => (__webpack_require__("./resources/css/loader.css")))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/app","css/loader","css/mdb.min","css/customResources"], () => (__webpack_require__("./resources/css/all.min.css")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()

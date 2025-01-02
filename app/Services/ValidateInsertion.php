@@ -63,7 +63,7 @@ class ValidateInsertion{
                     'Estado' => $tipoInventario,
                 ]);
                 $dataRecord = [
-                    'InsercionEstado' => 0,
+                    'InsercionEstado' => 1,
                     'Insercion' => "Inventareado - Estado del material distinto a $estado",
                     'C_Barras' => $found->C_Barras,
                     'Situacion' => $found->Situacion,

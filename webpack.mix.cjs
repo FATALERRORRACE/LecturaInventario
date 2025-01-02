@@ -18,4 +18,5 @@ mix
 .postCss('resources/css/app.css',  'public/css')
 .postCss('resources/css/customResources.css',  'public/css')
 .postCss('resources/css/mdb.min.css',  'public/css')
-.postCss('resources/css/loader.css',  'public/css');
+.postCss('resources/css/loader.css',  'public/css')
+.postCss('resources/css/all.min.css',  'public/css');

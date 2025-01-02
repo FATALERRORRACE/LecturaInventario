@@ -15,7 +15,11 @@ class menuComponent extends Component
     public static function renderMenu($menu, $admin){
         $html = "";
         foreach ($menu as $key => $item) {
-            if($item['permiso'] > $admin) continue;
+            if($item['permiso'] > $admin) {
+                if(!isset($menu[$key+1])) $html.= '</div></div>';
+                unset($menu[$key]);
+                continue;
+            }
             if($item['orden'] > (int)$item['orden']){
                 if(!isset($validateSubMenu) || isset($validateSubMenu) && !$validateSubMenu){
                     $prevData = next($menu);
@@ -26,7 +30,7 @@ class menuComponent extends Component
                 }
                 $html.= '<a href="#" class="base-1-color block px-4 py-2 text-sm " role="menuitem" tabindex="-1" id="menu-item-'.$item["id"].'">'.$item["label"].'</a>';
                 $validateSubMenu = true;
-                if(!next($menu)) $html.= '</div></div>';
+                if(!next($menu[$key+1])) $html.= '</div></div>';
             }else{
                 if(isset($validateSubMenu) && $validateSubMenu){
                     $html.= '</div></div>'; 

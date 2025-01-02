@@ -3,8 +3,11 @@
 namespace App\View\Components;
 
 use Illuminate\View\Component;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use App\Models\Menu;
 use App\Models\Bibliotecas;
+
 class MainLayout extends Component
 {
     /**

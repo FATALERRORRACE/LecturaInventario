@@ -8,7 +8,6 @@ var inventarioInstance = new Inventario;
 var adminInstance = new Administracion;
 var avances = new Avances;
 
-
 $(document).ready(() => {
 
   $('#espacio').select2();
@@ -26,6 +25,7 @@ $(document).ready(() => {
     $("#modal-menu-2").attr('data-open', $("#modal-menu-2").attr('data-open') == 1 ? 0 : 1);
     return
   });
+
   $("#menu-item-2").click((eve) => {
     eve.preventDefault();
     $("#sub-content").hide();
