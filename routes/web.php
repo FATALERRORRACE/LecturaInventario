@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\IndexController;
+use App\Http\Controllers\Api\AdministracionController;
 
 Route::group(['middleware' => 'guest'], function () {
     Route::get('/register',  [AuthController::class, 'register']);
@@ -14,4 +15,6 @@ Route::group(['middleware' => 'guest'], function () {
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/',         [IndexController::class, 'index']);
     Route::get('/logout',   [AuthController::class, 'logout'])->name('logout');
+    Route::get('/admin/data/{id}/xls',          [AdministracionController::class, 'createXls']);
+    Route::get('/admin/data/{id}/master/xls',   [AdministracionController::class, 'createXlsMaster']);
 });

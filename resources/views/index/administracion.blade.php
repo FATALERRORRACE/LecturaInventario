@@ -2,7 +2,10 @@
     <div class="text-center border-t border-gray-1 text-4B3863 px-4 pt-3" role="alert">
         <p class="font-bold text-xl">Bibloteca Seleccionada: <span id="sel-bbl"></span></p>
         <button id="expordata" class="border px-3 mx-3 base-1-color btn rounded-lg p-2" style="{{ $tableExists == false ? 'display:none;' : '' }}">
-            <i class="fa-solid fa-file-excel"></i> Exportar .XLSS
+            <i class="fa-solid fa-file-excel"></i> Exportar Materiales Inventariados
+        </button>
+        <button id="expordataRegister" class="border px-3 mx-3 base-1-color btn rounded-lg p-2" style="{{ $tableExists == false ? 'display:none;' : '' }}">
+            <i class="fa-solid fa-file-excel"></i> Descargar Registro
         </button>
     </div>
     <form class="justify-center text-center flex" id="registercode">

@@ -22,17 +22,23 @@ class AvancesController extends Controller
         $tableExists = true;
         $situacionesArrayNI = [];
         $situacionesArray = [];
+        $situacionesArrayP = [];
         try {
             DB::table($library['Tabla'])->first();
+            $situaciones = DB::table($library['Tabla'])->where('Estado', 'P')->distinct()->get(['Situacion']);
+            $countPrestado = DB::table($library['Tabla'])->where('Estado', 'P')->count();
+            foreach ($situaciones as $value) {
+                $situacionesArrayP[$value->Situacion] = DB::table($library['Tabla'])->where('Estado', 'P')->where('Situacion', $value->Situacion)->count();
+            }
             $situaciones = DB::table($library['Tabla'])->where('Estado', 'I')->distinct()->get(['Situacion']);
             $countInventariado = DB::table($library['Tabla'])->where('Estado', 'I')->count();
             foreach ($situaciones as $value) {
                 $situacionesArray[$value->Situacion] = DB::table($library['Tabla'])->where('Estado', 'I')->where('Situacion', $value->Situacion)->count();
             }
-            $situaciones = DB::table($library['Tabla'])->where('Estado', '<>', 'I')->distinct()->get(['Situacion']);
-            $countNoInventariado = DB::table($library['Tabla'])->where('Estado', '<>', 'I')->count();
+            $situaciones = DB::table($library['Tabla'])->where('Estado', '<>', 'I')->where('Estado', '<>', 'P')->distinct()->get(['Situacion']);
+            $countNoInventariado = DB::table($library['Tabla'])->where('Estado', '<>', 'I')->where('Estado', '<>', 'P')->count();
             foreach ($situaciones as $value) {
-                $situacionesArrayNI[$value->Situacion] = DB::table($library['Tabla'])->where('Situacion', $value->Situacion)->where('Estado', '<>', 'I')->count();
+                $situacionesArrayNI[$value->Situacion] = DB::table($library['Tabla'])->where('Situacion', $value->Situacion)->where('Estado', '<>', 'I')->where('Estado', '<>', 'P')->count();
             }
         } catch (\Throwable $th) {
             $tableExists = false;
@@ -44,8 +50,10 @@ class AvancesController extends Controller
                 'tableExists' => $tableExists,
                 'total' => $tableExists ? ($countInventariado + $countNoInventariado) : null,
                 'inventariado' => $tableExists ? $countInventariado : null,
+                'prestado' => $tableExists ? $countPrestado : null,
                 'noInventariado' => $tableExists ? $countNoInventariado : null,
                 'situacionesI' => $situacionesArray,
+                'situacionesP' => $situacionesArrayP,
                 'situacionesNI' => $situacionesArrayNI
             ]
         );

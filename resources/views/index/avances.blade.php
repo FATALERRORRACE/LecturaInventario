@@ -11,7 +11,7 @@
         </div>
     </div>
 @else
-    <div class="mt-2 text-center justify-center items-center flex flex-col">
+    <div class="my-2 text-center justify-center items-center flex flex-col">
         <table class=" table-auto min-w-max table-auto border border-l " style="border-color: #c1a7e285">
             <tr>
                 <th colspan="{{ count($situacionesI) }}" class="p-2 border-b border-blue-gray-100 bg-blue-gray-50">Total
@@ -35,7 +35,27 @@
             </tbody>
         </table>
     </div>
-    <div class="text-center justify-center items-center flex flex-col">
+    <div class="my-2 text-center justify-center items-center flex flex-col">
+        <table class=" table-auto min-w-max table-auto border border-l " style="border-color: #c1a7e285">
+            <tr>
+                <th colspan="{{ count($situacionesI) }}" class="p-2 border-b border-blue-gray-100 bg-blue-gray-50">Total
+                    Prestado: {{ number_format($prestado) }}</th>
+            </tr>
+            <tr>
+                @foreach ($situacionesP as $key => $situacion)
+                    <th class="p-2 border border-blue-gray-100 bg-blue-gray-50">{{ $key }}</th>
+                @endforeach
+            </tr>
+            <tbody>
+                <tr>
+                    @foreach ($situacionesP as $key => $situacion)
+                        <td class="p-2 border border-blue-gray-50">{{ number_format($situacion) }}</td>
+                    @endforeach
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="my-2 text-center justify-center items-center flex flex-col">
         <table class="w-full table-auto min-w-max table-auto border " style="border-color: #c1a7e285">
             <tr>
                 <th colspan="{{ count($situacionesNI) }}" class="p-2 border-b border-blue-gray-100 bg-blue-gray-50 ">

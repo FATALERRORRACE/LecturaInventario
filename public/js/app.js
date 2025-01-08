@@ -77,7 +77,10 @@ var Administracion = /*#__PURE__*/function () {
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").trigger("change");
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#calendar").val(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#datehidden").val());
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#expordata").click(function () {
-            window.open("".concat(location.href, "api/admin/data/").concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/xls"));
+            window.open("".concat(location.href, "admin/data/").concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/xls"));
+          });
+          jquery__WEBPACK_IMPORTED_MODULE_0___default()("#expordataRegister").click(function () {
+            window.open("".concat(location.href, "admin/data/").concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/master/xls"));
           });
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#registercode").submit(function (event) {
             event.preventDefault();

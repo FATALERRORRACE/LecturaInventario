@@ -48,21 +48,21 @@ class AdministracionController extends Controller{
 
     public function getData($id ,Request $request){
         $data = Bibliotecas::where('id', $id)->first();
-        $query = DB::table($data['Tabla']);
-        switch ((int)$request->categoria) {
-            case 1:
-                $query->where('Estado');
-                'Nivel Central';
-                break;
-            case 2:
-                $query->where();
-                'Normal No Displonible';
-                break;
-            case 3:
-                $query->where();
-                'En catalogación';
-                break;
-        }
+        //$query = DB::table($data['Tabla']);
+        //switch ((int)$request->categoria) {
+        //    case 1:
+        //        $query->where('Estado');
+        //        'Nivel Central';
+        //        break;
+        //    case 2:
+        //        $query->where();
+        //        'Normal No Displonible';
+        //        break;
+        //    case 3:
+        //        $query->where();
+        //        'En catalogación';
+        //        break;
+        //}
         return [
             "fecha" => $data['Fecha_Inventario'],
             "data" => DB::table($data['Tabla'])->get()->toArray()
@@ -77,11 +77,41 @@ class AdministracionController extends Controller{
     }
 
     public function createXls(int $id, Request $request){
+        $data = Bibliotecas::select()->where('id', $id)->first();
+        $xlssExportInstance = new XlssExport;
+        $xlssExportInstance->execute(
+            DB::table($data['Tabla'])->select(
+                'C_Barras',
+                'Usuario',
+                'Situacion',
+                'Comentario',
+                'Fecha',
+                'Estado',
+            )->get()->toArray(), 
+            $data
+        );
+    }
+
+    public function createXlsMaster(int $id){
         $data = Bibliotecas::where('id', $id)->first();
         $xlssExportInstance = new XlssExport;
-        $xlssExportInstance
-        ->execute(
-            DB::table($data['Tabla'])->get()->toArray(), 
+        $xlssExportInstance->executeSecondReport(
+            Master::select(
+                'C_Barras', 
+                'Titulo', 
+                'Autor', 
+                'Clasificacion', 
+                'Isbn', 
+                'Descripcion', 
+                'Precio', 
+                'Estadistica', 
+                'Biblioteca', 
+                'Material', 
+                'Localizacion', 
+                'Proceso', 
+                'Creacion', 
+                'Acervo'
+            )->where('Biblioteca', $data['Nombre'])->get()->toArray(), 
             $data['Nombre']
         );
     }

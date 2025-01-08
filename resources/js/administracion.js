@@ -31,9 +31,15 @@ export class Administracion {
             context.actionAdminUtils();
             $("#espacio").trigger("change");
             $("#calendar").val($("#datehidden").val());
+
             $("#expordata").click(()=>{
-                window.open(`${location.href}api/admin/data/${$("#espacio").val()}/xls`);
-            })
+                window.open(`${location.href}admin/data/${$("#espacio").val()}/xls`);
+            });
+
+            $("#expordataRegister").click(()=>{
+                window.open(`${location.href}admin/data/${$("#espacio").val()}/master/xls`);
+            });
+
             $("#registercode").submit((event) => {
                 event.preventDefault();
                 gridInstance.config.data.push({

@@ -5,14 +5,12 @@ namespace App\Services;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-class XlssExport
-{
+class XlssExport{
 
     /**
      * Bootstrap services.
      */
     public function execute($data, $nombre){
-
         $date = new \DateTime();
         $spreadsheet = new Spreadsheet();
         $activeWorksheet = $spreadsheet->getActiveSheet();
@@ -32,18 +30,60 @@ class XlssExport
         $activeWorksheet->setCellValue('F1', 'Estado');
 
         $xAngle = 2;
-        foreach ($data as $key => $value) {     
-            $activeWorksheet->setCellValue([1, $xAngle], $value->C_Barras);
-            $activeWorksheet->setCellValue([2, $xAngle], $value->Usuario);
-            $activeWorksheet->setCellValue([3, $xAngle], $value->Situacion);
-            $activeWorksheet->setCellValue([4, $xAngle], $value->Comentario);
-            $activeWorksheet->setCellValue([5, $xAngle], $value->Fecha);
-            $activeWorksheet->setCellValue([6, $xAngle], $value->Estado);
+
+        foreach ($data as $key => $value) {
+            //array_values((array)$value);
+            $activeWorksheet->fromArray([(array)$value], NULL, "A{$xAngle}");
             $xAngle++;
         }
+        return $this->returnDonwloadableFile($spreadsheet, $nombre, $date->format('Y-m-d h:s:i') );
+    }
+
+    /**
+     * Bootstrap services.
+     */
+    public function executeSecondReport($data, $nombre){
+        $date = new \DateTime();
+        $spreadsheet = new Spreadsheet();
+        $activeWorksheet = $spreadsheet->getActiveSheet();
+        $range = range('A', 'Ñ');
+        $header = [
+                'C_Barras', 
+                'Titulo', 
+                'Autor', 
+                'Clasificacion', 
+                'Isbn', 
+                'Descripcion', 
+                'Precio', 
+                'Estadistica', 
+                'Biblioteca', 
+                'Material', 
+                'Localizacion', 
+                'Proceso', 
+                'Creacion', 
+                'Acervo'
+        ];
+        foreach ($header as $key => $value) 
+            $activeWorksheet->setCellValue( "{$range[$key]}1" , $value);
+
+        $xAngle = 2;
+        foreach ($data as $key => $value) {
+            $activeWorksheet->fromArray([(array)$value], NULL, "A{$xAngle}");
+            $xAngle++;
+        }
+        $activeWorksheet->getStyle("A1:O1")->getFont()->setBold( true );
+        $activeWorksheet->getStyle('A1:O1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('DDE5ED');
+        
+        return $this->returnDonwloadableFile($spreadsheet, $nombre, $date->format('Y-m-d h:s:i') ); 
+    }
+
+    /**
+     * Bootstrap services.
+     */
+    public function returnDonwloadableFile($spreadsheet, $nombre, $date){
         $writer = new Xlsx($spreadsheet);
         header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment; filename="' . $nombre . " ". $date->format('Y-m-d h:s:i') . '.xlsx"');
-        $writer->save("php://output");
+        header('Content-Disposition: attachment; filename="' . $nombre . " ". $date . '.xlsx"');
+        $writer->save("php://output");        
     }
 }

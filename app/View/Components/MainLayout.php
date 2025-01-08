@@ -8,8 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Menu;
 use App\Models\Bibliotecas;
 
-class MainLayout extends Component
-{
+class MainLayout extends Component {
     /**
      * Get the view / contents that represents the component.
      *
