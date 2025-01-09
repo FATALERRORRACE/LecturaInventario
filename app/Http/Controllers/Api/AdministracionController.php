@@ -95,25 +95,7 @@ class AdministracionController extends Controller{
     public function createXlsMaster(int $id){
         $data = Bibliotecas::where('id', $id)->first();
         $xlssExportInstance = new XlssExport;
-        $xlssExportInstance->executeSecondReport(
-            Master::select(
-                'C_Barras', 
-                'Titulo', 
-                'Autor', 
-                'Clasificacion', 
-                'Isbn', 
-                'Descripcion', 
-                'Precio', 
-                'Estadistica', 
-                'Biblioteca', 
-                'Material', 
-                'Localizacion', 
-                'Proceso', 
-                'Creacion', 
-                'Acervo'
-            )->where('Biblioteca', $data['Nombre'])->get()->toArray(), 
-            $data['Nombre']
-        );
+        $xlssExportInstance->executeSecondReport($data);
     }
 
     public function processTable($tableName, $username){

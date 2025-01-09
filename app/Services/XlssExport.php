@@ -4,9 +4,12 @@ namespace App\Services;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\IOFactory;
+use Illuminate\Support\Facades\DB;
+use App\Models\Master;
+
 class XlssExport{
 
+    private $indexPage = 1;
     /**
      * Bootstrap services.
      */
@@ -42,10 +45,171 @@ class XlssExport{
     /**
      * Bootstrap services.
      */
-    public function executeSecondReport($data, $nombre){
+    public function executeSecondReport($table){
         $date = new \DateTime();
         $spreadsheet = new Spreadsheet();
         $activeWorksheet = $spreadsheet->getActiveSheet();
+        $tableName = $table['Tabla'];
+
+        $data = DB::table($tableName)
+            ->select(
+                'master.C_Barras', 
+                'master.Titulo', 
+                'master.Autor', 
+                'master.Clasificacion', 
+                'master.Isbn', 
+                'master.Descripcion', 
+                'master.Precio', 
+                'master.Estadistica', 
+                'master.Biblioteca', 
+                'master.Material', 
+                'master.Localizacion', 
+                'master.Proceso', 
+                'master.Creacion', 
+                'master.Acervo'
+            )
+            ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
+            ->where("{$tableName}.Estado", 'I')->take(1000)->get()->toArray();
+        $spreadsheet->getActiveSheet()->setTitle('INVENTARIADO');
+        $this->setNewPageAndData($spreadsheet, $data, 'INVENTARIADO', 0);
+
+        $data = DB::table($tableName)
+            ->select(
+                'master.C_Barras', 
+                'master.Titulo', 
+                'master.Autor', 
+                'master.Clasificacion', 
+                'master.Isbn', 
+                'master.Descripcion', 
+                'master.Precio', 
+                'master.Estadistica', 
+                'master.Biblioteca', 
+                'master.Material', 
+                'master.Localizacion', 
+                'master.Proceso', 
+                'master.Creacion', 
+                'master.Acervo'
+            )
+            ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
+            ->where("{$tableName}.Estado", 'P')->take(1000)->get()->toArray();
+        $spreadsheet->createSheet();
+        $this->setNewPageAndData($spreadsheet, $data, 'PRESTADOS', 1);
+        
+        $data = DB::table($tableName)
+            ->select(
+                'master.C_Barras', 
+                'master.Titulo', 
+                'master.Autor', 
+                'master.Clasificacion', 
+                'master.Isbn', 
+                'master.Descripcion', 
+                'master.Precio', 
+                'master.Estadistica', 
+                'master.Biblioteca', 
+                'master.Material', 
+                'master.Localizacion', 
+                'master.Proceso', 
+                'master.Creacion', 
+                'master.Acervo'
+            )
+            ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
+            //->where("{$tableName}.Estado", '<>', 'I')->where("{$tableName}.Estado", '<>','P')->take(1000)->get()->toArray();
+            ->where("master.Proceso", 'NIVEL CENTRAL')->take(1000)->get()->toArray();
+        
+        $spreadsheet->createSheet();
+        $this->setNewPageAndData($spreadsheet, $data, 'NIVEL CENTRAL', 2);
+
+        $data = DB::table($tableName)
+            ->select(
+                'master.C_Barras', 
+                'master.Titulo', 
+                'master.Autor', 
+                'master.Clasificacion', 
+                'master.Isbn', 
+                'master.Descripcion', 
+                'master.Precio', 
+                'master.Estadistica', 
+                'master.Biblioteca', 
+                'master.Material', 
+                'master.Localizacion', 
+                'master.Proceso', 
+                'master.Creacion', 
+                'master.Acervo'
+            )
+            ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
+            //->where("{$tableName}.Estado", '<>', 'I')->where("{$tableName}.Estado", '<>','P')->take(1000)->get()->toArray();
+            ->where("{$tableName}.Situacion", 'En catalogación')->take(1000)->get()->toArray();
+        $spreadsheet->createSheet();
+        $this->setNewPageAndData($spreadsheet, $data, 'EN CATALOGACIÓN', 3);
+
+        $data = DB::table('anexos')
+            ->select(
+                'master.C_Barras', 
+                'master.Titulo', 
+                'master.Autor', 
+                'master.Clasificacion', 
+                'master.Isbn', 
+                'master.Descripcion', 
+                'master.Precio', 
+                'master.Estadistica', 
+                'master.Biblioteca', 
+                'master.Material', 
+                'master.Localizacion', 
+                'master.Proceso', 
+                'master.Creacion', 
+                'master.Acervo'
+            )
+            ->join('master', 'master.C_Barras', '=', "anexos.C_Barras")
+            //->where("{$tableName}.Estado", '<>', 'I')->where("{$tableName}.Estado", '<>','P')->take(1000)->get()->toArray();
+            ->where("anexos.Biblioteca_L", $table['Nombre'])->take(1000)->get()->toArray();
+        $spreadsheet->createSheet();
+        $this->setNewPageAndData($spreadsheet, $data, 'EN OTRAS BIB', 4);
+
+        $data = DB::table('anexos')
+            ->select(
+                'master.C_Barras', 
+                'master.Titulo', 
+                'master.Autor', 
+                'master.Clasificacion', 
+                'master.Isbn', 
+                'master.Descripcion', 
+                'master.Precio', 
+                'master.Estadistica', 
+                'master.Biblioteca', 
+                'master.Material', 
+                'master.Localizacion', 
+                'master.Proceso', 
+                'master.Creacion', 
+                'master.Acervo'
+            )
+            ->join('master', 'master.C_Barras', '=', "anexos.C_Barras")
+            //->where("{$tableName}.Estado", '<>', 'I')->where("{$tableName}.Estado", '<>','P')->take(1000)->get()->toArray();
+            ->where("anexos.Biblioteca_O", $table['Nombre'])->take(1000)->get()->toArray();
+        $spreadsheet->createSheet();
+        $this->setNewPageAndData($spreadsheet, $data, 'EN MI BIB', 5);
+
+
+        $data = DB::table('anexos')
+            ->select(
+                'C_Barras', 
+            )
+            ->whereNull("anexos.Biblioteca_O")
+            ->where("anexos.Biblioteca_L", $table['Nombre'])->take(1000)->get()->toArray();
+        $spreadsheet->createSheet();
+        $this->setNewPageAndData($spreadsheet, $data, 'NO ENCONTRADOS', 6);
+
+        $activeWorksheet->getStyle("A1:O1")->getFont()->setBold(true);
+        $activeWorksheet->getStyle('A1:O1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('DDE5ED');
+
+        return $this->returnDonwloadableFile($spreadsheet, $table['nombre'], $date->format('Y-m-d h:s:i') ); 
+    }
+
+    /**
+     * Bootstrap services.
+     */
+    public function setNewPageAndData(&$spreadsheet, $data, $pageTitle, $indexPage){
+        $spreadsheet->setActiveSheetIndex($indexPage);
+        $spreadsheet->getActiveSheet()->setTitle($pageTitle);
         $range = range('A', 'Ñ');
         $header = [
                 'C_Barras', 
@@ -63,19 +227,18 @@ class XlssExport{
                 'Creacion', 
                 'Acervo'
         ];
-        foreach ($header as $key => $value) 
-            $activeWorksheet->setCellValue( "{$range[$key]}1" , $value);
+        if($pageTitle == 'NO ENCONTRADOS')
+            $header = ['C_Barras'];
+
+        foreach ($header as $key => $value)
+            $spreadsheet->getActiveSheet()->setCellValue("{$range[$key]}1" , $value);
 
         $xAngle = 2;
         foreach ($data as $key => $value) {
-            $activeWorksheet->fromArray([(array)$value], NULL, "A{$xAngle}");
+            $spreadsheet->getActiveSheet()->fromArray([(array)$value], NULL, "A{$xAngle}");
             $xAngle++;
         }
-        $activeWorksheet->getStyle("A1:O1")->getFont()->setBold( true );
-        $activeWorksheet->getStyle('A1:O1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('DDE5ED');
-        
-        return $this->returnDonwloadableFile($spreadsheet, $nombre, $date->format('Y-m-d h:s:i') ); 
-    }
+    }    
 
     /**
      * Bootstrap services.
@@ -84,6 +247,8 @@ class XlssExport{
         $writer = new Xlsx($spreadsheet);
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment; filename="' . $nombre . " ". $date . '.xlsx"');
-        $writer->save("php://output");        
+        $writer->save("php://output");
     }
+
+
 }
