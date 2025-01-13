@@ -24,6 +24,9 @@ Route::middleware('auth:api')->post('/admin/{espacio}/data',        [Administrac
 Route::middleware('auth:api')->post('/admin/{espacio}/dataadvance', [AdministracionController::class, 'getDataAdvance']);
 
 //AVANCES
-Route::middleware('auth:api')->get('/avances/{espacio}/info',           [AvancesController::class, 'getInfo']);
-Route::middleware('auth:api')->get('/avances/{id}/tree',                [AvancesController::class, 'getTreeTemplate']);
-Route::middleware('auth:api')->get('/avances/{id}/tree/clasificacion',  [AvancesController::class, 'getClasificacionData']);
+Route::middleware('auth:api')->get('/avances/{espacio}/info',               [AvancesController::class, 'getInfo']);
+Route::get('/avances/{espacio}/inventareados',      [AvancesController::class, 'getInventariados']);
+Route::get('/avances/{espacio}/no-inventareados',   [AvancesController::class, 'getNoInventariados']);
+
+Route::middleware('auth:api')->get('/avances/{id}/tree',                    [AvancesController::class, 'getTreeTemplate']);
+Route::middleware('auth:api')->get('/avances/{id}/tree/clasificacion',      [AvancesController::class, 'getClasificacionData']);

@@ -122,6 +122,7 @@ class AdministracionController extends Controller{
             $sum = 1;
             foreach ($registros as $key => $val) {
                 $sum++;
+                $val['C_Barras'] = str_replace(' ', '', $val['C_Barras']);
                 $insert[] = [
                     'C_Barras' => $val['C_Barras'],
                     'Situacion' => $val['Proceso'],

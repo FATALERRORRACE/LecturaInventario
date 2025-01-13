@@ -219,12 +219,15 @@ class InventarioController extends Controller{
             $count = 0;
             $inserted = 0;
             $failed = 0;
-            $allRecords = DB::table($library['Tabla'])->select('Id', 'C_Barras', 'Situacion','Estado')->get()->keyBy('C_Barras')->toArray();
+            $allRecords = DB::
+                table($library['Tabla'])
+                ->select('Id', 'C_Barras', 'Situacion','Estado')
+                ->get()->keyBy('C_Barras')->toArray();
+            
             while (($line = fgets($handle)) !== false) {
                 $line = str_replace("\n", "", $line);
                 $line = str_replace("\r", "", $line);
                 $line = str_replace(" ", "", $line);
-
                 $tmpData = $validateInsertion->set(
                     isset($allRecords[$line]) ? $allRecords[$line] : null , 
                     $dateF, 
@@ -269,7 +272,7 @@ class InventarioController extends Controller{
         header('Content-Length: ' . filesize("/tmp/{$request->name}"));
         header('Content-Type: application/octet-stream');
         header("Content-Transfer-Encoding: Binary"); 
-        readfile("/tmp/{$request->name}");
+        readfile("c:/tmp/{$request->name}");
         exit();
     }
 }

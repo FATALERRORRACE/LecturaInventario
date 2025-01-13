@@ -75,5 +75,16 @@
             </tbody>
         </table>
     </div>
-    <div id="table-advances"></div>
+    <div id="tabs">
+        <ul>
+            <li><a href="#tabs-1">Códigos Escaneados</a></li>
+            <li><a href="#tabs-2">No inventariados</a></li>
+        </ul>
+        <div id="tabs-1">
+            <div id="table-advances"></div>
+        </div>
+        <div id="tabs-2">
+            <div id="table-no-inventory"></div>
+        </div>
+    </div>
 @endif

@@ -207,7 +207,13 @@ class XlssExport{
         ->groupBy('master.Localizacion')
         ->take(1000)->get()->toArray();
 
-        $this->createConsilidatedReport($spreadsheet ,$table, 7, $dataUbicaciones);
+        $dataUbicacionesPrecios = DB::table($tableName)
+        ->select('master.Localizacion', DB::raw("SUM(master.Precio) as total"))
+        ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
+        //->where("{$tableName}.Estado", 'I')
+        ->groupBy('master.Localizacion')
+        ->take(1000)->get()->toArray();
+        $this->createConsilidatedReport($spreadsheet ,$table, 7, $dataUbicaciones, $dataUbicacionesPrecios);
 
         $activeWorksheet->getStyle("A1:O1")->getFont()->setBold(true);
         $activeWorksheet->getStyle('A1:O1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('DDE5ED');
@@ -251,7 +257,7 @@ class XlssExport{
         }
     }    
 
-    public function createConsilidatedReport($spreadsheet, $table, $position, $dataUbicaciones){
+    public function createConsilidatedReport($spreadsheet, $table, $position, $dataUbicaciones, $dataUbicacionesPrecios){
         $date = new \DateTime();
         $spreadsheet->createSheet();
         $spreadsheet->setActiveSheetIndex($position);
@@ -296,6 +302,11 @@ class XlssExport{
         $spreadsheet->getActiveSheet()->setCellValue('B11', 'INVENTARIADOS');
         
         foreach ($dataUbicaciones as $key => $value) {
+            $spreadsheet->getActiveSheet()->setCellValue("A".($key+12), $value->Localizacion);
+            $spreadsheet->getActiveSheet()->setCellValue("B".($key+12), $value->total);
+        }
+        
+        foreach ($dataUbicacionesPrecios as $key => $value) {
             $spreadsheet->getActiveSheet()->setCellValue("A".($key+12), $value->Localizacion);
             $spreadsheet->getActiveSheet()->setCellValue("B".($key+12), $value->total);
         }

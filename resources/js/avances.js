@@ -4,23 +4,30 @@ import { esES } from "gridjs/l10n";
 import "select2";
 import 'jstree/dist/jstree';
 import 'jquery-ui/ui/widgets/dialog';
-import toastr from "toastr";
+import 'jquery-ui/ui/widgets/tabs';
 
 export class Avances {
     controller = new AbortController();
     signal = this.controller.signal;
     sendSignal = 0;
     columns = [
-        {
-            name: "Códigos Escaneados", columns: [
-                { id: "C_Barras", name: "C_Barras", width: '100px' },
-                { id: "Usuario", name: "Usuario", width: '100px' },
-                { id: "Situacion", name: "Situacion", width: '100px' },
-                { id: "Comentario", name: "Comentario", width: '100px' },
-                { id: "Fecha", name: "Fecha", width: '100px' },
-                { id: "Estado", name: "Estado", width: '100px' },
-            ]
-        }
+        { id: "C_Barras", name: "C_Barras", width: '100px' },
+        { id: "Usuario", name: "Usuario", width: '100px' },
+        { id: "Situacion", name: "Situacion", width: '100px' },
+        { id: "Comentario", name: "Comentario", width: '100px' },
+        { id: "Fecha", name: "Fecha", width: '100px' },
+        { id: "Estado", name: "Estado", width: '100px' },
+    ];
+
+    sColumns = [
+        { id: "C_Barras", name: "C_Barras", width: '100px' },
+        { id: "Titulo", name: "Titulo", width: '100px' },
+        { id: "Clasificacion", name: "Clasificacion", width: '100px' },
+        { id: "Usuario", name: "Usuario", width: '100px' },
+        { id: "Situacion", name: "Situacion", width: '100px' },
+        { id: "Comentario", name: "Comentario", width: '100px' },
+        { id: "Fecha", name: "Fecha", width: '100px' },
+        { id: "Estado", name: "Estado", width: '100px' },
     ];
 
     actionAvances() {
@@ -43,20 +50,65 @@ export class Avances {
 
     utils() {
         var context = this;
-
+        $("#tabs").tabs();
         gridInstance = new Grid({
-            search: true,
             className: {
                 tr: 'table-tr-custom',
             },
             columns: context.columns,
             sort: true,
-            pagination: true,
+            server: {
+                url: `api/avances/${$("#espacio").val()}/inventareados`,
+                then: data => data.data,
+                total: data => data.total   
+            },
+            pagination: {
+                limit: 10,
+                server: {
+                    url: (prev, page, limit) => 
+                        $("#table-no-inventory .gridjs-search-input").val() ? 
+                        `${prev}&limit=${limit}&offset=${page * limit}`:
+                        `${prev}?limit=${limit}&offset=${page * limit}`
+                }
+            },
+            search: {
+                server: {
+                    url: (prev, keyword) => `${prev}?search=${keyword}`
+                }
+            },
             language: esES,
             resizable: true,
             selector: (cell, rowIndex, cellIndex) => cellIndex === 0 ? cell.firstName : cell,
-            data: []
         }).render(document.getElementById("table-advances"));
+        new Grid({
+            columns: context.sColumns,
+            server: {
+                url: `api/avances/${$("#espacio").val()}/no-inventareados`,
+                then: data => data.data,
+                total: data => data.total   
+            },
+            pagination: {
+                limit: 10,
+                server: {
+                    url: (prev, page, limit) => 
+                        $("#table-no-inventory .gridjs-search-input").val() ? 
+                        `${prev}&limit=${limit}&offset=${page * limit}`:
+                        `${prev}?limit=${limit}&offset=${page * limit}`
+                }
+            },
+            search: {
+                server: {
+                    url: (prev, keyword) => `${prev}?search=${keyword}`
+                }
+            },
+            className: {
+                tr: 'table-tr-custom',
+            },
+            sort: true,
+            language: esES,
+            resizable: true,
+            selector: (cell, rowIndex, cellIndex) => cellIndex === 0 ? cell.firstName : cell,
+        }).render(document.getElementById("table-no-inventory"));
 
         $("#espacio")
             .off('change.espacio3')
@@ -75,7 +127,7 @@ export class Avances {
                             $('#daterange').val('').daterangepicker(
                                 {
                                     opens: 'left'
-                                }, function (start, end, label) {}
+                                }, function (start, end, label) { }
                             );
                             $('#dialog-form').hide();
                             gridInstance.updateConfig({
@@ -95,7 +147,7 @@ export class Avances {
                             $('#daterange').val(json.fecha).daterangepicker(
                                 {
                                     opens: 'left'
-                                }, function (start, end, label) {}
+                                }, function (start, end, label) { }
                             );
                             gridInstance.updateConfig({
                                 columns: context.columns,
@@ -104,7 +156,6 @@ export class Avances {
                         });
                     });
             });
-        $("#espacio").trigger("change");
     }
 
     openDialogTree() {
@@ -124,7 +175,8 @@ export class Avances {
                     position: { my: "top", at: "bottom", of: $('#contain-e-t') },
                     height: 'auto',
                     width: 'auto',
-                    modal: false,
+                    modal: true,
+                    draggable: false,
                     open: function (event, ui) {
                         $(".ui-dialog-title").text('');
                     },
