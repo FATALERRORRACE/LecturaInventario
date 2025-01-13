@@ -188,7 +188,6 @@ class XlssExport{
         $spreadsheet->createSheet();
         $this->setNewPageAndData($spreadsheet, $data, 'EN MI BIB', 5);
 
-
         $data = DB::table('anexos')
             ->select(
                 'C_Barras', 
@@ -197,6 +196,18 @@ class XlssExport{
             ->where("anexos.Biblioteca_L", $table['Nombre'])->take(1000)->get()->toArray();
         $spreadsheet->createSheet();
         $this->setNewPageAndData($spreadsheet, $data, 'NO ENCONTRADOS', 6);
+
+
+        
+    
+        $dataUbicaciones = DB::table($tableName)
+        ->select('master.Localizacion', DB::raw("COUNT($tableName.id) as total"))
+        ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
+        ->where("{$tableName}.Estado", 'I')
+        ->groupBy('master.Localizacion')
+        ->take(1000)->get()->toArray();
+
+        $this->createConsilidatedReport($spreadsheet ,$table, 7, $dataUbicaciones);
 
         $activeWorksheet->getStyle("A1:O1")->getFont()->setBold(true);
         $activeWorksheet->getStyle('A1:O1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('DDE5ED');
@@ -240,54 +251,60 @@ class XlssExport{
         }
     }    
 
-    public function createConsilidatedReport($data){
+    public function createConsilidatedReport($spreadsheet, $table, $position, $dataUbicaciones){
         $date = new \DateTime();
-        $spreadsheet = new Spreadsheet();
-        $activeWorksheet = $spreadsheet->getActiveSheet();
-        $activeWorksheet->getColumnDimension('A')->setWidth(15);
-        $activeWorksheet->getColumnDimension('B')->setWidth(12);
-        $activeWorksheet->getColumnDimension('C')->setWidth(15);
-        $activeWorksheet->getColumnDimension('D')->setWidth(12);
-        $activeWorksheet->getColumnDimension('E')->setWidth(12);
-        $activeWorksheet->getColumnDimension('F')->setWidth(12);
-        $activeWorksheet->getStyle("A1:F1")->getFont()->setBold( true );
-        $activeWorksheet->getStyle('A1:F1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('DDE5ED');
-        $activeWorksheet->setCellValue('A1', 'INFORME CONSOLIDADO DE TOMA FISICA');
+        $spreadsheet->createSheet();
+        $spreadsheet->setActiveSheetIndex($position);
+        $spreadsheet->getActiveSheet()->setTitle('ACUMULADO');
+        $spreadsheet->getActiveSheet()->getColumnDimension('A')->setWidth(15);
+        $spreadsheet->getActiveSheet()->getColumnDimension('B')->setWidth(12);
+        $spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(15);
+        $spreadsheet->getActiveSheet()->getColumnDimension('D')->setWidth(12);
+        $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(12);
+        $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(12);
+        $spreadsheet->getActiveSheet()->getStyle("A1:F1")->getFont()->setBold( true );
+        $spreadsheet->getActiveSheet()->getStyle('A1:F1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('DDE5ED');
+        $spreadsheet->getActiveSheet()->setCellValue('A1', 'INFORME CONSOLIDADO DE TOMA FISICA');
         $spreadsheet->getActiveSheet()->mergeCells('A1:B1', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
 
-        $activeWorksheet->setCellValue('A3', 'UBICACIÓN');
+        $spreadsheet->getActiveSheet()->setCellValue('A3', 'UBICACIÓN');
         $spreadsheet->getActiveSheet()->mergeCells('A3:A4', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
-        $activeWorksheet->setCellValue('B3', 'TOMA FíSICA');
+        $spreadsheet->getActiveSheet()->setCellValue('B3', 'TOMA FíSICA');
         $spreadsheet->getActiveSheet()->mergeCells('B3:D3', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
 
-        $activeWorksheet->setCellValue('B4', 'CAPTURADOS');
-        $activeWorksheet->setCellValue('C4', 'REPETIDOS');
-        $activeWorksheet->setCellValue('D4', 'TOTAL');
+        $spreadsheet->getActiveSheet()->setCellValue('B4', 'CAPTURADOS');
+        $spreadsheet->getActiveSheet()->setCellValue('C4', 'REPETIDOS');
+        $spreadsheet->getActiveSheet()->setCellValue('D4', 'TOTAL');
 
-        $activeWorksheet->setCellValue('A5', 'la pena');
-        $activeWorksheet->setCellValue('B5', '10.000');
-        $activeWorksheet->setCellValue('C5', '10.000');
-        $activeWorksheet->setCellValue('D5', '10.000');
+        $spreadsheet->getActiveSheet()->setCellValue('A5', $table['Nombre']);
+        $spreadsheet->getActiveSheet()->setCellValue('B5', '10.000');
+        $spreadsheet->getActiveSheet()->setCellValue('C5', '10.000');
+        $spreadsheet->getActiveSheet()->setCellValue('D5', '10.000');
 
-        $activeWorksheet->setCellValue('A6', 'TOTALES');
-        $activeWorksheet->setCellValue('B6', '10.000');
-        $activeWorksheet->setCellValue('C6', '10.000');
-        $activeWorksheet->setCellValue('D6', '10.000');
+        $spreadsheet->getActiveSheet()->setCellValue('A6', 'TOTALES');
+        $spreadsheet->getActiveSheet()->setCellValue('B6', '10.000');
+        $spreadsheet->getActiveSheet()->setCellValue('C6', '10.000');
+        $spreadsheet->getActiveSheet()->setCellValue('D6', '10.000');
 
-        $activeWorksheet->setCellValue('A8', 'INFORME CONSOLIDADO DEL PROCESO DE INVENTARIO EN PERGAMUM');
-        $spreadsheet->getActiveSheet()->mergeCells('A8:D3', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
+        $spreadsheet->getActiveSheet()->setCellValue('A8', 'INFORME CONSOLIDADO DEL PROCESO DE INVENTARIO EN PERGAMUM');
+        $spreadsheet->getActiveSheet()->mergeCells('A8:D8', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
 
-        $activeWorksheet->setCellValue('A10', 'UBICACIÓN');
+        $spreadsheet->getActiveSheet()->setCellValue('A10', 'UBICACIÓN');
         $spreadsheet->getActiveSheet()->mergeCells('A10:A11', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
 
-        $activeWorksheet->setCellValue('B10', 'PROCESO DE INVENTARIO');
-        $activeWorksheet->setCellValue('B11', 'INVENTARIADOS');
+        $spreadsheet->getActiveSheet()->setCellValue('B10', 'PROCESO DE INVENTARIO');
+        $spreadsheet->getActiveSheet()->setCellValue('B11', 'INVENTARIADOS');
         
-        $activeWorksheet->setCellValue('D10', 'OTROS');
+        foreach ($dataUbicaciones as $key => $value) {
+            $spreadsheet->getActiveSheet()->setCellValue("A".($key+12), $value->Localizacion);
+            $spreadsheet->getActiveSheet()->setCellValue("B".($key+12), $value->total);
+        }
+
+        $spreadsheet->getActiveSheet()->setCellValue('D10', 'OTROS');
         $spreadsheet->getActiveSheet()->mergeCells('D10:F10', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
-        $activeWorksheet->setCellValue('D11', 'BAJA ACUMULADA');
-        $activeWorksheet->setCellValue('E11', 'OTRAS BIBLIOTECAS');
-        $activeWorksheet->setCellValue('F11', 'TOTAL');
+        $spreadsheet->getActiveSheet()->setCellValue('D11', 'BAJA ACUMULADA');
+        $spreadsheet->getActiveSheet()->setCellValue('E11', 'OTRAS BIBLIOTECAS');
+        $spreadsheet->getActiveSheet()->setCellValue('F11', 'TOTAL');
 
     }
 
