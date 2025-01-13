@@ -3,7 +3,7 @@ import { Grid, html } from "gridjs";
 import { esES } from "gridjs/l10n";
 import "select2";
 import toastr from "toastr";
-
+import moment from "moment";
 export class Administracion {
 
     columns = [
@@ -30,7 +30,7 @@ export class Administracion {
             $("#tableContent").html(text);
             context.actionAdminUtils();
             $("#espacio").trigger("change");
-            $("#calendar").val($("#datehidden").val());
+            //context.setDateAndSetEvent($("#datehidden").val());
 
             $("#expordata").click(()=>{
                 window.open(`${location.href}admin/data/${$("#espacio").val()}/xls`);
@@ -79,6 +79,7 @@ export class Administracion {
 
     actionAdminUtils(){
         var context = this;
+
         $("#espacio").off('change.espacio2').off('change.espacio1').on('change.espacio1', () => {
             $("#sel-bbl").text($("#espacio").find(':selected').text());
             fetch(`api/admin/${$("#espacio").val()}/data`,
@@ -89,7 +90,7 @@ export class Administracion {
             })
             .then((response) => {
                 if (response.status == 500) {
-                    $('#calendar').val('');
+                    context.setDateAndSetEvent('', '');
                     $('#dialog-form').hide();
                     gridInstance.updateConfig({
                         columns: context.columns,
@@ -103,7 +104,8 @@ export class Administracion {
                     $('#dialog-form').show();
                     $('#alert-no-exist').hide();
                     $('#expordata').show();
-                    $('#calendar').val(json.fecha);
+                    console.log('json.fecha1');
+                    context.setDateAndSetEvent(json.fechaInicio, json.fechaFin);
                     gridInstance.updateConfig({
                         columns: context.columns,
                         data: json.data
@@ -126,5 +128,34 @@ export class Administracion {
             data: []
         }).render(document.getElementById("table-adm"));
 
+    }
+
+    setDateAndSetEvent(fechaInicio, fechaFin){
+        console.log(fechaInicio);
+        console.log(moment(fechaInicio));
+        $('#daterange').off().daterangepicker(
+            {
+                opens: 'left',
+                startDate: moment(fechaInicio),
+                endDate: moment(fechaFin)
+            }, function (start, end, label) {}
+        );
+        $("#daterange").change((eve) => {
+            fetch(`api/inventario/${$("#espacio").val()}/date`,
+              {
+                method: "POST",
+                headers: headers,
+                redirect: "follow",
+                body: JSON.stringify({
+                  'fecha': eve.currentTarget.value
+                }),
+              })
+              .then((response) => response.json().then(json => {
+                if (json.status == 'ok')
+                  toastr.success(json.message);
+                else
+                  toastr.error(json.message);
+              }));
+          })
     }
 }

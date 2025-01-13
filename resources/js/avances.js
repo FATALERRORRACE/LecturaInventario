@@ -51,7 +51,7 @@ export class Avances {
             },
             columns: context.columns,
             sort: true,
-            pagination: true,   
+            pagination: true,
             language: esES,
             resizable: true,
             selector: (cell, rowIndex, cellIndex) => cellIndex === 0 ? cell.firstName : cell,
@@ -72,7 +72,11 @@ export class Avances {
                     })
                     .then((response) => {
                         if (response.status == 500) {
-                            $('#calendar').val('');
+                            $('#daterange').val('').daterangepicker(
+                                {
+                                    opens: 'left'
+                                }, function (start, end, label) {}
+                            );
                             $('#dialog-form').hide();
                             gridInstance.updateConfig({
                                 columns: context.columns,
@@ -86,7 +90,13 @@ export class Avances {
                             $('#dialog-form').show();
                             $('#alert-no-exist').hide();
                             $('#expordata').show();
-                            $('#calendar').val(json.fecha);
+                            console.log('json.fecha1');
+                            console.log(json.fecha);
+                            $('#daterange').val(json.fecha).daterangepicker(
+                                {
+                                    opens: 'left'
+                                }, function (start, end, label) {}
+                            );
                             gridInstance.updateConfig({
                                 columns: context.columns,
                                 data: json.data
@@ -107,60 +117,60 @@ export class Avances {
                 redirect: "follow"
             }
         )
-        .then((response) => response.text().then(text => {
-            $('#dialog-form').html(text);
-            $("#dialog-form").dialog({
-                autoOpen: true,
-                position: { my: "top", at: "bottom", of: $('#contain-e-t') },
-                height: 'auto',
-                width: 'auto',
-                modal: false,
-                open: function (event, ui) {
-                    $(".ui-dialog-title").text('');
-                },
-                close: function (event, ui) {
-                },
-            });
-            $('#jstree').on('changed.jstree', function (e, data) {
-                fetch(`api/avances/${$("#espacio").val()}/tree/clasificacion?lcl=${data.selected}&search=${$("#search-clsfcn").val()}`,
-                    {
-                        method: "GET",
-                        headers: headers,
-                        redirect: "follow"
-                    }
-                ).then((response) => response.text().then(text => {
-                    $('#jstre2e').html(text).jstree();
-                    
-                }));
-            }).jstree();
-            $("#search-clsfcn").on('keyup', function (event) {
-                event.preventDefault();
-                console.log($("#jstree").jstree("get_selected"));
-                if(globalContext.sendSignal){
-                    globalContext.controller.abort();
-                    globalContext.controller = new AbortController();
-                }
-                globalContext.sendSignal = 1;
-                fetch(`api/avances/${$("#espacio").val()}/tree/clasificacion?lcl=${$("#jstree").jstree("get_selected")[0]}&search=${$("#search-clsfcn").val()}`,
-                    {
-                        method: "GET",
-                        headers: headers,
-                        redirect: "follow",
-                        signal: globalContext.controller.signal,
-                    }
-                ).then((response) => response.text().then(text => {
-                    globalContext.sendSignal = 0;
-                    $('#jstre2e').jstree("destroy");
-                    $('#jstre2e').html(text);
-                    $('#jstre2e').jstree();
-                })).catch((err)=>{
-                    console.log(err);
+            .then((response) => response.text().then(text => {
+                $('#dialog-form').html(text);
+                $("#dialog-form").dialog({
+                    autoOpen: true,
+                    position: { my: "top", at: "bottom", of: $('#contain-e-t') },
+                    height: 'auto',
+                    width: 'auto',
+                    modal: false,
+                    open: function (event, ui) {
+                        $(".ui-dialog-title").text('');
+                    },
+                    close: function (event, ui) {
+                    },
                 });
-            });
-            $('#jstre3e').jstree();
-            
-        }));
-    
+                $('#jstree').on('changed.jstree', function (e, data) {
+                    fetch(`api/avances/${$("#espacio").val()}/tree/clasificacion?lcl=${data.selected}&search=${$("#search-clsfcn").val()}`,
+                        {
+                            method: "GET",
+                            headers: headers,
+                            redirect: "follow"
+                        }
+                    ).then((response) => response.text().then(text => {
+                        $('#jstre2e').html(text).jstree();
+
+                    }));
+                }).jstree();
+                $("#search-clsfcn").on('keyup', function (event) {
+                    event.preventDefault();
+                    console.log($("#jstree").jstree("get_selected"));
+                    if (globalContext.sendSignal) {
+                        globalContext.controller.abort();
+                        globalContext.controller = new AbortController();
+                    }
+                    globalContext.sendSignal = 1;
+                    fetch(`api/avances/${$("#espacio").val()}/tree/clasificacion?lcl=${$("#jstree").jstree("get_selected")[0]}&search=${$("#search-clsfcn").val()}`,
+                        {
+                            method: "GET",
+                            headers: headers,
+                            redirect: "follow",
+                            signal: globalContext.controller.signal,
+                        }
+                    ).then((response) => response.text().then(text => {
+                        globalContext.sendSignal = 0;
+                        $('#jstre2e').jstree("destroy");
+                        $('#jstre2e').html(text);
+                        $('#jstre2e').jstree();
+                    })).catch((err) => {
+                        console.log(err);
+                    });
+                });
+                $('#jstre3e').jstree();
+
+            }));
+
 
     }
 }

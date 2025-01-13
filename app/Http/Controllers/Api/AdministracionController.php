@@ -30,7 +30,7 @@ class AdministracionController extends Controller{
             'index.administracion',
             [
                 'tableExists' => $tableExists,
-                'date' => $data['Fecha_Inventario'],
+                'date' => "{$data['Fecha_Inventario']} - {$data['Fecha_Fin_Inventario']}",
             ]
         );
     }
@@ -63,9 +63,13 @@ class AdministracionController extends Controller{
         //        'En catalogación';
         //        break;
         //}
+        $fechaInventario = new \DateTime($data['Fecha_Inventario']);
+        $fechaFinInventario = new \DateTime($data['Fecha_Fin_Inventario']);
+
         return [
-            "fecha" => $data['Fecha_Inventario'],
-            "data" => DB::table($data['Tabla'])->get()->toArray()
+            'fechaInicio' => $fechaInventario->format('Y-m-d'), 
+            'fechaFin' => $fechaFinInventario->format('Y-m-d'),
+            'data' => DB::table($data['Tabla'])->get()->toArray()
         ];
     }
 

@@ -19,6 +19,13 @@ class InventarioController extends Controller{
     public function index(Request $request)
     {
         $library = Bibliotecas::where("id", $request->bbltc)->first();
+        $date = new \DateTime();
+        $dateFechaInventario = new \DateTime($library['Fecha_Inventario']);
+        $dateFechaFinInventario = new \DateTime($library['Fecha_Fin_Inventario']);
+        $dateAllowed = false; 
+        if($date >= $dateFechaInventario && $date <= $dateFechaFinInventario)
+            $dateAllowed = true;
+
         $tableExists = true;
         try {
             DB::table($library['Tabla'])->first();
@@ -29,7 +36,8 @@ class InventarioController extends Controller{
             'index.lectura',
             [
                 'admin' => DB::table('usuariosadministradores')->where('username', Auth::user()->username)->first() ? 1 : 0 ,
-                'tableExists' => $tableExists
+                'tableExists' => $tableExists,
+                'dateAllowed' => $dateAllowed,
             ]
         );
     }
@@ -41,9 +49,14 @@ class InventarioController extends Controller{
      */
     public function setDate($id, Request $request)
     {
+        $fecha = explode(' - ', $request->fecha);
+        $fechaInicio = new \DateTime($fecha[0]);
+        $fechaFin = new \DateTime($fecha[1]);
+
         $libraryFind = Bibliotecas::where("id", $id)->first();
         $libraryUpdate = Bibliotecas::where("id", $id)->update([
-            'Fecha_Inventario' => $request->fecha,
+            'Fecha_Inventario' => $fechaInicio->format('Y-m-d'),
+            'Fecha_Fin_Inventario' => $fechaFin->format('Y-m-d'),
         ]);
         try {
             DB::table($libraryFind['Tabla'])->first();

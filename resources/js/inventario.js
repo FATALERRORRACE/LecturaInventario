@@ -54,85 +54,67 @@ export class Inventario {
                 redirect: "follow"
             }
         )
-            .then((response) => response.text().then(text => {
-                $("#tableContent").html(text);
-                context.inventarioUtils();
-                $("#registercode").submit((event) => {
-                    event.preventDefault();
-                    if (
-                        !$($(".clasificacion")[0]).prop('checked') &&
-                        !$($(".clasificacion")[1]).prop('checked') &&
-                        !$($(".clasificacion")[2]).prop('checked')
-                    ) {
-                        $("#container-xyz").effect('shake');
-                        toastr.error('Seleccione una clasificación');
-                        return;
-                    }
+        .then((response) => response.text().then(text => {
+            $("#tableContent").html(text);
+            context.inventarioUtils();
+            $("#registercode").submit((event) => {
+                event.preventDefault();
+                if (
+                    !$($(".clasificacion")[0]).prop('checked') &&
+                    !$($(".clasificacion")[1]).prop('checked') &&
+                    !$($(".clasificacion")[2]).prop('checked')
+                ) {
+                    $("#container-xyz").effect('shake');
+                    toastr.error('Seleccione una clasificación');
+                    return;
+                }
 
-                    $("#codbar").prop('disabled', true);
+                $("#codbar").prop('disabled', true);
 
-                    gridInstance.config.data.forEach(element => {
-                        if (element['C_Barras'] == $('#codbar').val()) {
-                            if (element.clasificacion && element.clasificacion != $("input[name=clasificacion]:checked").val())
-                                return;
-                            toastr.error('código de barras registrado anteriormente');
-                            $("#codbar").prop('disabled', false);
-                            $("#codbar").trigger('focus');
-                            $("#codbar").val('');
-                            throw new Error("código de barras registrado anteriormente");
-
-                        }
-                    });
-
-                    if ($('#codbar').val() == '') {
-                        toastr.error('El código de barras no puede estar vacío');
+                gridInstance.config.data.forEach(element => {
+                    if (element['C_Barras'] == $('#codbar').val()) {
+                        if (element.clasificacion && element.clasificacion != $("input[name=clasificacion]:checked").val())
+                            return;
+                        toastr.error('código de barras registrado anteriormente');
                         $("#codbar").prop('disabled', false);
                         $("#codbar").trigger('focus');
                         $("#codbar").val('');
-                        return;
-                    }
+                        throw new Error("código de barras registrado anteriormente");
 
-                    fetch(`api/inventario/${$("#espacio").val()}/new`,
-                        {
-                            method: "POST",
-                            headers: headers,
-                            redirect: "follow",
-                            body: JSON.stringify({
-                                'cbarras': $('#codbar').val(),
-                                'categoria': $("input[name=clasificacion]:checked").val()
-                            }),
-                        })
-                        .then((response) => response.json().then(json => {
-                            $("#codbar").prop('disabled', false);
-                            $("#codbar").trigger('focus');
-                            $("#codbar").val('');
-                            gridInstance.config.data.unshift(json);
-                            gridInstance.updateConfig({
-                                data: gridInstance.config.data
-                            }).forceRender();
-                            localStorage.setItem('alerts', JSON.stringify(gridInstance.config.data));
-                        }));
-                    $("#codbar").val('');
+                    }
                 });
 
-            }));
-        $("#calendar").off().change((eve) => {
-            fetch(`api/inventario/${$("#espacio").val()}/date`,
-                {
-                    method: "POST",
-                    headers: headers,
-                    redirect: "follow",
-                    body: JSON.stringify({
-                        'fecha': eve.currentTarget.value
-                    }),
-                })
-                .then((response) => response.json().then(json => {
-                    if (json.status == 'ok')
-                        toastr.success(json.message);
-                    else
-                        toastr.error(json.message);
-                }));
-        })
+                if ($('#codbar').val() == '') {
+                    toastr.error('El código de barras no puede estar vacío');
+                    $("#codbar").prop('disabled', false);
+                    $("#codbar").trigger('focus');
+                    $("#codbar").val('');
+                    return;
+                }
+
+                fetch(`api/inventario/${$("#espacio").val()}/new`,
+                    {
+                        method: "POST",
+                        headers: headers,
+                        redirect: "follow",
+                        body: JSON.stringify({
+                            'cbarras': $('#codbar').val(),
+                            'categoria': $("input[name=clasificacion]:checked").val()
+                        }),
+                    })
+                    .then((response) => response.json().then(json => {
+                        $("#codbar").prop('disabled', false);
+                        $("#codbar").trigger('focus');
+                        $("#codbar").val('');
+                        gridInstance.config.data.unshift(json);
+                        gridInstance.updateConfig({
+                            data: gridInstance.config.data
+                        }).forceRender();
+                        localStorage.setItem('alerts', JSON.stringify(gridInstance.config.data));
+                    }));
+                $("#codbar").val('');
+            });
+        }));
     }
 
     async inventarioUtils() {

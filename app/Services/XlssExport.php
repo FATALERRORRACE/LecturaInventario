@@ -240,6 +240,58 @@ class XlssExport{
         }
     }    
 
+    public function createConsilidatedReport($data){
+        $date = new \DateTime();
+        $spreadsheet = new Spreadsheet();
+        $activeWorksheet = $spreadsheet->getActiveSheet();
+        $activeWorksheet->getColumnDimension('A')->setWidth(15);
+        $activeWorksheet->getColumnDimension('B')->setWidth(12);
+        $activeWorksheet->getColumnDimension('C')->setWidth(15);
+        $activeWorksheet->getColumnDimension('D')->setWidth(12);
+        $activeWorksheet->getColumnDimension('E')->setWidth(12);
+        $activeWorksheet->getColumnDimension('F')->setWidth(12);
+        $activeWorksheet->getStyle("A1:F1")->getFont()->setBold( true );
+        $activeWorksheet->getStyle('A1:F1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('DDE5ED');
+        $activeWorksheet->setCellValue('A1', 'INFORME CONSOLIDADO DE TOMA FISICA');
+        $spreadsheet->getActiveSheet()->mergeCells('A1:B1', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
+
+        $activeWorksheet->setCellValue('A3', 'UBICACIÓN');
+        $spreadsheet->getActiveSheet()->mergeCells('A3:A4', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
+        $activeWorksheet->setCellValue('B3', 'TOMA FíSICA');
+        $spreadsheet->getActiveSheet()->mergeCells('B3:D3', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
+
+        $activeWorksheet->setCellValue('B4', 'CAPTURADOS');
+        $activeWorksheet->setCellValue('C4', 'REPETIDOS');
+        $activeWorksheet->setCellValue('D4', 'TOTAL');
+
+        $activeWorksheet->setCellValue('A5', 'la pena');
+        $activeWorksheet->setCellValue('B5', '10.000');
+        $activeWorksheet->setCellValue('C5', '10.000');
+        $activeWorksheet->setCellValue('D5', '10.000');
+
+        $activeWorksheet->setCellValue('A6', 'TOTALES');
+        $activeWorksheet->setCellValue('B6', '10.000');
+        $activeWorksheet->setCellValue('C6', '10.000');
+        $activeWorksheet->setCellValue('D6', '10.000');
+
+        $activeWorksheet->setCellValue('A8', 'INFORME CONSOLIDADO DEL PROCESO DE INVENTARIO EN PERGAMUM');
+        $spreadsheet->getActiveSheet()->mergeCells('A8:D3', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
+
+        $activeWorksheet->setCellValue('A10', 'UBICACIÓN');
+        $spreadsheet->getActiveSheet()->mergeCells('A10:A11', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
+
+        $activeWorksheet->setCellValue('B10', 'PROCESO DE INVENTARIO');
+        $activeWorksheet->setCellValue('B11', 'INVENTARIADOS');
+        
+        $activeWorksheet->setCellValue('D10', 'OTROS');
+        $spreadsheet->getActiveSheet()->mergeCells('D10:F10', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
+        $activeWorksheet->setCellValue('D11', 'BAJA ACUMULADA');
+        $activeWorksheet->setCellValue('E11', 'OTRAS BIBLIOTECAS');
+        $activeWorksheet->setCellValue('F11', 'TOTAL');
+
+    }
+
+
     /**
      * Bootstrap services.
      */

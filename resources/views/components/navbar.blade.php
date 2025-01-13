@@ -19,7 +19,7 @@
                 </select>
                 <div class="block mx-3" id="enableDate">
                     <p class="text-center">Fecha de habilitación</p>
-                    <input id="calendar" class="border px-3 base-1-color rounded-lg p-2" type="date">
+                    <input id="daterange" class="border px-3 base-1-color rounded-lg p-2" type="text" value="" placeholder="Ingrese el rango de fecha"/>
                 </div>
             </div>
         </div>
