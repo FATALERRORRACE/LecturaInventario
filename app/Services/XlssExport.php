@@ -196,19 +196,16 @@ class XlssExport{
             ->where("anexos.Biblioteca_L", $table['Nombre'])->take(1000)->get()->toArray();
         $spreadsheet->createSheet();
         $this->setNewPageAndData($spreadsheet, $data, 'NO ENCONTRADOS', 6);
-
-
-        
     
         $dataUbicaciones = DB::table($tableName)
-        ->select('master.Localizacion', DB::raw("COUNT($tableName.id) as total"))
+        ->select('master.Localizacion', DB::raw("COUNT($tableName.Id) as total"))
         ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
         ->where("{$tableName}.Estado", 'I')
         ->groupBy('master.Localizacion')
         ->take(1000)->get()->toArray();
 
         $dataUbicacionesPrecios = DB::table($tableName)
-        ->select('master.Localizacion', DB::raw("SUM(master.Precio) as total"))
+        ->select('master.Localizacion', DB::raw("COUNT(master.Id) as total"))
         ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
         //->where("{$tableName}.Estado", 'I')
         ->groupBy('master.Localizacion')

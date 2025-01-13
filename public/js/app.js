@@ -173,9 +173,8 @@ var Administracion = /*#__PURE__*/function () {
   }, {
     key: "setDateAndSetEvent",
     value: function setDateAndSetEvent(fechaInicio, fechaFin) {
-      console.log(fechaInicio);
-      console.log(moment__WEBPACK_IMPORTED_MODULE_5___default()(fechaInicio));
-      jquery__WEBPACK_IMPORTED_MODULE_0___default()('#daterange').off().daterangepicker({
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()('#daterange').off();
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()('#daterange').daterangepicker({
         opens: 'left',
         startDate: moment__WEBPACK_IMPORTED_MODULE_5___default()(fechaInicio),
         endDate: moment__WEBPACK_IMPORTED_MODULE_5___default()(fechaFin)
@@ -404,13 +403,9 @@ var Avances = /*#__PURE__*/function () {
           redirect: "follow"
         }).then(function (response) {
           if (response.status == 500) {
-            jquery__WEBPACK_IMPORTED_MODULE_0___default()('#daterange').val('').daterangepicker({
-              opens: 'left'
-            }, function (start, end, label) {});
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#dialog-form').hide();
             gridInstance.updateConfig({
-              columns: context.columns,
-              data: []
+              columns: context.columns
             }).forceRender();
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#alert-no-exist').show();
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#expordata').hide();
@@ -420,11 +415,6 @@ var Avances = /*#__PURE__*/function () {
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#dialog-form').show();
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#alert-no-exist').hide();
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#expordata').show();
-            console.log('json.fecha1');
-            console.log(json.fecha);
-            jquery__WEBPACK_IMPORTED_MODULE_0___default()('#daterange').val(json.fecha).daterangepicker({
-              opens: 'left'
-            }, function (start, end, label) {});
             gridInstance.updateConfig({
               columns: context.columns,
               data: json.data

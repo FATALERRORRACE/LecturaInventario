@@ -124,15 +124,9 @@ export class Avances {
                     })
                     .then((response) => {
                         if (response.status == 500) {
-                            $('#daterange').val('').daterangepicker(
-                                {
-                                    opens: 'left'
-                                }, function (start, end, label) { }
-                            );
                             $('#dialog-form').hide();
                             gridInstance.updateConfig({
                                 columns: context.columns,
-                                data: []
                             }).forceRender();
                             $('#alert-no-exist').show();
                             $('#expordata').hide();
@@ -142,13 +136,6 @@ export class Avances {
                             $('#dialog-form').show();
                             $('#alert-no-exist').hide();
                             $('#expordata').show();
-                            console.log('json.fecha1');
-                            console.log(json.fecha);
-                            $('#daterange').val(json.fecha).daterangepicker(
-                                {
-                                    opens: 'left'
-                                }, function (start, end, label) { }
-                            );
                             gridInstance.updateConfig({
                                 columns: context.columns,
                                 data: json.data
