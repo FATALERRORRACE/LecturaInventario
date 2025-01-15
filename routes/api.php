@@ -22,6 +22,8 @@ Route::middleware('auth:api')->get('/admin/{id}',                   [Administrac
 Route::middleware('auth:api')->post('/admin/biblioteca/set',        [AdministracionController::class, 'createJob']);
 Route::middleware('auth:api')->post('/admin/{espacio}/data',        [AdministracionController::class, 'getData']);
 Route::middleware('auth:api')->post('/admin/{espacio}/dataadvance', [AdministracionController::class, 'getDataAdvance']);
+Route::middleware('auth:api')->put('/admin/{espacio}/posinventario', [AdministracionController::class, 'updatePosInventario']);
+
 
 //AVANCES
 Route::middleware('auth:api')->get('/avances/{espacio}/info',               [AvancesController::class, 'getInfo']);

@@ -1,16 +1,28 @@
 <div class="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="text-center border-t border-gray-1 text-4B3863 px-4 pt-3" role="alert">
+    <div class="text-center border-t border-gray-1 text-4B3863 px-4 pt-2" role="alert">
         <p class="font-bold text-xl">Bibloteca Seleccionada: <span id="sel-bbl"></span></p>
-        <button id="expordata" class="border px-3 mx-3 base-1-color btn rounded-lg p-2" style="{{ $tableExists == false ? 'display:none;' : '' }}">
-            <i class="fa-solid fa-file-excel"></i> Exportar Materiales Inventariados
-        </button>
-        <button id="expordataRegister" class="border px-3 mx-3 base-1-color btn rounded-lg p-2" style="{{ $tableExists == false ? 'display:none;' : '' }}">
-            <i class="fa-solid fa-file-excel"></i> Descargar Informe Preliminar
-        </button>
-        <button id="expordataRegister" class="border px-3 mx-3 base-1-color btn rounded-lg p-2" style="{{ $tableExists == false ? 'display:none;' : '' }}">
-            <i class="fa-solid fa-file-excel"></i> Descargar Informe Final (Pos-Inventario) 
-        </button>
+        
     </div>
+    <div class="border-gray-1 px-4 flex justify-center " role="alert">
+        <div class="mt-2 border rounded-lg p-2">
+            <p class="text-gray-500">Opciones</p>
+            <label for="pos-inventario" class="ml-2 text-lg">Pos-Inventario</label>
+            <input type="checkbox" id="pos-inventario" name="pos-inventario" class="mr-2" {{ $posInventory ?  'checked' : '' }}>
+        </div>
+        <div class="mt-2 border rounded-lg p-2">
+            <p class="text-gray-500">Informes</p>
+            <button id="expordata" class="border px-3 mx-3 base-1-color btn rounded-lg p-2" style="{{ $tableExists == false ? 'display:none;' : '' }}">
+                <i class="fa-solid fa-file-excel"></i> Exportar Materiales Inventariados
+            </button>
+            <button id="expordataRegister" class="border px-3 mx-3 base-1-color btn rounded-lg p-2" style="{{ $tableExists == false ? 'display:none;' : '' }}">
+                <i class="fa-solid fa-file-excel"></i> Descargar Informe Preliminar
+            </button>
+            <button id="expordataRegisterPos" class="border px-3 mx-3 base-1-color btn rounded-lg p-2" style="{{ $tableExists == false ? 'display:none;' : '' }}">
+                <i class="fa-solid fa-file-excel"></i> Descargar Informe Final (Pos-Inventario) 
+            </button>
+        </div>
+    </div>
+    
     <form class="justify-center text-center flex" id="registercode">
         <div class="mt-2 w-50" id="alert-no-exist" style="{{ $tableExists == false ? 'display:none;' : '' }}">
             <div class="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4" role="alert">

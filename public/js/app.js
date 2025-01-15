@@ -86,6 +86,9 @@ var Administracion = /*#__PURE__*/function () {
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#expordataRegister").click(function () {
             window.open("".concat(location.href, "admin/data/").concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/master/xls"));
           });
+          jquery__WEBPACK_IMPORTED_MODULE_0___default()("#expordataRegisterPos").click(function () {
+            window.open("".concat(location.href, "admin/data/").concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/master/xls?posInventario=1"));
+          });
           jquery__WEBPACK_IMPORTED_MODULE_0___default()("#registercode").submit(function (event) {
             event.preventDefault();
             gridInstance.config.data.push({
@@ -123,6 +126,18 @@ var Administracion = /*#__PURE__*/function () {
     key: "actionAdminUtils",
     value: function actionAdminUtils() {
       var context = this;
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()("#pos-inventario").click(function (eve) {
+        console.log(eve);
+        fetch("api/admin/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/posinventario?active=").concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#pos-inventario").prop('checked')), {
+          method: "PUT",
+          headers: headers,
+          redirect: "follow"
+        }).then(function (response) {
+          return response.json().then(function (json) {
+            if (json.status == 200) toastr__WEBPACK_IMPORTED_MODULE_4___default().success(json.message);else toastr__WEBPACK_IMPORTED_MODULE_4___default().error(json.message);
+          });
+        });
+      });
       jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").off('change.espacio2').off('change.espacio1').on('change.espacio1', function () {
         jquery__WEBPACK_IMPORTED_MODULE_0___default()("#sel-bbl").text(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").find(':selected').text());
         fetch("api/admin/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/data"), {
@@ -145,7 +160,6 @@ var Administracion = /*#__PURE__*/function () {
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#dialog-form').show();
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#alert-no-exist').hide();
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#expordata').show();
-            console.log('json.fecha1');
             context.setDateAndSetEvent(json.fechaInicio, json.fechaFin);
             gridInstance.updateConfig({
               columns: context.columns,

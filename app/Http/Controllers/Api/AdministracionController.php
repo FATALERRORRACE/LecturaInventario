@@ -30,6 +30,7 @@ class AdministracionController extends Controller{
             'index.administracion',
             [
                 'tableExists' => $tableExists,
+                'posInventory' => (bool)$data['PosInventario'],
                 'date' => "{$data['Fecha_Inventario']} - {$data['Fecha_Fin_Inventario']}",
             ]
         );
@@ -96,10 +97,10 @@ class AdministracionController extends Controller{
         );
     }
 
-    public function createXlsMaster(int $id){
+    public function createXlsMaster(int $id, Request $request){
         $data = Bibliotecas::where('id', $id)->first();
         $xlssExportInstance = new XlssExport;
-        $xlssExportInstance->executeSecondReport($data);
+        $xlssExportInstance->executeSecondReport($data, (bool)$request->posInventario);
     }
 
     public function processTable($tableName, $username){
@@ -141,5 +142,22 @@ class AdministracionController extends Controller{
         if ($insert)
             DB::table($data['Tabla'])->insert($insert);
 
+    }
+
+    public function updatePosInventario($id, Request $request){
+        $data = Bibliotecas::where('id', $id)->update([
+            'PosInventario' => ($request->active == 'true' ? 1 : 0 )
+        ]);
+        if ($data) {
+            return response()->json([
+                'message' => $request->active == 'true' ? 'Pos inventario activo' : 'Pos inventario inactivo',
+                'status' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Biblioteca no encontrada',
+                'status' => 404
+            ]);
+        }
     }
 }

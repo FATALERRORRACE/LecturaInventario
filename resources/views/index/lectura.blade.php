@@ -12,7 +12,9 @@
     </div>
 @else
     <div id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);" ondragleave="dragLeaveHandler(event);">
-
+        @if($posInventory)
+            <span class="absolute inline-flex items-center ml-3 mt-1 rounded-md bg-blue-50 px-2 py-1 text-2xl font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">Pos-Inventario Activo</span>
+        @endif
         <div class="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="text-center border-t text-4B3863 px-4 pt-2" role="alert">
                 <p class="font-bold text-2xl">Lectura de códigos de barras</p>

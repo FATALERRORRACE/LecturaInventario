@@ -39,6 +39,9 @@ export class Administracion {
             $("#expordataRegister").click(()=>{
                 window.open(`${location.href}admin/data/${$("#espacio").val()}/master/xls`);
             });
+            $("#expordataRegisterPos").click(()=>{
+                window.open(`${location.href}admin/data/${$("#espacio").val()}/master/xls?posInventario=1`);
+            });
 
             $("#registercode").submit((event) => {
                 event.preventDefault();
@@ -79,6 +82,21 @@ export class Administracion {
 
     actionAdminUtils(){
         var context = this;
+        $("#pos-inventario").click((eve)=>{
+            console.log(eve);
+            fetch(`api/admin/${$("#espacio").val()}/posinventario?active=${$("#pos-inventario").prop('checked')}`,
+            {
+                method: "PUT",
+                headers: headers,
+                redirect: "follow"
+            })
+            .then((response) =>  response.json().then(json => {
+                if (json.status == 200)
+                    toastr.success(json.message);
+                else
+                    toastr.error(json.message);
+            }));
+        })
 
         $("#espacio").off('change.espacio2').off('change.espacio1').on('change.espacio1', () => {
             $("#sel-bbl").text($("#espacio").find(':selected').text());
@@ -104,7 +122,6 @@ export class Administracion {
                     $('#dialog-form').show();
                     $('#alert-no-exist').hide();
                     $('#expordata').show();
-                    console.log('json.fecha1');
                     context.setDateAndSetEvent(json.fechaInicio, json.fechaFin);
                     gridInstance.updateConfig({
                         columns: context.columns,

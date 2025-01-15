@@ -38,6 +38,7 @@ class InventarioController extends Controller{
                 'admin' => DB::table('usuariosadministradores')->where('username', Auth::user()->username)->first() ? 1 : 0 ,
                 'tableExists' => $tableExists,
                 'dateAllowed' => $dateAllowed,
+                'posInventory' => (bool)$library['PosInventario'],
             ]
         );
     }
