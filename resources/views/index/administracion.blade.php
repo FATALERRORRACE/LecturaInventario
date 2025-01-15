@@ -5,7 +5,10 @@
             <i class="fa-solid fa-file-excel"></i> Exportar Materiales Inventariados
         </button>
         <button id="expordataRegister" class="border px-3 mx-3 base-1-color btn rounded-lg p-2" style="{{ $tableExists == false ? 'display:none;' : '' }}">
-            <i class="fa-solid fa-file-excel"></i> Descargar Registro
+            <i class="fa-solid fa-file-excel"></i> Descargar Informe Preliminar
+        </button>
+        <button id="expordataRegister" class="border px-3 mx-3 base-1-color btn rounded-lg p-2" style="{{ $tableExists == false ? 'display:none;' : '' }}">
+            <i class="fa-solid fa-file-excel"></i> Descargar Informe Final (Pos-Inventario) 
         </button>
     </div>
     <form class="justify-center text-center flex" id="registercode">

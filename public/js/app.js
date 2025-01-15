@@ -173,9 +173,8 @@ var Administracion = /*#__PURE__*/function () {
   }, {
     key: "setDateAndSetEvent",
     value: function setDateAndSetEvent(fechaInicio, fechaFin) {
-      console.log(fechaInicio);
-      console.log(moment__WEBPACK_IMPORTED_MODULE_5___default()(fechaInicio));
-      jquery__WEBPACK_IMPORTED_MODULE_0___default()('#daterange').off().daterangepicker({
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()('#daterange').off();
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()('#daterange').daterangepicker({
         opens: 'left',
         startDate: moment__WEBPACK_IMPORTED_MODULE_5___default()(fechaInicio),
         endDate: moment__WEBPACK_IMPORTED_MODULE_5___default()(fechaFin)
@@ -221,8 +220,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jstree_dist_jstree__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(jstree_dist_jstree__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var jquery_ui_ui_widgets_dialog__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! jquery-ui/ui/widgets/dialog */ "./node_modules/jquery-ui/ui/widgets/dialog.js");
 /* harmony import */ var jquery_ui_ui_widgets_dialog__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(jquery_ui_ui_widgets_dialog__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var toastr__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! toastr */ "./node_modules/toastr/toastr.js");
-/* harmony import */ var toastr__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(toastr__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var jquery_ui_ui_widgets_tabs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! jquery-ui/ui/widgets/tabs */ "./node_modules/jquery-ui/ui/widgets/tabs.js");
+/* harmony import */ var jquery_ui_ui_widgets_tabs__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(jquery_ui_ui_widgets_tabs__WEBPACK_IMPORTED_MODULE_6__);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
@@ -244,32 +243,62 @@ var Avances = /*#__PURE__*/function () {
     _defineProperty(this, "signal", this.controller.signal);
     _defineProperty(this, "sendSignal", 0);
     _defineProperty(this, "columns", [{
-      name: "Códigos Escaneados",
-      columns: [{
-        id: "C_Barras",
-        name: "C_Barras",
-        width: '100px'
-      }, {
-        id: "Usuario",
-        name: "Usuario",
-        width: '100px'
-      }, {
-        id: "Situacion",
-        name: "Situacion",
-        width: '100px'
-      }, {
-        id: "Comentario",
-        name: "Comentario",
-        width: '100px'
-      }, {
-        id: "Fecha",
-        name: "Fecha",
-        width: '100px'
-      }, {
-        id: "Estado",
-        name: "Estado",
-        width: '100px'
-      }]
+      id: "C_Barras",
+      name: "C_Barras",
+      width: '100px'
+    }, {
+      id: "Usuario",
+      name: "Usuario",
+      width: '100px'
+    }, {
+      id: "Situacion",
+      name: "Situacion",
+      width: '100px'
+    }, {
+      id: "Comentario",
+      name: "Comentario",
+      width: '100px'
+    }, {
+      id: "Fecha",
+      name: "Fecha",
+      width: '100px'
+    }, {
+      id: "Estado",
+      name: "Estado",
+      width: '100px'
+    }]);
+    _defineProperty(this, "sColumns", [{
+      id: "C_Barras",
+      name: "C_Barras",
+      width: '100px'
+    }, {
+      id: "Titulo",
+      name: "Titulo",
+      width: '100px'
+    }, {
+      id: "Clasificacion",
+      name: "Clasificacion",
+      width: '100px'
+    }, {
+      id: "Usuario",
+      name: "Usuario",
+      width: '100px'
+    }, {
+      id: "Situacion",
+      name: "Situacion",
+      width: '100px'
+    }, {
+      id: "Comentario",
+      name: "Comentario",
+      width: '100px'
+    }, {
+      id: "Fecha",
+      name: "Fecha",
+      width: '100px'
+    }, {
+      id: "Estado",
+      name: "Estado",
+      width: '100px'
     }]);
   }
   return _createClass(Avances, [{
@@ -293,21 +322,79 @@ var Avances = /*#__PURE__*/function () {
     key: "utils",
     value: function utils() {
       var context = this;
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()("#tabs").tabs();
       gridInstance = new gridjs__WEBPACK_IMPORTED_MODULE_1__.Grid({
-        search: true,
         className: {
           tr: 'table-tr-custom'
         },
         columns: context.columns,
         sort: true,
-        pagination: true,
+        server: {
+          url: "api/avances/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/inventareados"),
+          then: function then(data) {
+            return data.data;
+          },
+          total: function total(data) {
+            return data.total;
+          }
+        },
+        pagination: {
+          limit: 10,
+          server: {
+            url: function url(prev, page, limit) {
+              return jquery__WEBPACK_IMPORTED_MODULE_0___default()("#table-no-inventory .gridjs-search-input").val() ? "".concat(prev, "&limit=").concat(limit, "&offset=").concat(page * limit) : "".concat(prev, "?limit=").concat(limit, "&offset=").concat(page * limit);
+            }
+          }
+        },
+        search: {
+          server: {
+            url: function url(prev, keyword) {
+              return "".concat(prev, "?search=").concat(keyword);
+            }
+          }
+        },
         language: gridjs_l10n__WEBPACK_IMPORTED_MODULE_2__.esES,
         resizable: true,
         selector: function selector(cell, rowIndex, cellIndex) {
           return cellIndex === 0 ? cell.firstName : cell;
-        },
-        data: []
+        }
       }).render(document.getElementById("table-advances"));
+      new gridjs__WEBPACK_IMPORTED_MODULE_1__.Grid({
+        columns: context.sColumns,
+        server: {
+          url: "api/avances/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/no-inventareados"),
+          then: function then(data) {
+            return data.data;
+          },
+          total: function total(data) {
+            return data.total;
+          }
+        },
+        pagination: {
+          limit: 10,
+          server: {
+            url: function url(prev, page, limit) {
+              return jquery__WEBPACK_IMPORTED_MODULE_0___default()("#table-no-inventory .gridjs-search-input").val() ? "".concat(prev, "&limit=").concat(limit, "&offset=").concat(page * limit) : "".concat(prev, "?limit=").concat(limit, "&offset=").concat(page * limit);
+            }
+          }
+        },
+        search: {
+          server: {
+            url: function url(prev, keyword) {
+              return "".concat(prev, "?search=").concat(keyword);
+            }
+          }
+        },
+        className: {
+          tr: 'table-tr-custom'
+        },
+        sort: true,
+        language: gridjs_l10n__WEBPACK_IMPORTED_MODULE_2__.esES,
+        resizable: true,
+        selector: function selector(cell, rowIndex, cellIndex) {
+          return cellIndex === 0 ? cell.firstName : cell;
+        }
+      }).render(document.getElementById("table-no-inventory"));
       jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").off('change.espacio3').off('change.espacio2').off('change.espacio1').on('change.espacio3', function () {
         jquery__WEBPACK_IMPORTED_MODULE_0___default()("#sel-bbl").text(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").find(':selected').text());
         fetch("api/admin/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/dataadvance"), {
@@ -316,13 +403,9 @@ var Avances = /*#__PURE__*/function () {
           redirect: "follow"
         }).then(function (response) {
           if (response.status == 500) {
-            jquery__WEBPACK_IMPORTED_MODULE_0___default()('#daterange').val('').daterangepicker({
-              opens: 'left'
-            }, function (start, end, label) {});
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#dialog-form').hide();
             gridInstance.updateConfig({
-              columns: context.columns,
-              data: []
+              columns: context.columns
             }).forceRender();
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#alert-no-exist').show();
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#expordata').hide();
@@ -332,11 +415,6 @@ var Avances = /*#__PURE__*/function () {
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#dialog-form').show();
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#alert-no-exist').hide();
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#expordata').show();
-            console.log('json.fecha1');
-            console.log(json.fecha);
-            jquery__WEBPACK_IMPORTED_MODULE_0___default()('#daterange').val(json.fecha).daterangepicker({
-              opens: 'left'
-            }, function (start, end, label) {});
             gridInstance.updateConfig({
               columns: context.columns,
               data: json.data
@@ -344,7 +422,6 @@ var Avances = /*#__PURE__*/function () {
           });
         });
       });
-      jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").trigger("change");
     }
   }, {
     key: "openDialogTree",
@@ -367,7 +444,8 @@ var Avances = /*#__PURE__*/function () {
             },
             height: 'auto',
             width: 'auto',
-            modal: false,
+            modal: true,
+            draggable: false,
             open: function open(event, ui) {
               jquery__WEBPACK_IMPORTED_MODULE_0___default()(".ui-dialog-title").text('');
             },

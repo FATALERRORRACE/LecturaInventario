@@ -131,9 +131,8 @@ export class Administracion {
     }
 
     setDateAndSetEvent(fechaInicio, fechaFin){
-        console.log(fechaInicio);
-        console.log(moment(fechaInicio));
-        $('#daterange').off().daterangepicker(
+        $('#daterange').off();
+        $('#daterange').daterangepicker(
             {
                 opens: 'left',
                 startDate: moment(fechaInicio),

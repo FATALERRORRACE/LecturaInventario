@@ -82,7 +82,8 @@ class AvancesController extends Controller
         $library = Bibliotecas::where("id", $id)->first();
         $clasificacion = Master::select('Clasificacion')
             ->where('Biblioteca', $library['Nombre'])
-            ->where('Localizacion', $request->lcl);
+            ->where('Localizacion', $request->lcl)
+            ->whereNull('Estado');
         if($request->search)
             $clasificacion->where('Clasificacion', 'LIKE', "{$request->search}%");
         return view(
@@ -94,5 +95,79 @@ class AvancesController extends Controller
                     ->toArray(),
             ]
         );
+    }
+
+    public function getInventariados($id ,Request $request){
+        $data = Bibliotecas::where('id', $id)->first();
+        $qryGetData = DB::
+            table($data['Tabla'])
+            ->select(
+                "{$data['Tabla']}.C_Barras",
+                "{$data['Tabla']}.Usuario",
+                "{$data['Tabla']}.Situacion",
+                "{$data['Tabla']}.Comentario",
+                "{$data['Tabla']}.Fecha",
+                "{$data['Tabla']}.Estado",
+            )
+            ->where('Estado','');
+        if($request->search){
+            $qryGetData
+                ->where(function($q) use ($data, $request) {
+                    $q->where("{$data['Tabla']}.C_Barras", 'LIKE', "{$request->search}%")
+                    ->orWhere("{$data['Tabla']}.Situacion", 'LIKE', "{$request->search}%")
+                    ->orWhere("{$data['Tabla']}.Usuario", 'LIKE', "{$request->search}%");
+                    //->orWhere("{$data['Tabla']}.Fecha", 'LIKE', "{$request->search}%")
+                });
+            
+        }
+        $countData = $qryGetData->count();
+        return [
+            'data' => $qryGetData
+                ->take($request->limit)
+                ->skip($request->offset)
+                ->get()
+                ->toArray(),
+            'total' => $countData
+        ];
+    }
+    public function getNoInventariados($id ,Request $request){
+        $data = Bibliotecas::where('id', $id)->first();
+        $qryGetData = DB::
+            table($data['Tabla'])
+            ->select(
+                'master.C_Barras',
+                'master.Titulo',
+                'master.Clasificacion',
+                "{$data['Tabla']}.Usuario",
+                "{$data['Tabla']}.Situacion",
+                "{$data['Tabla']}.Comentario",
+                "{$data['Tabla']}.Fecha",
+                "{$data['Tabla']}.Estado",
+            )
+            ->join('master', 'master.C_Barras', '=', "{$data['Tabla']}.C_Barras")
+            ->where('Estado','');
+        if($request->search){
+            $qryGetData
+                ->where(function($q) use ($data, $request) {
+                    $q->where("{$data['Tabla']}.C_Barras", 'LIKE', "{$request->search}%")
+                    ->orWhere('master.Titulo', 'LIKE', "{$request->search}%")
+                    ->orWhere('master.Clasificacion', 'LIKE', "{$request->search}%")
+                    ->orWhere("{$data['Tabla']}.Situacion", 'LIKE', "{$request->search}%")
+                    ->orWhere("{$data['Tabla']}.Usuario", 'LIKE', "{$request->search}%");
+                    //->orWhere("{$data['Tabla']}.Fecha", 'LIKE', "{$request->search}%")
+                    //->orWhere('master.Titulo', 'LIKE', "{$request->search}%")
+                    //->orWhere('master.Clasificacion', 'LIKE', "{$request->search}%");
+                });
+            
+        }
+        $countData = $qryGetData->count();
+        return [
+            'data' => $qryGetData
+                ->take($request->limit)
+                ->skip($request->offset)
+                ->get()
+                ->toArray(),
+            'total' => $countData
+        ];
     }
 }
