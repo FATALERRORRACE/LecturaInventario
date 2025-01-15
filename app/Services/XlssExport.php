@@ -6,6 +6,8 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Facades\DB;
 use App\Models\Master;
+use PhpParser\Node\Stmt\Foreach_;
+use Psy\VarDumper\Dumper;
 
 class XlssExport{
 
@@ -48,6 +50,8 @@ class XlssExport{
     public function executeSecondReport($table){
         $date = new \DateTime();
         $spreadsheet = new Spreadsheet();
+        $otros = [];
+        $consolidado = [];
         $activeWorksheet = $spreadsheet->getActiveSheet();
         $tableName = $table['Tabla'];
 
@@ -186,6 +190,8 @@ class XlssExport{
             //->where("{$tableName}.Estado", '<>', 'I')->where("{$tableName}.Estado", '<>','P')->take(1000)->get()->toArray();
             ->where("anexos.Biblioteca_O", $table['Nombre'])->take(1000)->get()->toArray();
         $spreadsheet->createSheet();
+
+        $otros['otrasBibCount'] = count($data);
         $this->setNewPageAndData($spreadsheet, $data, 'EN MI BIB', 5);
 
         $data = DB::table('anexos')
@@ -196,18 +202,74 @@ class XlssExport{
             ->where("anexos.Biblioteca_L", $table['Nombre'])->take(1000)->get()->toArray();
         $spreadsheet->createSheet();
         $this->setNewPageAndData($spreadsheet, $data, 'NO ENCONTRADOS', 6);
-
-
+        unset($data);
         
-    
-        $dataUbicaciones = DB::table($tableName)
+        $otros['ubicaciones'] = DB::table($tableName)
         ->select('master.Localizacion', DB::raw("COUNT($tableName.id) as total"))
         ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
         ->where("{$tableName}.Estado", 'I')
+        ->whereIn('master.Localizacion' ,
+            [
+                'Distrito Gráfico',
+                'General',
+                'Infantil',
+                'Sonoteca',
+                'Videoteca',
+            ]
+        )
         ->groupBy('master.Localizacion')
         ->take(1000)->get()->toArray();
 
-        $this->createConsilidatedReport($spreadsheet ,$table, 7, $dataUbicaciones);
+        $otros['Baja'] = DB::table($tableName)
+        ->select(DB::raw("COUNT($tableName.id) as total"))
+        ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
+        ->where("{$tableName}.Estado", 'I')
+        ->where("{$tableName}.Estado", 'P')
+        ->whereNotIn('master.Localizacion' ,
+            [
+                'Distrito Gráfico',
+                'General',
+                'Infantil',
+                'Sonoteca',
+                'Videoteca',
+            ]
+        )
+        ->take(1000)->first();
+        
+        $consolidado['Inventariado'] = DB::table($tableName)
+        ->select('master.Localizacion', DB::raw("COUNT($tableName.id) as total"), DB::raw("SUM(master.Precio) as totalprice"))
+        ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
+        ->where("{$tableName}.Estado", '<>','')
+        ->whereIn('master.Localizacion' ,['General','Infantil'])
+        ->groupBy('master.Localizacion')
+        ->take(1000)->get()->toArray();
+
+        $consolidado['Faltante'] = DB::table($tableName)
+        ->select('master.Localizacion', DB::raw("COUNT($tableName.id) as total"), DB::raw("SUM(master.Precio) as totalprice"))
+        ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
+        ->where("{$tableName}.Estado", '<>','I')
+        ->where("{$tableName}.Estado", '<>','P')
+        ->where('master.Proceso', '!=', 'Nivel Central')
+        ->whereIn('master.Localizacion' ,['General','Infantil'])
+        ->groupBy('master.Localizacion')
+        ->take(1000)->get()->toArray();
+
+        $consolidado['FaltanteNivelCentral'] = DB::table($tableName)
+        ->select(DB::raw("COUNT($tableName.id) as total"), DB::raw("SUM(master.Precio) as totalprice"))
+        ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
+        ->where("{$tableName}.Estado", '<>','I')
+        ->where("{$tableName}.Estado", '<>','P')
+        ->where('master.Proceso', 'Nivel Central')
+        ->take(1000)->first();
+        
+        $consolidado['FaltanteTransito'] = DB::table($tableName)
+        ->select(DB::raw("COUNT($tableName.id) as total"), DB::raw("SUM(master.Precio) as totalprice"))
+        ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
+        ->where("{$tableName}.Estado", '<>','I')
+        ->where("{$tableName}.Estado", '<>','P')
+        ->where('master.Proceso', 'Material en tránsito')
+        ->take(1000)->first();
+        $this->createConsilidatedReport($spreadsheet ,$table, 7, $otros, $consolidado);
 
         $activeWorksheet->getStyle("A1:O1")->getFont()->setBold(true);
         $activeWorksheet->getStyle('A1:O1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('DDE5ED');
@@ -251,8 +313,7 @@ class XlssExport{
         }
     }    
 
-    public function createConsilidatedReport($spreadsheet, $table, $position, $dataUbicaciones){
-        $date = new \DateTime();
+    public function createConsilidatedReport($spreadsheet, $table, $position, $dataUbicaciones, $consolidado){
         $spreadsheet->createSheet();
         $spreadsheet->setActiveSheetIndex($position);
         $spreadsheet->getActiveSheet()->setTitle('ACUMULADO');
@@ -294,20 +355,66 @@ class XlssExport{
 
         $spreadsheet->getActiveSheet()->setCellValue('B10', 'PROCESO DE INVENTARIO');
         $spreadsheet->getActiveSheet()->setCellValue('B11', 'INVENTARIADOS');
-        
-        foreach ($dataUbicaciones as $key => $value) {
+        $sumtotal = 0;
+        foreach ($dataUbicaciones['ubicaciones'] as $key => $value) {
             $spreadsheet->getActiveSheet()->setCellValue("A".($key+12), $value->Localizacion);
             $spreadsheet->getActiveSheet()->setCellValue("B".($key+12), $value->total);
+            $sumtotal += $value->total;
         }
-
+        $y = $key + 13;
+        $spreadsheet->getActiveSheet()->setCellValue("A{$y}", 'TOTALES');
+        $spreadsheet->getActiveSheet()->setCellValue("B{$y}", $sumtotal);
         $spreadsheet->getActiveSheet()->setCellValue('D10', 'OTROS');
         $spreadsheet->getActiveSheet()->mergeCells('D10:F10', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
         $spreadsheet->getActiveSheet()->setCellValue('D11', 'BAJA ACUMULADA');
         $spreadsheet->getActiveSheet()->setCellValue('E11', 'OTRAS BIBLIOTECAS');
         $spreadsheet->getActiveSheet()->setCellValue('F11', 'TOTAL');
+        $spreadsheet->getActiveSheet()->setCellValue('D12', $dataUbicaciones['Baja']->total);
+        $spreadsheet->getActiveSheet()->setCellValue('E12', $dataUbicaciones['otrasBibCount']);
+        $spreadsheet->getActiveSheet()->setCellValue('F12', ((int)$dataUbicaciones['Baja']->total + (int)$dataUbicaciones['otrasBibCount']));
+        $spreadsheet->getActiveSheet()->setCellValue('D13', $dataUbicaciones['Baja']->total);
+        $spreadsheet->getActiveSheet()->setCellValue('E13', $dataUbicaciones['otrasBibCount']);
+        $spreadsheet->getActiveSheet()->setCellValue('F13', ((int)$dataUbicaciones['Baja']->total + (int)$dataUbicaciones['otrasBibCount']));
+        $y+=2;
+        $spreadsheet->getActiveSheet()->setCellValue("A{$y}", 'INFORME CONSOLIDADO DE NO INVENTARIADOS Y TOTAL DE COLECCIÓN');
+        $spreadsheet->getActiveSheet()->mergeCells("A{$y}:D{$y}", \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
+        $y+=2;
+        $spreadsheet->getActiveSheet()->setCellValue("A{$y}", 'DESCRIPCIÓN');
+        $spreadsheet->getActiveSheet()->mergeCells("A{$y}:A".($y+1), \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
+        $spreadsheet->getActiveSheet()->setCellValue("B{$y}", 'RESUMEN DE INVENTARIO EN PERGAMUM');
+        $spreadsheet->getActiveSheet()->mergeCells("B{$y}:G{$y}", \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
+        $y+=1;
+        $rangeAngleX = range('B', 'I');
+        foreach (['UBICACIÓN', 'ESTADO', 'TOTAL', 'PRECIO', 'PRECIO TOTAL', '%', '%TOTAL'] as $key => $value) {
+            $spreadsheet->getActiveSheet()->setCellValue("{$rangeAngleX[$key]}{$y}", $value);
+        }
+        $y+=1;
 
+        $totalInventariado = $consolidado['Inventariado'][0]->total + $consolidado['Inventariado'][1]->total;
+        $totalInventariado = $consolidado['Faltante'][0]->total + $consolidado['Faltante'][1]->total;
+        $totalSuma = $totalInventariado + $totalInventariado + $consolidado['FaltanteNivelCentral']->total + $consolidado['FaltanteTransito']->total;
+        $spreadsheet->getActiveSheet()->setCellValue("B{$y}", 'General');
+        $spreadsheet->getActiveSheet()->setCellValue("C{$y}", 'No Disponible');
+        $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $consolidado['Inventariado'][0]->total);
+        $spreadsheet->getActiveSheet()->setCellValue("E{$y}", $totalInventariado);
+        $spreadsheet->getActiveSheet()->setCellValue("F{$y}", $consolidado['Inventariado'][0]->totalprice);
+        $spreadsheet->getActiveSheet()->setCellValue("G{$y}", $consolidado['Inventariado'][0]->totalprice + $consolidado['Inventariado'][1]->totalprice);
+        $spreadsheet->getActiveSheet()->setCellValue("H{$y}", ($consolidado['Inventariado'][0]->total / $totalSuma) * 100 . ' %');
+        $y+=1;
+        $spreadsheet->getActiveSheet()->setCellValue("B{$y}", 'Infantil');
+        $spreadsheet->getActiveSheet()->setCellValue("C{$y}", 'No Disponible');
+        $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $consolidado['Inventariado'][1]->total);
+        $spreadsheet->getActiveSheet()->setCellValue("F{$y}", $consolidado['Inventariado'][1]->totalprice);
+        $spreadsheet->getActiveSheet()->setCellValue("H{$y}", ($consolidado['Inventariado'][1]->total / $totalSuma) * 100 . ' %');
+        
+        //$consolidado
+        //$consolidado['Inventariado'][0]['total'] //general
+        //$consolidado['Inventariado'][1]['totalprice'] //infamtiol
+        //$consolidado['Faltante'][0]['total'] //general
+        //$consolidado['Faltante'][1]['totalprice'] //infamtiol
+
+        //$spreadsheet->getActiveSheet()->setCellValue('A{$key}', 'FALTANTES');
     }
-
 
     /**
      * Bootstrap services.
@@ -318,6 +425,4 @@ class XlssExport{
         header('Content-Disposition: attachment; filename="' . $nombre . " ". $date . '.xlsx"');
         $writer->save("php://output");
     }
-
-
 }
