@@ -16,14 +16,13 @@ class InventarioController extends Controller{
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         $library = Bibliotecas::where("id", $request->bbltc)->first();
         $date = new \DateTime();
         $dateFechaInventario = new \DateTime($library['Fecha_Inventario']);
         $dateFechaFinInventario = new \DateTime($library['Fecha_Fin_Inventario']);
-        $dateAllowed = false; 
-        if($date >= $dateFechaInventario && $date <= $dateFechaFinInventario)
+        $dateAllowed = false;
+        if ($date >= $dateFechaInventario && $date <= $dateFechaFinInventario)
             $dateAllowed = true;
 
         $tableExists = true;
@@ -35,7 +34,7 @@ class InventarioController extends Controller{
         return view(
             'index.lectura',
             [
-                'admin' => DB::table('usuariosadministradores')->where('username', Auth::user()->username)->first() ? 1 : 0 ,
+                'admin' => DB::table('usuariosadministradores')->where('username', Auth::user()->username)->first() ? 1 : 0,
                 'tableExists' => $tableExists,
                 'dateAllowed' => $dateAllowed,
                 'posInventory' => (bool)$library['PosInventario'],
@@ -48,8 +47,8 @@ class InventarioController extends Controller{
      *
      * @return \Illuminate\Http\Response
      */
-    public function setDate($id, Request $request)
-    {
+    public function setDate($id, Request $request){
+
         $fecha = explode(' - ', $request->fecha);
         $fechaInicio = new \DateTime($fecha[0]);
         $fechaFin = new \DateTime($fecha[1]);
@@ -79,107 +78,43 @@ class InventarioController extends Controller{
      *
      * @return \Illuminate\Http\Response
      */
-    public function set($id, Request $request)
-    {
+    public function set($id, Request $request){
         $cbarras = $request->cbarras;
         $date = new \DateTime();
         $date = $date->format("Y-m-d");
         $library = Bibliotecas::where("id", $id)->first();
         $username = $request->user()->username;
+        // $request->inventario = 1 // INVENTARIO;
+        // $request->inventario = 2 // PRESTAMO;
+        $estado = $request->inventario == 1 ? 'I' : 'P';
         $record = false;
         try {
             $record = DB::table($library['Tabla'])->where('C_Barras', $cbarras)->first();
         } catch (\Throwable $th) {}
         if (!$record) {
             $findInAnotherLibrary = Master::where('C_Barras', $cbarras)->first();
+            $dataRecord = [];
             if ($findInAnotherLibrary) {
                 $originalLibrary = Bibliotecas::where("Nombre", $findInAnotherLibrary->Biblioteca)->first();
-                $dataRecord = [
-                    'C_Barras' => $cbarras,
-                    'Biblioteca_L' => $library['Nombre'], //lectora
-                    'Biblioteca_O' => $originalLibrary->Nombre,
-                    'Fecha' => $date,
-                    'Situacion' => $findInAnotherLibrary['Proceso'],
-                    'Usuario' => $username,
-                ];
-                DB::table('anexos')
-                    ->insert($dataRecord);
-                $dataRecord['InsercionEstado'] = 0;
-                $dataRecord['Insercion'] = "Material de otra biblioteca";
+                $dataRecord['Biblioteca_O'] = $originalLibrary->Nombre;
+                $dataRecord['Situacion'] = $findInAnotherLibrary['Proceso'];
             } else {
-                $dataRecord = [
-                    'C_Barras' => $cbarras,
-                    'Biblioteca_L' =>  NULL,
-                    'Biblioteca_O' => NULL,
-                    'Fecha' => $date,
-                    'Situacion' => '',
-                    'Usuario' => $username,
-                ];
-                DB::table('anexos')
-                    ->insert($dataRecord);
-
-                $dataRecord['Biblioteca_L'] = 'No encontrado';
-                $dataRecord['Biblioteca_O'] = 'No encontrado';
-                $dataRecord['InsercionEstado'] = 0;
-                $dataRecord['Insercion'] = "Código de barras no encontrado";
+                $dataRecord['Biblioteca_O'] = NULL;
+                $dataRecord['Situacion'] = 'No encontrado';
             };
+
+            $dataRecord['Fecha'] = $date;
+            $dataRecord['C_Barras'] = $cbarras;
+            $dataRecord['Biblioteca_L'] = $library['Nombre'];
+            $dataRecord['Usuario'] = $username;
+            DB::table('anexos')->insert($dataRecord);
+            $dataRecord['InsercionEstado'] = 0;
+            $dataRecord['Insercion'] = ($findInAnotherLibrary ? "Material de otra biblioteca" : "Código de barras no encontrado");
         } else {
-            $estadoMatch = false;
-            switch ((int)$request->categoria) {
-                case 1:
-                    $estado = 'Nivel Central';
-                    $estadoMatch = $record->Situacion == $estado;
-                    break;
-                case 2:
-                    $estado = 'Normal o No Displonible';
-                    $estadoMatch = $record->Situacion == 'Normal' || $record->Situacion == 'No Displonible';
-                    break;
-                case 3:
-                    $estado = 'En catalogación';
-                    $estadoMatch = $record->Situacion == $estado;
-                    break;
-            }
-            if ($estadoMatch) {
-                DB::table($library['Tabla'])->where('id', $record->id)
-                    ->update([
-                        'Situacion' => $record->Situacion,
-                        'Estado' => 'I',
-                        'Usuario' => $username,
-                        'Fecha' => $date,
-                    ]);
-                $dataRecord = [
-                    'clasificacion' => (int)$request->categoria,
-                    'InsercionEstado' => 1,
-                    'Insercion' => "Inventareado exitosamente",
-                    'C_Barras' => $record->C_Barras,
-                    'Situacion' => $record->Situacion,
-                    'Biblioteca_L' =>  $library['Nombre'],
-                    'Biblioteca_O' => $library['Nombre'],
-                    'Estado' => 'I',
-                    'Usuario' => $username,
-                    'Fecha' => $date,
-                ];
-            } else if (!$estadoMatch) {
-                DB::table($library['Tabla'])->where('id', $record->id)
-                    ->update([
-                        'Situacion' => $record->Situacion,
-                        'Estado' => 'I',
-                        'Usuario' => $username,
-                        'Fecha' => $date,
-                    ]);
-                $dataRecord = [
-                    'clasificacion' => (int)$request->categoria,
-                    'InsercionEstado' => 0,
-                    'Insercion' => "Inventareado - Alerta, Estado distinto a $estado",
-                    'C_Barras' => $record->C_Barras,
-                    'Situacion' => $record->Situacion,
-                    'Biblioteca_L' =>  $library['Nombre'],
-                    'Biblioteca_O' => NULL,
-                    'Estado' => $record->Estado,
-                    'Usuario' => $username,
-                    'Fecha' => $date,
-                ];
-            }
+            if($library['PosInventario'] == 1)
+                $dataRecord = $this->posInventoryRecord($request, $record, $estado, $username, $date, $library);
+            else
+                $dataRecord = $this->noPosInventoryRecord($request, $record, $estado, $username, $date, $library);
         }
         return $dataRecord;
     }
@@ -190,9 +125,13 @@ class InventarioController extends Controller{
         $validateInsertion = new ValidateInsertion;
         $library = Bibliotecas::where("id", $id)->first();
         $username = $request->user()->username;
-        // $request->inventario = 1 // INVENTARIO;
-        // $request->inventario = 2 // PRESTAMO;
         $tipoInventario = $request->inventario == 1 || $request->inventario == 'undefined' ? 'I' : 'P';
+        if($library->PosInventario == 1 ){
+            if($tipoInventario == 'P'){
+                $tipoInventario = 'D';
+            }
+        };
+
         try {
             DB::table($library['Tabla'])->first();
         } catch (\Throwable $th) {
@@ -201,8 +140,9 @@ class InventarioController extends Controller{
         $filePathName = $request->file('file')->getPathname();
         $handle = fopen($filePathName, "r");
         $filename = $request->file('file')->getClientOriginalName();
-        $newfilename = $date->format('Ymdhsi').$filename.".csv";
-        $newfileData[] = implode(';', 
+        $newfilename = $date->format('Ymdhsi') . $filename . ".csv";
+        $newfileData[] = implode(
+            ';',
             [
                 'InsercionEstado',
                 'Insercion',
@@ -220,22 +160,21 @@ class InventarioController extends Controller{
             $count = 0;
             $inserted = 0;
             $failed = 0;
-            $allRecords = DB::
-                table($library['Tabla'])
-                ->select('Id', 'C_Barras', 'Situacion','Estado')
+            $allRecords = DB::table($library['Tabla'])
+                ->select('Id', 'C_Barras', 'Situacion', 'Estado')
                 ->get()->keyBy('C_Barras')->toArray();
-            
+
             while (($line = fgets($handle)) !== false) {
                 $line = str_replace("\n", "", $line);
                 $line = str_replace("\r", "", $line);
                 $line = str_replace(" ", "", $line);
                 $tmpData = $validateInsertion->set(
-                    isset($allRecords[$line]) ? $allRecords[$line] : null , 
-                    $dateF, 
-                    $username, 
-                    $line, 
-                    $library, 
-                    (int)$request->categoria, 
+                    isset($allRecords[$line]) ? $allRecords[$line] : null,
+                    $dateF,
+                    $username,
+                    $line,
+                    $library,
+                    (int)$request->categoria,
                     $tipoInventario
                 );
                 if ($tmpData['InsercionEstado'] == 1)
@@ -249,11 +188,11 @@ class InventarioController extends Controller{
             fseek($temp, 0);
         }
         DB::table($library['Tabla'])->where('Fecha', $dateF)
-        ->update([
-            'Comentario' => 'Origen:'.$filename,
-            'Usuario' => $username,
-        ]);
-        file_put_contents("/tmp/".$newfilename, implode(PHP_EOL, $newfileData) );
+            ->update([
+                'Comentario' => 'Origen:' . $filename,
+                'Usuario' => $username,
+            ]);
+        file_put_contents("/tmp/" . $newfilename, implode(PHP_EOL, $newfileData));
         return [
             'filename' => $filename,
             'total' => (int)$failed + (int)$inserted,
@@ -272,8 +211,107 @@ class InventarioController extends Controller{
         header('Pragma: public');
         header('Content-Length: ' . filesize("/tmp/{$request->name}"));
         header('Content-Type: application/octet-stream');
-        header("Content-Transfer-Encoding: Binary"); 
+        header("Content-Transfer-Encoding: Binary");
         readfile("c:/tmp/{$request->name}");
         exit();
+    }
+
+    public function posInventoryRecord($request, $record, $estado, $username, $date, $library) {
+        if($estado == 'P' && empty($record->Estado) || $estado == 'P' && $record->Estado == 'P' ){
+            $estado = 'D';
+            DB::table($library['Tabla'])->where('id', $record->id)
+            ->update([
+                'Estado' => $estado,
+                'Usuario' => $username,
+                'Fecha' => $date,
+            ]);
+        }
+        if($estado == 'I' && empty($record->Estado)){
+            $estado = 'E';
+            DB::table($library['Tabla'])->where('id', $record->id)
+            ->update([
+                'Estado' => $estado,
+                'Usuario' => $username,
+                'Fecha' => $date,
+            ]);
+        }
+        if($estado == 'I' && $record->Estado == 'I'){
+            DB::table($library['Tabla'])->where('id', $record->id)
+            ->update([
+                'Usuario' => $username,
+                'Fecha' => $date,
+            ]); 
+        }
+        $situacionMatch = false;
+        switch ((int)$request->categoria) {
+            case 1:
+                $situacion = 'Nivel Central';
+                $situacionMatch = $record->Situacion == $situacion;
+                break;
+            case 2:
+                $situacion = 'Normal o No Displonible';
+                $situacionMatch = $record->Situacion == 'Normal' || $record->Situacion == 'No Displonible';
+                break;
+            case 3:
+                $situacion = 'En catalogación';
+                $situacionMatch = $record->Situacion == $situacion;
+                break;
+        }
+        $dataRecord = [
+            'clasificacion' => (int)$request->categoria,
+            'InsercionEstado' => 1,
+            'Insercion' => $situacionMatch ? 'Inventareado exitosamente' : 'Inventareado - Alerta, Estado distinto a $situacion',
+            'C_Barras' => $record->C_Barras,
+            'Situacion' => $record->Situacion,
+            'Biblioteca_L' =>  $library['Nombre'],
+            'Biblioteca_O' => $library['Nombre'],
+            'Estado' => $estado,
+            'Usuario' => $username,
+            'Fecha' => $date,
+        ];
+        return $dataRecord;
+    }
+
+    public function noPosInventoryRecord($request, $record, $estado, $username, $date, $library){
+        $situacionMatch = false;
+        switch ((int)$request->categoria) {
+            case 1:
+                $situacion = 'Nivel Central';
+                $situacionMatch = $record->Situacion == $situacion;
+                break;
+            case 2:
+                $situacion = 'Normal o No Displonible';
+                $situacionMatch = $record->Situacion == 'Normal' || $record->Situacion == 'No Displonible';
+                break;
+            case 3:
+                $situacion = 'En catalogación';
+                $situacionMatch = $record->Situacion == $situacion;
+                break;
+        }
+        DB::table($library['Tabla'])->where('id', $record->id)
+            ->update([
+                'Estado' => $estado,
+                'Usuario' => $username,
+                'Fecha' => $date,
+            ]);
+        DB::table($library['Tabla'])->where('id', $record->id)
+            ->update([
+                'Estado' => $estado,
+                'Usuario' => $username,
+                'Fecha' => $date,
+            ]);
+        $dataRecord = [
+            'clasificacion' => (int)$request->categoria,
+            'InsercionEstado' => 1,
+            'Insercion' => $situacionMatch ? 'Inventareado exitosamente' : 'Inventareado - Alerta, Estado distinto a $situacion',
+            'C_Barras' => $record->C_Barras,
+            'Situacion' => $record->Situacion,
+            'Biblioteca_L' =>  $library['Nombre'],
+            'Biblioteca_O' => $library['Nombre'],
+            'Estado' => $estado,
+            'Usuario' => $username,
+            'Fecha' => $date,
+        ];
+        return $dataRecord;
     }
 }

@@ -24,6 +24,29 @@ class ValidateInsertion{
                 'Fecha' => $date,
             ];
         } else {
+
+            if($library->PosInventario == 1 ){
+                if($tipoInventario == 'P'){
+                    $tipoInventario = 'D';
+                }
+                if($tipoInventario == 'I' && empty($found->Estado)){
+                    $tipoInventario = 'E';
+                }
+                if($tipoInventario == 'I' && $found->Estado == 'I'){
+                    return $dataRecord = [
+                        'InsercionEstado' => 1,
+                        'Insercion' => "Inventareado exitosamente",
+                        'C_Barras' => $found->C_Barras,
+                        'Situacion' => $found->Situacion,
+                        'Biblioteca_L' =>  $library['Nombre'],
+                        'Biblioteca_O' => $library['Nombre'],
+                        'Estado' => 'I',
+                        'Usuario' => $username,
+                        'Fecha' => $date,
+                    ];
+                }
+            };
+
             $estadoMatch = false;
             switch ((int)$categoria) {
                 case 1:
@@ -39,41 +62,22 @@ class ValidateInsertion{
                     $estadoMatch = $found->Situacion == $estado;
                     break;
             }
-            if ($estadoMatch) {
-                DB::table($library['Tabla'])->where('Id', $found->Id)
-                    ->update([
-                        'Fecha' => $date,
-                        'Estado' => $tipoInventario,
-                    ]);
-                $dataRecord = [
-                    'InsercionEstado' => 1,
-                    'Insercion' => "Inventareado exitosamente",
-                    'C_Barras' => $found->C_Barras,
-                    'Situacion' => $found->Situacion,
-                    'Biblioteca_L' =>  $library['Nombre'],
-                    'Biblioteca_O' => $library['Nombre'],
-                    'Estado' => 'I',
-                    'Usuario' => $username,
-                    'Fecha' => $date,
-                ];
-            } else if (!$estadoMatch) {
-                DB::table($library['Tabla'])->where('Id', $found->Id)
-                ->update([
-                    'Fecha' => $date,
-                    'Estado' => $tipoInventario,
-                ]);
-                $dataRecord = [
-                    'InsercionEstado' => 1,
-                    'Insercion' => "Inventareado - Estado del material distinto a $estado",
-                    'C_Barras' => $found->C_Barras,
-                    'Situacion' => $found->Situacion,
-                    'Biblioteca_L' =>  $library['Nombre'],
-                    'Biblioteca_O' => $library['Nombre'],
-                    'Estado' => $found->Estado,
-                    'Usuario' => $username,
-                    'Fecha' => $date,
-                ];
-            }
+            $dataRecord = [
+                'InsercionEstado' => 1,
+                'Insercion' => $estadoMatch ? "Inventareado exitosamente" : "Inventareado - Estado del material distinto a {$estado}",
+                'C_Barras' => $found->C_Barras,
+                'Situacion' => $found->Situacion,
+                'Biblioteca_L' =>  $library['Nombre'],
+                'Biblioteca_O' => $library['Nombre'],
+                'Estado' => $tipoInventario,
+                'Usuario' => $username,
+                'Fecha' => $date,
+            ];
+            DB::table($library['Tabla'])->where('Id', $found->Id)
+            ->update([
+                'Fecha' => $date,
+                'Estado' => $tipoInventario,
+            ]);
         }
         return $dataRecord;
     }

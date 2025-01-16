@@ -645,10 +645,17 @@ var Inventario = /*#__PURE__*/function () {
               redirect: "follow",
               body: JSON.stringify({
                 'cbarras': jquery__WEBPACK_IMPORTED_MODULE_0___default()('#codbar').val(),
+                'inventario': jquery__WEBPACK_IMPORTED_MODULE_0___default()("input[name=tipoCarga]:checked").val(),
                 'categoria': jquery__WEBPACK_IMPORTED_MODULE_0___default()("input[name=clasificacion]:checked").val()
               })
             }).then(function (response) {
-              return response.json().then(function (json) {
+              if (response.status == 500) {
+                jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").prop('disabled', false);
+                jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").trigger('focus');
+                jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").val('');
+                toastr__WEBPACK_IMPORTED_MODULE_3___default().error('Error en el servicio');
+              }
+              response.json().then(function (json) {
                 jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").prop('disabled', false);
                 jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").trigger('focus');
                 jquery__WEBPACK_IMPORTED_MODULE_0___default()("#codbar").val('');

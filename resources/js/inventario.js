@@ -99,19 +99,28 @@ export class Inventario {
                         redirect: "follow",
                         body: JSON.stringify({
                             'cbarras': $('#codbar').val(),
-                            'categoria': $("input[name=clasificacion]:checked").val()
-                        }),
+                            'inventario': $("input[name=tipoCarga]:checked").val(),
+                            'categoria': $("input[name=clasificacion]:checked").val(),
+                        })
                     })
-                    .then((response) => response.json().then(json => {
-                        $("#codbar").prop('disabled', false);
-                        $("#codbar").trigger('focus');
-                        $("#codbar").val('');
-                        gridInstance.config.data.unshift(json);
-                        gridInstance.updateConfig({
-                            data: gridInstance.config.data
-                        }).forceRender();
-                        localStorage.setItem('alerts', JSON.stringify(gridInstance.config.data));
-                    }));
+                    .then((response) => {
+                        if (response.status == 500) {
+                            $("#codbar").prop('disabled', false);
+                            $("#codbar").trigger('focus');
+                            $("#codbar").val('');
+                            toastr.error('Error en el servicio');
+                        }
+                        response.json().then(json => {
+                            $("#codbar").prop('disabled', false);
+                            $("#codbar").trigger('focus');
+                            $("#codbar").val('');
+                            gridInstance.config.data.unshift(json);
+                            gridInstance.updateConfig({
+                                data: gridInstance.config.data
+                            }).forceRender();
+                            localStorage.setItem('alerts', JSON.stringify(gridInstance.config.data));
+                        });
+                    });
                 $("#codbar").val('');
             });
         }));

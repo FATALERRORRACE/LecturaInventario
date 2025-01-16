@@ -13141,48 +13141,30 @@ window.dropHandler = function (ev) {
     toastr__WEBPACK_IMPORTED_MODULE_1___default().error('Seleccione una clasificación');
     return;
   }
-  if (ev.currentTarget && ev.currentTarget.files) {
-    var file = ev.currentTarget.files[0];
-    var data = new FormData();
-    data.append('file', file);
-    fetch("api/inventario/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/datafile?categoria=").concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("input[name=clasificacion]:checked").val(), "&inventario=").concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("input[name=tipoCarga]:checked").val()), {
-      method: "POST",
-      headers: headersMultipart,
-      redirect: "follow",
-      body: data
-    }).then(function (response) {
-      return response.json().then(function (json) {
-        subgridInstance.config.data.unshift(json);
-        subgridInstance.updateConfig({
-          data: subgridInstance.config.data
-        }).forceRender();
-        localStorage.setItem('filesUploaded', JSON.stringify(subgridInstance.config.data));
-        showElements();
-      });
+  var data = new FormData();
+  var file;
+  if (ev.currentTarget && ev.currentTarget.files) file = ev.currentTarget.files[0];
+  if (ev.dataTransfer && ev.dataTransfer.items && ev.dataTransfer.items[0].kind === "file") file = ev.dataTransfer.items[0].getAsFile();
+  if (!file) {
+    toastr__WEBPACK_IMPORTED_MODULE_1___default().error('Archivo no reconocido');
+    return;
+  }
+  data.append('file', file);
+  fetch("api/inventario/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/datafile?categoria=").concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("input[name=clasificacion]:checked").val(), "&inventario=").concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("input[name=tipoCarga]:checked").val()), {
+    method: "POST",
+    headers: headersMultipart,
+    redirect: "follow",
+    body: data
+  }).then(function (response) {
+    return response.json().then(function (json) {
+      subgridInstance.config.data.unshift(json);
+      subgridInstance.updateConfig({
+        data: subgridInstance.config.data
+      }).forceRender();
+      localStorage.setItem('filesUploaded', JSON.stringify(subgridInstance.config.data));
+      showElements();
     });
-  }
-  if (ev.dataTransfer && ev.dataTransfer.items) {
-    if (ev.dataTransfer.items[0].kind === "file") {
-      var file = ev.dataTransfer.items[0].getAsFile();
-      var data = new FormData();
-      data.append('file', file);
-      fetch("api/inventario/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/datafile?categoria=").concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("input[name=clasificacion]:checked").val(), "&inventario=").concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("input[name=tipoCarga]:checked").val()), {
-        method: "POST",
-        headers: headersMultipart,
-        redirect: "follow",
-        body: data
-      }).then(function (response) {
-        return response.json().then(function (json) {
-          subgridInstance.config.data.unshift(json);
-          subgridInstance.updateConfig({
-            data: subgridInstance.config.data
-          }).forceRender();
-          localStorage.setItem('filesUploaded', JSON.stringify(subgridInstance.config.data));
-          showElements();
-        });
-      });
-    }
-  }
+  });
 };
 })();
 
