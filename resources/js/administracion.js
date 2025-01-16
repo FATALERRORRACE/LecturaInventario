@@ -122,11 +122,13 @@ export class Administracion {
                     $('#dialog-form').show();
                     $('#alert-no-exist').hide();
                     $('#expordata').show();
-                    context.setDateAndSetEvent(json.fechaInicio, json.fechaFin);
-                    gridInstance.updateConfig({
-                        columns: context.columns,
-                        data: json.data
-                    }).forceRender();
+                    if(json.fechaInicio && json.fechaFin && json.data){
+                        context.setDateAndSetEvent(json.fechaInicio, json.fechaFin);
+                        gridInstance.updateConfig({
+                            columns: context.columns,
+                            data: json.data
+                        }).forceRender();
+                    }
                 });
             });
         });
