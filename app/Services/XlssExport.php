@@ -83,7 +83,7 @@ class XlssExport{
             else 
                 $data->where("{$tableName}.Estado", 'I');
 
-            $data = $data->take(100)->get()->toArray();
+            $data = $data->get()->toArray();
         $spreadsheet->getActiveSheet()->setTitle('INVENTARIADO');
         $this->setNewPageAndData($spreadsheet, $data, 'INVENTARIADO', $position++);
 
@@ -105,7 +105,7 @@ class XlssExport{
                 'master.Acervo'
             )
             ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
-            ->where("{$tableName}.Estado", 'P')->take(100)->get()->toArray();
+            ->where("{$tableName}.Estado", 'P')->get()->toArray();
         $spreadsheet->createSheet();
         $this->setNewPageAndData($spreadsheet, $data, 'PRESTADOS', $position++);
         $data = DB::table($tableName)
@@ -126,8 +126,8 @@ class XlssExport{
                 'master.Acervo'
             )
             ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
-            //->where("{$tableName}.Estado", '<>', 'I')->where("{$tableName}.Estado", '<>','P')->take(100)->get()->toArray();
-            ->where("master.Proceso", 'NIVEL CENTRAL')->take(100)->get()->toArray();
+            //->where("{$tableName}.Estado", '<>', 'I')->where("{$tableName}.Estado", '<>','P')->get()->toArray();
+            ->where("master.Proceso", 'NIVEL CENTRAL')->get()->toArray();
         
         $spreadsheet->createSheet();
         $this->setNewPageAndData($spreadsheet, $data, 'NIVEL CENTRAL', $position++);
@@ -150,8 +150,8 @@ class XlssExport{
                 'master.Acervo'
             )
             ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
-            //->where("{$tableName}.Estado", '<>', 'I')->where("{$tableName}.Estado", '<>','P')->take(100)->get()->toArray();
-            ->where("{$tableName}.Situacion", 'En catalogación')->take(100)->get()->toArray();
+            //->where("{$tableName}.Estado", '<>', 'I')->where("{$tableName}.Estado", '<>','P')->get()->toArray();
+            ->where("{$tableName}.Situacion", 'En catalogación')->get()->toArray();
         $spreadsheet->createSheet();
         $this->setNewPageAndData($spreadsheet, $data, 'EN CATALOGACIÓN', $position++);
 
@@ -173,8 +173,8 @@ class XlssExport{
                 'master.Acervo'
             )
             ->join('master', 'master.C_Barras', '=', "anexos.C_Barras")
-            //->where("{$tableName}.Estado", '<>', 'I')->where("{$tableName}.Estado", '<>','P')->take(100)->get()->toArray();
-            ->where("anexos.Biblioteca_L", $table['Nombre'])->take(100)->get()->toArray();
+            //->where("{$tableName}.Estado", '<>', 'I')->where("{$tableName}.Estado", '<>','P')->get()->toArray();
+            ->where("anexos.Biblioteca_L", $table['Nombre'])->get()->toArray();
         $spreadsheet->createSheet();
         $this->setNewPageAndData($spreadsheet, $data, 'EN OTRAS BIB', $position++);
 
@@ -197,8 +197,8 @@ class XlssExport{
                 'master.Acervo'
             )
             ->join('master', 'master.C_Barras', '=', "anexos.C_Barras")
-            //->where("{$tableName}.Estado", '<>', 'I')->where("{$tableName}.Estado", '<>','P')->take(100)->get()->toArray();
-            ->where("anexos.Biblioteca_O", $table['Nombre'])->take(100)->get()->toArray();
+            //->where("{$tableName}.Estado", '<>', 'I')->where("{$tableName}.Estado", '<>','P')->get()->toArray();
+            ->where("anexos.Biblioteca_O", $table['Nombre'])->get()->toArray();
         
         $otros['otrasBibCount'] = count($data);
         $spreadsheet->createSheet();
@@ -209,7 +209,7 @@ class XlssExport{
                 'C_Barras', 
             )
             ->whereNull("anexos.Biblioteca_O")
-            ->where("anexos.Biblioteca_L", $table['Nombre'])->take(100)->get()->toArray();
+            ->where("anexos.Biblioteca_L", $table['Nombre'])->get()->toArray();
         $spreadsheet->createSheet();
         $this->setNewPageAndData($spreadsheet, $data, 'NO ENCONTRADOS', $position++);
         unset($data);
@@ -235,7 +235,7 @@ class XlssExport{
             ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
             ->whereNotIn("{$tableName}.Estado", ['I', 'E'])
             ->where("master.Proceso", 'Baja')
-            ->take(100)->get()->toArray();
+            ->get()->toArray();
         $spreadsheet->createSheet();
         $this->setNewPageAndData($spreadsheet, $data, 'BAJA', $position++);
 
@@ -259,7 +259,7 @@ class XlssExport{
                 )
                 ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
                 ->where("{$tableName}.Estado", 'E')
-                ->take(100)->get()->toArray();
+                ->get()->toArray();
             $spreadsheet->createSheet();
             $this->setNewPageAndData($spreadsheet, $data, 'ENCONTRADOS', $position++);
         }
@@ -278,7 +278,7 @@ class XlssExport{
             ]
         )
         ->groupBy('master.Localizacion')
-        ->take(100)->get()->toArray();
+        ->get()->toArray();
 
         $otros['Baja'] = DB::table($tableName)
         ->select(DB::raw("COUNT($tableName.id) as total"))
@@ -294,7 +294,7 @@ class XlssExport{
                 'Videoteca',
             ]
         )
-        ->take(100)->first();
+        ->first();
         
         $consolidado['Inventariado'] = DB::table($tableName)
         ->select('master.Localizacion', DB::raw("COUNT($tableName.id) as total"), DB::raw("SUM(master.Precio) as totalprice"))
@@ -302,7 +302,7 @@ class XlssExport{
         ->where("{$tableName}.Estado", '<>','')
         ->whereIn('master.Localizacion' ,['General','Infantil'])
         ->groupBy('master.Localizacion')
-        ->take(100)->get()->toArray();
+        ->get()->toArray();
 
         $consolidado['Faltante'] = DB::table($tableName)
         ->select('master.Localizacion', DB::raw("COUNT($tableName.id) as total"), DB::raw("SUM(master.Precio) as totalprice"))
@@ -312,7 +312,7 @@ class XlssExport{
         ->where('master.Proceso', '!=', 'Nivel Central')
         ->whereIn('master.Localizacion' ,['General','Infantil'])
         ->groupBy('master.Localizacion')
-        ->take(100)->get()->toArray();
+        ->get()->toArray();
 
         $consolidado['FaltanteNivelCentral'] = DB::table($tableName)
         ->select(DB::raw("COUNT($tableName.id) as total"), DB::raw("SUM(master.Precio) as totalprice"))
@@ -320,7 +320,7 @@ class XlssExport{
         ->where("{$tableName}.Estado", '<>','I')
         ->where("{$tableName}.Estado", '<>','P')
         ->where('master.Proceso', 'Nivel Central')
-        ->take(100)->first();
+        ->first();
         
         $consolidado['FaltanteTransito'] = DB::table($tableName)
         ->select(DB::raw("COUNT($tableName.id) as total"), DB::raw("SUM(master.Precio) as totalprice"))
@@ -328,7 +328,7 @@ class XlssExport{
         ->where("{$tableName}.Estado", '<>','I')
         ->where("{$tableName}.Estado", '<>','P')
         ->where('master.Proceso', 'Material en tránsito')
-        ->take(100)->first();
+        ->first();
         $this->createConsilidatedReport($spreadsheet ,$table, $position++, $otros, $consolidado);
 
         $activeWorksheet->getStyle("A1:O1")->getFont()->setBold(true);
@@ -441,7 +441,7 @@ class XlssExport{
             $spreadsheet->getActiveSheet()->setCellValue("B".($key+12), $value->total);
             $sumtotal += $value->total;
         }
-        $y = $key + 13;
+        $y = ($key ?? 1) + 13;
         $spreadsheet->getActiveSheet()->setCellValue("A{$y}", 'TOTALES');
         $this->addHeaderStyle($spreadsheet, "A{$y}");
         $spreadsheet->getActiveSheet()->setCellValue("B{$y}", $sumtotal);
@@ -510,29 +510,69 @@ class XlssExport{
     }
 
     public function createSheetConsolidate($spreadsheet, $consolidado, $y, $tableStart) {
-        
-        $totalInventariado = $consolidado['Inventariado'][0]->total + $consolidado['Inventariado'][1]->total;
-        $totalFaltante = $consolidado['Faltante'][0]->total + $consolidado['Faltante'][1]->total;
-        $totalInventariadoPrecio = $consolidado['Inventariado'][0]->totalprice + $consolidado['Inventariado'][1]->totalprice;
-        $totalFaltantePrecio = $consolidado['Faltante'][0]->totalprice + $consolidado['Faltante'][1]->totalprice;
-        $totalSuma = $totalInventariado + $totalFaltante + $consolidado['FaltanteNivelCentral']->total + $consolidado['FaltanteTransito']->total;
-        $totalSumaPrecio = $totalInventariadoPrecio + $totalFaltantePrecio + $consolidado['FaltanteNivelCentral']->totalprice + $consolidado['FaltanteTransito']->totalprice;
-        $porcentajeInventariadoGeneral = ($consolidado['Inventariado'][0]->total / $totalSuma) * 100;
-        $porcentajeInventariadoInfantil = ($consolidado['Inventariado'][1]->total / $totalSuma) * 100;
-        $porcentajeFaltanteGeneral = ($consolidado['Faltante'][0]->total / $totalSuma) * 100;
-        $porcentajeFaltanteInfantil = ($consolidado['Faltante'][1]->total / $totalSuma) * 100;
-        $porcentajeFaltanteNivelCentral = ($consolidado['FaltanteNivelCentral']->total / $totalSuma) * 100;
-        $porcentajeFaltanteTransito = ($consolidado['FaltanteTransito']->total / $totalSuma) * 100;
+
+        if(sizeof($consolidado['Inventariado'])){
+            $totalInventariadoGeneral = $consolidado['Inventariado'][0]->total;
+            $totalInventariadoInfantil = $consolidado['Inventariado'][1]->total;
+            $consolidadoInventariadoGeneralPrecio = $consolidado['Inventariado'][0]->totalprice;
+            $consolidadoInventariadoInfantilPrecio = $consolidado['Inventariado'][1]->totalprice;
+        } else {
+            $totalInventariadoGeneral = 0;
+            $totalInventariadoInfantil = 0;
+            $consolidadoInventariadoGeneralPrecio = 0;
+            $consolidadoInventariadoInfantilPrecio = 0;
+        }
+
+        if(sizeof($consolidado['Faltante'])){
+            $totalFaltanteGeneral = $consolidado['Faltante'][0]->total;
+            $totalFaltanteInfantil = $consolidado['Faltante'][1]->total;
+            $consolidadoFaltanteGeneralPrecio = $consolidado['Faltante'][0]->totalprice;
+            $consolidadoFaltanteInfantilPrecio = $consolidado['Faltante'][1]->totalprice;
+        } else {
+            $totalFaltanteGeneral = 0;
+            $totalFaltanteInfantil = 0;
+            $consolidadoFaltanteGeneralPrecio = 0;
+            $consolidadoFaltanteInfantilPrecio = 0;
+        }
+
+        if(sizeof((array)$consolidado['FaltanteNivelCentral'])){
+            $totalFaltanteNivelCentral = $consolidado['FaltanteNivelCentral']->total;
+            $consolidadoFaltanteNivelCentralPrecio = $consolidado['FaltanteNivelCentral']->totalprice;
+        } else {
+            $totalFaltanteNivelCentral = 0;
+            $consolidadoFaltanteNivelCentralPrecio = 0;
+        }
+
+        if(sizeof((array)$consolidado['FaltanteTransito'])){
+            $totalFaltanteTransito = $consolidado['FaltanteTransito']->total;
+            $consolidadoFaltanteTransitoPrecio = $consolidado['FaltanteTransito']->totalprice;
+        } else {
+            $totalFaltanteTransito = 0;
+            $consolidadoFaltanteTransitoPrecio = 0;
+        }
+
+        $totalInventariado = $totalInventariadoGeneral + $totalInventariadoInfantil;
+        $totalInventariadoPrecio = $consolidadoInventariadoGeneralPrecio + $consolidadoInventariadoInfantilPrecio;
+        $totalFaltante = $totalFaltanteGeneral + $totalFaltanteInfantil;
+        $totalFaltantePrecio = $consolidadoFaltanteGeneralPrecio + $consolidadoFaltanteInfantilPrecio;
+        $totalSuma = $totalInventariado + $totalFaltante + $totalFaltanteNivelCentral + $totalFaltanteTransito;
+        $totalSumaPrecio = $totalInventariadoPrecio + $totalFaltantePrecio + $consolidadoFaltanteNivelCentralPrecio + $consolidadoFaltanteTransitoPrecio;
+        $porcentajeFaltanteGeneral = $totalFaltanteGeneral ? ($totalFaltanteGeneral / $totalSuma) * 100 : 0;
+        $porcentajeFaltanteInfantil = $totalFaltanteInfantil ? ($totalFaltanteInfantil / $totalSuma) * 100 : 0;
+        $porcentajeFaltanteNivelCentral = $totalFaltanteNivelCentral ? ($totalFaltanteNivelCentral / $totalSuma) * 100 : 0;
+        $porcentajeFaltanteTransito = $totalFaltanteTransito ? ($totalFaltanteTransito / $totalSuma) * 100 : 0;
+        $porcentajeInventariadoGeneral = $totalInventariadoGeneral ? ($totalInventariadoGeneral / $totalSuma) * 100 : 0;
+        $porcentajeInventariadoInfantil = $totalInventariadoInfantil ? ($totalInventariadoInfantil / $totalSuma) * 100 : 0;
 
         $y+=1;
         $spreadsheet->getActiveSheet()->setCellValue("A{$y}", 'Inventariado');
         $spreadsheet->getActiveSheet()->mergeCells("A{$y}:A".$y+1, \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
         $spreadsheet->getActiveSheet()->setCellValue("B{$y}", 'General');
         $spreadsheet->getActiveSheet()->setCellValue("C{$y}", 'No Disponible');
-        $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $consolidado['Inventariado'][0]->total);
+        $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $totalInventariadoGeneral);
         $spreadsheet->getActiveSheet()->setCellValue("E{$y}", $totalInventariado);
-        $spreadsheet->getActiveSheet()->setCellValue("F{$y}",  '$' . number_format($consolidado['Inventariado'][0]->totalprice,2));
-        $spreadsheet->getActiveSheet()->setCellValue("G{$y}",  '$' . number_format($consolidado['Inventariado'][0]->totalprice + $consolidado['Inventariado'][1]->totalprice,2));
+        $spreadsheet->getActiveSheet()->setCellValue("F{$y}",  '$' . number_format($consolidadoInventariadoGeneralPrecio,2));
+        $spreadsheet->getActiveSheet()->setCellValue("G{$y}",  '$' . number_format($consolidadoInventariadoGeneralPrecio + $consolidadoInventariadoInfantilPrecio,2));
         $spreadsheet->getActiveSheet()->mergeCells("G{$y}:G".$y+1, \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
         $spreadsheet->getActiveSheet()->setCellValue("H{$y}", number_format($porcentajeInventariadoGeneral, 2) . ' %');
         $spreadsheet->getActiveSheet()->setCellValue("I{$y}", number_format($porcentajeInventariadoGeneral + $porcentajeInventariadoInfantil, 2) . ' %');
@@ -540,8 +580,8 @@ class XlssExport{
         $y+=1;
         $spreadsheet->getActiveSheet()->setCellValue("B{$y}", 'Infantil');
         $spreadsheet->getActiveSheet()->setCellValue("C{$y}", 'No Disponible');
-        $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $consolidado['Inventariado'][1]->total);
-        $spreadsheet->getActiveSheet()->setCellValue("F{$y}",  '$' . number_format($consolidado['Inventariado'][1]->totalprice, 2));
+        $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $totalInventariadoInfantil);
+        $spreadsheet->getActiveSheet()->setCellValue("F{$y}",  '$' . number_format($consolidadoInventariadoInfantilPrecio, 2));
         $spreadsheet->getActiveSheet()->setCellValue("H{$y}", number_format($porcentajeInventariadoInfantil, 2) . ' %');
 
         $y+=1;
@@ -549,10 +589,10 @@ class XlssExport{
         $spreadsheet->getActiveSheet()->mergeCells("A{$y}:A".$y+1, \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
         $spreadsheet->getActiveSheet()->setCellValue("B{$y}", 'General');
         $spreadsheet->getActiveSheet()->setCellValue("C{$y}", 'No Disponible');
-        $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $consolidado['Faltante'][0]->total);
+        $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $totalFaltanteGeneral);
         $spreadsheet->getActiveSheet()->setCellValue("E{$y}", $totalFaltante);
-        $spreadsheet->getActiveSheet()->setCellValue("F{$y}", '$' . number_format($consolidado['Faltante'][0]->totalprice, 2));
-        $spreadsheet->getActiveSheet()->setCellValue("G{$y}", '$' . number_format($consolidado['Faltante'][0]->totalprice + $consolidado['Faltante'][1]->totalprice, 2));
+        $spreadsheet->getActiveSheet()->setCellValue("F{$y}", '$' . number_format($consolidadoFaltanteGeneralPrecio, 2));
+        $spreadsheet->getActiveSheet()->setCellValue("G{$y}", '$' . number_format($consolidadoFaltanteGeneralPrecio + $consolidadoFaltanteInfantilPrecio, 2));
         $spreadsheet->getActiveSheet()->mergeCells("G{$y}:G".$y+1, \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
         $spreadsheet->getActiveSheet()->setCellValue("H{$y}", number_format($porcentajeFaltanteGeneral, 2) . ' %');
         $spreadsheet->getActiveSheet()->setCellValue("I{$y}", number_format($porcentajeFaltanteGeneral + $porcentajeFaltanteInfantil, 2) . ' %');
@@ -560,24 +600,24 @@ class XlssExport{
         $y+=1;
         $spreadsheet->getActiveSheet()->setCellValue("B{$y}", 'Infantil');
         $spreadsheet->getActiveSheet()->setCellValue("C{$y}", 'No Disponible');
-        $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $consolidado['Faltante'][1]->total);
-        $spreadsheet->getActiveSheet()->setCellValue("F{$y}", '$' . number_format($consolidado['Faltante'][1]->totalprice,2));
+        $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $totalFaltanteInfantil);
+        $spreadsheet->getActiveSheet()->setCellValue("F{$y}", '$' . number_format($consolidadoFaltanteInfantilPrecio,2));
         $spreadsheet->getActiveSheet()->setCellValue("H{$y}", number_format($porcentajeFaltanteInfantil, 2) . ' %');
 
         $y+=1;
         $spreadsheet->getActiveSheet()->setCellValue("A{$y}", 'Faltante');
         $spreadsheet->getActiveSheet()->setCellValue("B{$y}", 'Nivel Central');
         $spreadsheet->getActiveSheet()->mergeCells("B{$y}:C{$y}", \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
-        $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $consolidado['FaltanteNivelCentral']->total);
-        $spreadsheet->getActiveSheet()->setCellValue("F{$y}", '$' . number_format($consolidado['FaltanteNivelCentral']->totalprice,2));
+        $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $totalFaltanteNivelCentral);
+        $spreadsheet->getActiveSheet()->setCellValue("F{$y}", '$' . number_format($consolidadoFaltanteNivelCentralPrecio,2));
         $spreadsheet->getActiveSheet()->setCellValue("H{$y}", number_format($porcentajeFaltanteNivelCentral, 2) . ' %');
 
         $y+=1;
         $spreadsheet->getActiveSheet()->setCellValue("A{$y}", 'Faltante');
         $spreadsheet->getActiveSheet()->setCellValue("B{$y}", 'Tránsito');
         $spreadsheet->getActiveSheet()->mergeCells("B{$y}:C{$y}", \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
-        $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $consolidado['FaltanteTransito']->total);
-        $spreadsheet->getActiveSheet()->setCellValue("F{$y}", '$' . number_format($consolidado['FaltanteTransito']->totalprice,2));
+        $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $totalFaltanteTransito);
+        $spreadsheet->getActiveSheet()->setCellValue("F{$y}", '$' . number_format($consolidadoFaltanteTransitoPrecio,2));
         $spreadsheet->getActiveSheet()->setCellValue("H{$y}", number_format($porcentajeFaltanteTransito, 2) . ' %');
 
         $y+=1;

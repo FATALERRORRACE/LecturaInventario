@@ -108,7 +108,7 @@ export class Administracion {
             })
             .then((response) => {
                 if (response.status == 500) {
-                    context.setDateAndSetEvent('', '');
+                    context.setDateAndSetEvent(null, null);
                     $('#dialog-form').hide();
                     gridInstance.updateConfig({
                         columns: context.columns,
@@ -122,13 +122,13 @@ export class Administracion {
                     $('#dialog-form').show();
                     $('#alert-no-exist').hide();
                     $('#expordata').show();
-                    if(json.fechaInicio && json.fechaFin && json.data){
+                    if(json.fechaInicio && json.fechaFin)
                         context.setDateAndSetEvent(json.fechaInicio, json.fechaFin);
+                    if(json.data)
                         gridInstance.updateConfig({
                             columns: context.columns,
                             data: json.data
                         }).forceRender();
-                    }
                 });
             });
         });
@@ -151,11 +151,12 @@ export class Administracion {
 
     setDateAndSetEvent(fechaInicio, fechaFin){
         $('#daterange').off();
+        console.log(fechaInicio);
         $('#daterange').daterangepicker(
             {
                 opens: 'left',
-                startDate: moment(fechaInicio),
-                endDate: moment(fechaFin)
+                startDate: fechaInicio ? moment(fechaInicio) : moment(),
+                endDate: fechaFin ? moment(fechaFin) : moment(),
             }, function (start, end, label) {}
         );
         $("#daterange").change((eve) => {

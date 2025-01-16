@@ -146,7 +146,7 @@ var Administracion = /*#__PURE__*/function () {
           redirect: "follow"
         }).then(function (response) {
           if (response.status == 500) {
-            context.setDateAndSetEvent('', '');
+            context.setDateAndSetEvent(null, null);
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#dialog-form').hide();
             gridInstance.updateConfig({
               columns: context.columns,
@@ -160,8 +160,8 @@ var Administracion = /*#__PURE__*/function () {
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#dialog-form').show();
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#alert-no-exist').hide();
             jquery__WEBPACK_IMPORTED_MODULE_0___default()('#expordata').show();
-            context.setDateAndSetEvent(json.fechaInicio, json.fechaFin);
-            gridInstance.updateConfig({
+            if (json.fechaInicio && json.fechaFin) context.setDateAndSetEvent(json.fechaInicio, json.fechaFin);
+            if (json.data) gridInstance.updateConfig({
               columns: context.columns,
               data: json.data
             }).forceRender();
@@ -188,10 +188,11 @@ var Administracion = /*#__PURE__*/function () {
     key: "setDateAndSetEvent",
     value: function setDateAndSetEvent(fechaInicio, fechaFin) {
       jquery__WEBPACK_IMPORTED_MODULE_0___default()('#daterange').off();
+      console.log(fechaInicio);
       jquery__WEBPACK_IMPORTED_MODULE_0___default()('#daterange').daterangepicker({
         opens: 'left',
-        startDate: moment__WEBPACK_IMPORTED_MODULE_5___default()(fechaInicio),
-        endDate: moment__WEBPACK_IMPORTED_MODULE_5___default()(fechaFin)
+        startDate: fechaInicio ? moment__WEBPACK_IMPORTED_MODULE_5___default()(fechaInicio) : moment__WEBPACK_IMPORTED_MODULE_5___default()(),
+        endDate: fechaFin ? moment__WEBPACK_IMPORTED_MODULE_5___default()(fechaFin) : moment__WEBPACK_IMPORTED_MODULE_5___default()()
       }, function (start, end, label) {});
       jquery__WEBPACK_IMPORTED_MODULE_0___default()("#daterange").change(function (eve) {
         fetch("api/inventario/".concat(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#espacio").val(), "/date"), {
