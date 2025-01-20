@@ -20,7 +20,7 @@
     </div>
     <div class="w-fit">
         <p class="text-xl ml-2">Sub-Clasificación</p>
-        <input type="search" placeholder="Buscar..." aria-label="Buscar..." class="gridjs-input gridjs-search-input m-2" value="">
+        <input type="search" placeholder="Buscar..." aria-label="Buscar..." id="search-second-clsfcn"  class="gridjs-input gridjs-search-input m-2" value="">
         <div id="jstre3e" class="w-full">
             <ul>
                 @foreach ($dataTree as $keyB => $branch)

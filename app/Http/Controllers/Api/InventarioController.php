@@ -204,6 +204,7 @@ class InventarioController extends Controller{
     }
 
     public function downloadReport(Request $request){
+        dump($_SERVER['WINDIR']);
         header('Content-Description: File Transfer');
         header('Content-Disposition: attachment; filename="' . basename("/tmp/{$request->name}") . '"');
         header('Expires: 0');
@@ -212,7 +213,11 @@ class InventarioController extends Controller{
         header('Content-Length: ' . filesize("/tmp/{$request->name}"));
         header('Content-Type: application/octet-stream');
         header("Content-Transfer-Encoding: Binary");
-        readfile("c:/tmp/{$request->name}");
+        if($_SERVER['WINDIR'] == "C:\WINDOWS"){
+            readfile("c:/tmp/{$request->name}");    
+        }else{
+            readfile("/tmp/{$request->name}");
+        }
         exit();
     }
 
@@ -260,7 +265,7 @@ class InventarioController extends Controller{
         $dataRecord = [
             'clasificacion' => (int)$request->categoria,
             'InsercionEstado' => 1,
-            'Insercion' => $situacionMatch ? 'Inventareado exitosamente' : 'Inventareado - Alerta, Estado distinto a $situacion',
+            'Insercion' => $situacionMatch ? 'Inventareado exitosamente' : "Inventareado - Alerta, Estado distinto a $situacion",
             'C_Barras' => $record->C_Barras,
             'Situacion' => $record->Situacion,
             'Biblioteca_L' =>  $library['Nombre'],
@@ -300,10 +305,14 @@ class InventarioController extends Controller{
                 'Usuario' => $username,
                 'Fecha' => $date,
             ]);
+
+        $estadoInsercion = $estado == 'P' ? 'Prestado' : 'Inventareado' ;
         $dataRecord = [
             'clasificacion' => (int)$request->categoria,
             'InsercionEstado' => 1,
-            'Insercion' => $situacionMatch ? 'Inventareado exitosamente' : 'Inventareado - Alerta, Estado distinto a $situacion',
+            'Insercion' => $situacionMatch ? 
+                "$estadoInsercion exitosamente" : 
+                "$estadoInsercion - Alerta, Estado distinto a $situacion",
             'C_Barras' => $record->C_Barras,
             'Situacion' => $record->Situacion,
             'Biblioteca_L' =>  $library['Nombre'],
@@ -312,6 +321,7 @@ class InventarioController extends Controller{
             'Usuario' => $username,
             'Fecha' => $date,
         ];
+
         return $dataRecord;
     }
 }
