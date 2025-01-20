@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -202,8 +201,10 @@ class InventarioController extends Controller{
             'summaryFile' => $newfilename,
         ];
     }
-
+ 
     public function downloadReport(Request $request){
+        dump($request->name);
+        dump(file_exists("/tmp/{$request->name}"));die;
         header('Content-Description: File Transfer');
         header('Content-Disposition: attachment; filename="' . basename("/tmp/{$request->name}") . '"');
         header('Expires: 0');
@@ -212,7 +213,7 @@ class InventarioController extends Controller{
         header('Content-Length: ' . filesize("/tmp/{$request->name}"));
         header('Content-Type: application/octet-stream');
         header("Content-Transfer-Encoding: Binary");
-        if($_SERVER['WINDIR'] == "C:\WINDOWS"){
+        if(isset($_SERVER['WINDIR'])){
             readfile("c:/tmp/{$request->name}");    
         }else{
             readfile("/tmp/{$request->name}");

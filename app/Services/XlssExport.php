@@ -5,12 +5,15 @@ namespace App\Services;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Facades\DB;
-class XlssExport{
+
+class XlssExport
+{
 
     /**
      * Bootstrap services.
      */
-    public function execute($data, $nombre){
+    public function execute($data, $nombre)
+    {
         $date = new \DateTime();
         $spreadsheet = new Spreadsheet();
         $activeWorksheet = $spreadsheet->getActiveSheet();
@@ -20,7 +23,7 @@ class XlssExport{
         $activeWorksheet->getColumnDimension('D')->setWidth(12);
         $activeWorksheet->getColumnDimension('E')->setWidth(12);
         $activeWorksheet->getColumnDimension('F')->setWidth(12);
-        $activeWorksheet->getStyle("A1:F1")->getFont()->setBold( true );
+        $activeWorksheet->getStyle("A1:F1")->getFont()->setBold(true);
         $activeWorksheet->getStyle('A1:F1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('DDE5ED');
         $activeWorksheet->setCellValue('A1', 'C_Barras');
         $activeWorksheet->setCellValue('B1', 'Usuario');
@@ -44,13 +47,14 @@ class XlssExport{
                 ],
             ],
         ]);
-        return $this->returnDonwloadableFile($spreadsheet, $nombre, $date->format('Y-m-d h:s:i') );
+        return $this->returnDonwloadableFile($spreadsheet, $nombre, $date->format('Y-m-d h:s:i'));
     }
 
     /**
      * Bootstrap services.
      */
-    public function executeSecondReport($table,$posInventario){
+    public function executeSecondReport($table, $posInventario)
+    {
         $date = new \DateTime();
         $spreadsheet = new Spreadsheet();
         $position = 0;
@@ -61,47 +65,47 @@ class XlssExport{
 
         $data = DB::table($tableName)
             ->select(
-                'master.C_Barras', 
-                'master.Titulo', 
-                'master.Autor', 
-                'master.Clasificacion', 
-                'master.Isbn', 
-                'master.Descripcion', 
-                'master.Precio', 
-                'master.Estadistica', 
-                'master.Biblioteca', 
-                'master.Material', 
-                'master.Localizacion', 
-                'master.Proceso', 
-                'master.Creacion', 
+                'master.C_Barras',
+                'master.Titulo',
+                'master.Autor',
+                'master.Clasificacion',
+                'master.Isbn',
+                'master.Descripcion',
+                'master.Precio',
+                'master.Estadistica',
+                'master.Biblioteca',
+                'master.Material',
+                'master.Localizacion',
+                'master.Proceso',
+                'master.Creacion',
                 'master.Acervo'
             )
             ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras");
 
-            if($posInventario)
-                $data->whereIn("{$tableName}.Estado", ['I', 'D']);
-            else 
-                $data->where("{$tableName}.Estado", 'I');
+        if ($posInventario)
+            $data->whereIn("{$tableName}.Estado", ['I', 'D']);
+        else
+            $data->where("{$tableName}.Estado", 'I');
 
-            $data = $data->get()->toArray();
+        $data = $data->get()->toArray();
         $spreadsheet->getActiveSheet()->setTitle('INVENTARIADO');
         $this->setNewPageAndData($spreadsheet, $data, 'INVENTARIADO', $position++);
 
         $data = DB::table($tableName)
             ->select(
-                'master.C_Barras', 
-                'master.Titulo', 
-                'master.Autor', 
-                'master.Clasificacion', 
-                'master.Isbn', 
-                'master.Descripcion', 
-                'master.Precio', 
-                'master.Estadistica', 
-                'master.Biblioteca', 
-                'master.Material', 
-                'master.Localizacion', 
-                'master.Proceso', 
-                'master.Creacion', 
+                'master.C_Barras',
+                'master.Titulo',
+                'master.Autor',
+                'master.Clasificacion',
+                'master.Isbn',
+                'master.Descripcion',
+                'master.Precio',
+                'master.Estadistica',
+                'master.Biblioteca',
+                'master.Material',
+                'master.Localizacion',
+                'master.Proceso',
+                'master.Creacion',
                 'master.Acervo'
             )
             ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
@@ -110,43 +114,43 @@ class XlssExport{
         $this->setNewPageAndData($spreadsheet, $data, 'PRESTADOS', $position++);
         $data = DB::table($tableName)
             ->select(
-                'master.C_Barras', 
-                'master.Titulo', 
-                'master.Autor', 
-                'master.Clasificacion', 
-                'master.Isbn', 
-                'master.Descripcion', 
-                'master.Precio', 
-                'master.Estadistica', 
-                'master.Biblioteca', 
-                'master.Material', 
-                'master.Localizacion', 
-                'master.Proceso', 
-                'master.Creacion', 
+                'master.C_Barras',
+                'master.Titulo',
+                'master.Autor',
+                'master.Clasificacion',
+                'master.Isbn',
+                'master.Descripcion',
+                'master.Precio',
+                'master.Estadistica',
+                'master.Biblioteca',
+                'master.Material',
+                'master.Localizacion',
+                'master.Proceso',
+                'master.Creacion',
                 'master.Acervo'
             )
             ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
             //->where("{$tableName}.Estado", '<>', 'I')->where("{$tableName}.Estado", '<>','P')->get()->toArray();
             ->where("master.Proceso", 'NIVEL CENTRAL')->get()->toArray();
-        
+
         $spreadsheet->createSheet();
         $this->setNewPageAndData($spreadsheet, $data, 'NIVEL CENTRAL', $position++);
 
         $data = DB::table($tableName)
             ->select(
-                'master.C_Barras', 
-                'master.Titulo', 
-                'master.Autor', 
-                'master.Clasificacion', 
-                'master.Isbn', 
-                'master.Descripcion', 
-                'master.Precio', 
-                'master.Estadistica', 
-                'master.Biblioteca', 
-                'master.Material', 
-                'master.Localizacion', 
-                'master.Proceso', 
-                'master.Creacion', 
+                'master.C_Barras',
+                'master.Titulo',
+                'master.Autor',
+                'master.Clasificacion',
+                'master.Isbn',
+                'master.Descripcion',
+                'master.Precio',
+                'master.Estadistica',
+                'master.Biblioteca',
+                'master.Material',
+                'master.Localizacion',
+                'master.Proceso',
+                'master.Creacion',
                 'master.Acervo'
             )
             ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
@@ -157,19 +161,19 @@ class XlssExport{
 
         $data = DB::table('anexos')
             ->select(
-                'master.C_Barras', 
-                'master.Titulo', 
-                'master.Autor', 
-                'master.Clasificacion', 
-                'master.Isbn', 
-                'master.Descripcion', 
-                'master.Precio', 
-                'master.Estadistica', 
-                'master.Biblioteca', 
-                'master.Material', 
-                'master.Localizacion', 
-                'master.Proceso', 
-                'master.Creacion', 
+                'master.C_Barras',
+                'master.Titulo',
+                'master.Autor',
+                'master.Clasificacion',
+                'master.Isbn',
+                'master.Descripcion',
+                'master.Precio',
+                'master.Estadistica',
+                'master.Biblioteca',
+                'master.Material',
+                'master.Localizacion',
+                'master.Proceso',
+                'master.Creacion',
                 'master.Acervo'
             )
             ->join('master', 'master.C_Barras', '=', "anexos.C_Barras")
@@ -181,55 +185,55 @@ class XlssExport{
 
         $data = DB::table('anexos')
             ->select(
-                'master.C_Barras', 
-                'master.Titulo', 
-                'master.Autor', 
-                'master.Clasificacion', 
-                'master.Isbn', 
-                'master.Descripcion', 
-                'master.Precio', 
-                'master.Estadistica', 
-                'master.Biblioteca', 
-                'master.Material', 
-                'master.Localizacion', 
-                'master.Proceso', 
-                'master.Creacion', 
+                'master.C_Barras',
+                'master.Titulo',
+                'master.Autor',
+                'master.Clasificacion',
+                'master.Isbn',
+                'master.Descripcion',
+                'master.Precio',
+                'master.Estadistica',
+                'master.Biblioteca',
+                'master.Material',
+                'master.Localizacion',
+                'master.Proceso',
+                'master.Creacion',
                 'master.Acervo'
             )
             ->join('master', 'master.C_Barras', '=', "anexos.C_Barras")
             //->where("{$tableName}.Estado", '<>', 'I')->where("{$tableName}.Estado", '<>','P')->get()->toArray();
             ->where("anexos.Biblioteca_O", $table['Nombre'])->get()->toArray();
-        
+
         $otros['otrasBibCount'] = count($data);
         $spreadsheet->createSheet();
         $this->setNewPageAndData($spreadsheet, $data, 'EN MI BIB', $position++);
 
         $data = DB::table('anexos')
             ->select(
-                'C_Barras', 
+                'C_Barras',
             )
             ->whereNull("anexos.Biblioteca_O")
             ->where("anexos.Biblioteca_L", $table['Nombre'])->get()->toArray();
         $spreadsheet->createSheet();
         $this->setNewPageAndData($spreadsheet, $data, 'NO ENCONTRADOS', $position++);
         unset($data);
-        
-        
+
+
         $data = DB::table($tableName)
             ->select(
-                'master.C_Barras', 
-                'master.Titulo', 
-                'master.Autor', 
-                'master.Clasificacion', 
-                'master.Isbn', 
-                'master.Descripcion', 
-                'master.Precio', 
-                'master.Estadistica', 
-                'master.Biblioteca', 
-                'master.Material', 
-                'master.Localizacion', 
-                'master.Proceso', 
-                'master.Creacion', 
+                'master.C_Barras',
+                'master.Titulo',
+                'master.Autor',
+                'master.Clasificacion',
+                'master.Isbn',
+                'master.Descripcion',
+                'master.Precio',
+                'master.Estadistica',
+                'master.Biblioteca',
+                'master.Material',
+                'master.Localizacion',
+                'master.Proceso',
+                'master.Creacion',
                 'master.Acervo'
             )
             ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
@@ -239,22 +243,22 @@ class XlssExport{
         $spreadsheet->createSheet();
         $this->setNewPageAndData($spreadsheet, $data, 'BAJA', $position++);
 
-        if($posInventario){
+        if ($posInventario) {
             $data = DB::table($tableName)
                 ->select(
-                    'master.C_Barras', 
-                    'master.Titulo', 
-                    'master.Autor', 
-                    'master.Clasificacion', 
-                    'master.Isbn', 
-                    'master.Descripcion', 
-                    'master.Precio', 
-                    'master.Estadistica', 
-                    'master.Biblioteca', 
-                    'master.Material', 
-                    'master.Localizacion', 
-                    'master.Proceso', 
-                    'master.Creacion', 
+                    'master.C_Barras',
+                    'master.Titulo',
+                    'master.Autor',
+                    'master.Clasificacion',
+                    'master.Isbn',
+                    'master.Descripcion',
+                    'master.Precio',
+                    'master.Estadistica',
+                    'master.Biblioteca',
+                    'master.Material',
+                    'master.Localizacion',
+                    'master.Proceso',
+                    'master.Creacion',
                     'master.Acervo'
                 )
                 ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
@@ -265,116 +269,139 @@ class XlssExport{
         }
 
         $otros['ubicaciones'] = DB::table($tableName)
-        ->select('master.Localizacion', DB::raw("COUNT($tableName.id) as total"))
-        ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
-        ->where("{$tableName}.Estado", 'I')
-        ->whereIn('master.Localizacion' ,
-            [
-                'Distrito Gráfico',
-                'General',
-                'Infantil',
-                'Sonoteca',
-                'Videoteca',
-            ]
-        )
-        ->groupBy('master.Localizacion')
-        ->get()->toArray();
+            ->select('master.Localizacion', DB::raw("COUNT($tableName.id) as total"))
+            ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
+            ->where("{$tableName}.Estado", 'I')
+            ->whereIn(
+                'master.Localizacion',
+                [
+                    'Distrito Gráfico',
+                    'General',
+                    'Infantil',
+                    'Sonoteca',
+                    'Videoteca',
+                ]
+            )
+            ->groupBy('master.Localizacion')
+            ->get()->toArray();
 
         $otros['Baja'] = DB::table($tableName)
-        ->select(DB::raw("COUNT($tableName.id) as total"))
-        ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
-        ->where("{$tableName}.Estado", 'I')
-        ->where("{$tableName}.Estado", 'P')
-        ->whereNotIn('master.Localizacion' ,
-            [
-                'Distrito Gráfico',
-                'General',
-                'Infantil',
-                'Sonoteca',
-                'Videoteca',
-            ]
-        )
-        ->first();
-        
+            ->select(DB::raw("COUNT($tableName.id) as total"))
+            ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
+            ->where("{$tableName}.Estado", 'I')
+            ->where("{$tableName}.Estado", 'P')
+            ->whereNotIn(
+                'master.Localizacion',
+                [
+                    'Distrito Gráfico',
+                    'General',
+                    'Infantil',
+                    'Sonoteca',
+                    'Videoteca',
+                ]
+            )
+            ->first();
+
         $consolidado['Inventariado'] = DB::table($tableName)
-        ->select('master.Localizacion', DB::raw("COUNT($tableName.id) as total"), DB::raw("SUM(master.Precio) as totalprice"))
-        ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
-        ->where("{$tableName}.Estado", '<>','')
-        ->whereIn('master.Localizacion' ,['General','Infantil'])
-        ->groupBy('master.Localizacion')
-        ->get()->toArray();
+            ->select('master.Proceso' ,'master.Localizacion',  DB::raw("COUNT($tableName.id) as total"), DB::raw("SUM(master.Precio) as totalprice"))
+            ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
+            ->where("{$tableName}.Estado", '<>', '')
+            ->groupBy('master.Localizacion', 'master.Proceso')
+            ->orderBy('master.Localizacion')
+            ->get()->toArray();
+
+        $consolidado['InventariadoSuma'] = DB::table($tableName)
+            ->select(DB::raw("COUNT($tableName.id) as total"), DB::raw("SUM(master.Precio) as totalprice"))
+            ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
+            ->where("{$tableName}.Estado", '<>', '')
+            ->first();
 
         $consolidado['Faltante'] = DB::table($tableName)
-        ->select('master.Localizacion', DB::raw("COUNT($tableName.id) as total"), DB::raw("SUM(master.Precio) as totalprice"))
-        ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
-        ->where("{$tableName}.Estado", '<>','I')
-        ->where("{$tableName}.Estado", '<>','P')
-        ->where('master.Proceso', '!=', 'Nivel Central')
-        ->whereIn('master.Localizacion' ,['General','Infantil'])
-        ->groupBy('master.Localizacion')
-        ->get()->toArray();
+            ->select('master.Proceso' ,'master.Localizacion', DB::raw("COUNT($tableName.id) as total"), DB::raw("SUM(master.Precio) as totalprice"))
+            ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
+            ->where("{$tableName}.Estado", '<>', 'I')
+            ->where("{$tableName}.Estado", '<>', 'P')
+            ->whereNotIn('master.Proceso', ['Nivel Central', 'Material en tránsito'])
+            ->groupBy('master.Localizacion', 'master.Proceso')
+            ->orderBy('master.Localizacion')
+            ->get()->toArray();
+
+        $consolidado['FaltanteSuma'] = DB::table($tableName)
+            ->select(DB::raw("COUNT($tableName.id) as total"), DB::raw("SUM(master.Precio) as totalprice"))
+            ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
+            ->where("{$tableName}.Estado", '<>', 'I')
+            ->where("{$tableName}.Estado", '<>', 'P')
+            ->whereNotIn('master.Proceso', ['Nivel Central', 'Material en tránsito'])
+            ->first();
 
         $consolidado['FaltanteNivelCentral'] = DB::table($tableName)
-        ->select(DB::raw("COUNT($tableName.id) as total"), DB::raw("SUM(master.Precio) as totalprice"))
-        ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
-        ->where("{$tableName}.Estado", '<>','I')
-        ->where("{$tableName}.Estado", '<>','P')
-        ->where('master.Proceso', 'Nivel Central')
-        ->first();
-        
+            ->select(DB::raw("COUNT($tableName.id) as total"), DB::raw("SUM(master.Precio) as totalprice"))
+            ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
+            ->where("{$tableName}.Estado", '<>', 'I')
+            ->where("{$tableName}.Estado", '<>', 'P')
+            ->where('master.Proceso', 'Nivel Central')
+            ->first();
+
         $consolidado['FaltanteTransito'] = DB::table($tableName)
-        ->select(DB::raw("COUNT($tableName.id) as total"), DB::raw("SUM(master.Precio) as totalprice"))
-        ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
-        ->where("{$tableName}.Estado", '<>','I')
-        ->where("{$tableName}.Estado", '<>','P')
-        ->where('master.Proceso', 'Material en tránsito')
-        ->first();
-        $this->createConsilidatedReport($spreadsheet ,$table, $position++, $otros, $consolidado);
+            ->select(DB::raw("COUNT($tableName.id) as total"), DB::raw("SUM(master.Precio) as totalprice"))
+            ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
+            ->where("{$tableName}.Estado", '<>', 'I')
+            ->where("{$tableName}.Estado", '<>', 'P')
+            ->where('master.Proceso', 'Material en tránsito')
+            ->first();
+
+        $consolidado['sumaTotal'] = DB::table($tableName)
+            ->select(DB::raw("COUNT($tableName.id) as total"), DB::raw("SUM(master.Precio) as totalprice"))
+            ->join('master', 'master.C_Barras', '=', "{$tableName}.C_Barras")
+            ->first();
+
+        $this->createConsilidatedReport($spreadsheet, $table, $position++, $otros, $consolidado);
 
         $activeWorksheet->getStyle("A1:O1")->getFont()->setBold(true);
         $activeWorksheet->getStyle('A1:O1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('DDE5ED');
 
-        return $this->returnDonwloadableFile($spreadsheet, $table['nombre'], $date->format('Y-m-d h:s:i') ); 
+        return $this->returnDonwloadableFile($spreadsheet, $table['nombre'], $date->format('Y-m-d h:s:i'));
     }
 
     /**
      * Bootstrap services.
      */
-    public function setNewPageAndData(&$spreadsheet, $data, $pageTitle, $indexPage){
+    public function setNewPageAndData(&$spreadsheet, $data, $pageTitle, $indexPage)
+    {
         $spreadsheet->setActiveSheetIndex($indexPage);
         $spreadsheet->getActiveSheet()->setTitle($pageTitle);
         $range = range('A', 'Ñ');
         $header = [
-                'C_Barras', 
-                'Titulo', 
-                'Autor', 
-                'Clasificacion', 
-                'Isbn', 
-                'Descripcion', 
-                'Precio', 
-                'Estadistica', 
-                'Biblioteca', 
-                'Material', 
-                'Localizacion', 
-                'Proceso', 
-                'Creacion', 
-                'Acervo'
+            'C_Barras',
+            'Titulo',
+            'Autor',
+            'Clasificacion',
+            'Isbn',
+            'Descripcion',
+            'Precio',
+            'Estadistica',
+            'Biblioteca',
+            'Material',
+            'Localizacion',
+            'Proceso',
+            'Creacion',
+            'Acervo'
         ];
-        if($pageTitle == 'NO ENCONTRADOS')
+        if ($pageTitle == 'NO ENCONTRADOS')
             $header = ['C_Barras'];
 
         foreach ($header as $key => $value)
-            $spreadsheet->getActiveSheet()->setCellValue("{$range[$key]}1" , $value);
+            $spreadsheet->getActiveSheet()->setCellValue("{$range[$key]}1", $value);
 
         $xAngle = 2;
         foreach ($data as $key => $value) {
             $spreadsheet->getActiveSheet()->fromArray([(array)$value], NULL, "A{$xAngle}");
             $xAngle++;
         }
-      
-    }    
+    }
 
-    public function createConsilidatedReport($spreadsheet, $table, $position, $dataUbicaciones, $consolidado){
+    public function createConsilidatedReport($spreadsheet, $table, $position, $dataUbicaciones, $consolidado)
+    {
         $spreadsheet->createSheet();
         $spreadsheet->setActiveSheetIndex($position);
         $spreadsheet->getActiveSheet()->setTitle('ACUMULADO');
@@ -387,7 +414,7 @@ class XlssExport{
         $spreadsheet->getActiveSheet()->getColumnDimension('D')->setWidth(16);
         $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(16);
         $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(16);
-        $spreadsheet->getActiveSheet()->getStyle("A1:F1")->getFont()->setBold( true );
+        $spreadsheet->getActiveSheet()->getStyle("A1:F1")->getFont()->setBold(true);
         $spreadsheet->getActiveSheet()->getStyle('A1:F1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('DDE5ED');
         $spreadsheet->getActiveSheet()->setCellValue('A1', 'INFORME CONSOLIDADO DE TOMA FÍSICA');
         $spreadsheet->getActiveSheet()->mergeCells('A1:F1', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
@@ -437,8 +464,8 @@ class XlssExport{
         $this->addHeaderStyle($spreadsheet, "B11");
         $sumtotal = 0;
         foreach ($dataUbicaciones['ubicaciones'] as $key => $value) {
-            $spreadsheet->getActiveSheet()->setCellValue("A".($key+12), $value->Localizacion);
-            $spreadsheet->getActiveSheet()->setCellValue("B".($key+12), $value->total);
+            $spreadsheet->getActiveSheet()->setCellValue("A" . ($key + 12), $value->Localizacion);
+            $spreadsheet->getActiveSheet()->setCellValue("B" . ($key + 12), $value->total);
             $sumtotal += $value->total;
         }
         $y = ($key ?? 1) + 13;
@@ -478,18 +505,18 @@ class XlssExport{
                 ],
             ],
         ]);
-        $y+=2;
+        $y += 2;
         $spreadsheet->getActiveSheet()->setCellValue("A{$y}", 'INFORME CONSOLIDADO DE NO INVENTARIADOS Y TOTAL DE COLECCIÓN');
         $spreadsheet->getActiveSheet()->mergeCells("A{$y}:D{$y}", \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
-        $y+=2;
+        $y += 2;
         $spreadsheet->getActiveSheet()->setCellValue("A{$y}", 'DESCRIPCIÓN');
         $tableStart = "A{$y}";
         $this->addHeaderStyle($spreadsheet, "A{$y}");
-        $spreadsheet->getActiveSheet()->mergeCells("A{$y}:A".($y+1), \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
+        $spreadsheet->getActiveSheet()->mergeCells("A{$y}:A" . ($y + 1), \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
         $spreadsheet->getActiveSheet()->setCellValue("B{$y}", 'RESUMEN DE INVENTARIO EN PERGAMUM');
         $spreadsheet->getActiveSheet()->mergeCells("B{$y}:I{$y}", \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
         $this->addHeaderStyle($spreadsheet, "B{$y}:I{$y}");
-        $y+=1;
+        $y += 1;
         $rangeAngleX = range('B', 'I');
         foreach (['UBICACIÓN', 'ESTADO', 'CANTIDAD', 'TOTAL', 'PRECIO', 'PRECIO TOTAL', '%', '%TOTAL'] as $key => $value) {
             $this->addHeaderStyle($spreadsheet, "{$rangeAngleX[$key]}{$y}");
@@ -502,125 +529,101 @@ class XlssExport{
     /**
      * Bootstrap services.
      */
-    public function returnDonwloadableFile($spreadsheet, $nombre, $date){
+    public function returnDonwloadableFile($spreadsheet, $nombre, $date)
+    {
         $writer = new Xlsx($spreadsheet);
         header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment; filename="' . $nombre . " ". $date . '.xlsx"');
+        header('Content-Disposition: attachment; filename="' . $nombre . " " . $date . '.xlsx"');
         $writer->save("php://output");
     }
 
-    public function createSheetConsolidate($spreadsheet, $consolidado, $y, $tableStart) {
-
-        if(sizeof($consolidado['Inventariado'])){
-            $totalInventariadoGeneral = $consolidado['Inventariado'][0]->total;
-            $totalInventariadoInfantil = $consolidado['Inventariado'][1]->total;
-            $consolidadoInventariadoGeneralPrecio = $consolidado['Inventariado'][0]->totalprice;
-            $consolidadoInventariadoInfantilPrecio = $consolidado['Inventariado'][1]->totalprice;
-        } else {
-            $totalInventariadoGeneral = 0;
-            $totalInventariadoInfantil = 0;
-            $consolidadoInventariadoGeneralPrecio = 0;
-            $consolidadoInventariadoInfantilPrecio = 0;
+    public function createSheetConsolidate($spreadsheet, $consolidado, $y, $tableStart)
+    {
+        $initialMergeUbication = $y;
+        foreach ($consolidado['Inventariado'] as $key => $value) {
+            $y += 1;
+            if ($key == 0) {
+                $spreadsheet->getActiveSheet()->setCellValue("A{$y}", 'Inventariado');
+                $spreadsheet->getActiveSheet()->setCellValue("E{$y}", $consolidado['InventariadoSuma']->total);
+                $spreadsheet->getActiveSheet()->setCellValue("G{$y}",  '$' . number_format($consolidado['InventariadoSuma']->totalprice, 2));
+                $spreadsheet->getActiveSheet()->setCellValue(
+                    "I{$y}",
+                    number_format(
+                        $consolidado['InventariadoSuma']->total ? ($consolidado['InventariadoSuma']->total / $consolidado['sumaTotal']->total) * 100 : 0,
+                        2
+                    ) . ' %'
+                );
+                $initialMergeUbication = $y;
+            }
+            $spreadsheet->getActiveSheet()->setCellValue("B{$y}", $value->Localizacion);
+            $spreadsheet->getActiveSheet()->setCellValue("C{$y}", $value->Proceso);
+            $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $value->total);
+            $spreadsheet->getActiveSheet()->setCellValue("F{$y}",  '$' . number_format($value->totalprice, 2));
+            $spreadsheet->getActiveSheet()->setCellValue(
+                "H{$y}",
+                number_format(
+                    $value->total ? ($value->total / $consolidado['sumaTotal']->total) * 100 : 0,
+                    2
+                ) . ' %'
+            );
         }
 
-        if(sizeof($consolidado['Faltante'])){
-            $totalFaltanteGeneral = $consolidado['Faltante'][0]->total;
-            $totalFaltanteInfantil = $consolidado['Faltante'][1]->total;
-            $consolidadoFaltanteGeneralPrecio = $consolidado['Faltante'][0]->totalprice;
-            $consolidadoFaltanteInfantilPrecio = $consolidado['Faltante'][1]->totalprice;
-        } else {
-            $totalFaltanteGeneral = 0;
-            $totalFaltanteInfantil = 0;
-            $consolidadoFaltanteGeneralPrecio = 0;
-            $consolidadoFaltanteInfantilPrecio = 0;
+        $spreadsheet->getActiveSheet()->mergeCells("A{$initialMergeUbication}:A$y", \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
+        $spreadsheet->getActiveSheet()->mergeCells("E{$initialMergeUbication}:E$y", \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
+        $spreadsheet->getActiveSheet()->mergeCells("G{$initialMergeUbication}:G$y", \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
+        $spreadsheet->getActiveSheet()->mergeCells("I{$initialMergeUbication}:I$y", \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
+
+        $initialMergeUbication = $y;
+        foreach ($consolidado['Faltante'] as $key => $value) {
+            $y += 1;
+            if ($key == 0) {
+                $spreadsheet->getActiveSheet()->setCellValue("A{$y}", 'Faltante');
+                $spreadsheet->getActiveSheet()->setCellValue("E{$y}", $consolidado['FaltanteSuma']->total);
+                $spreadsheet->getActiveSheet()->setCellValue("G{$y}",  '$' . number_format($consolidado['FaltanteSuma']->totalprice, 2));
+                $spreadsheet->getActiveSheet()->setCellValue(
+                    "I{$y}",
+                    number_format(
+                        $consolidado['FaltanteSuma']->total ? ($consolidado['FaltanteSuma']->total / $consolidado['sumaTotal']->total) * 100 : 0,
+                        2
+                    ) . ' %'
+                );
+                $initialMergeUbication = $y;
+            }
+            $spreadsheet->getActiveSheet()->setCellValue("B{$y}", $value->Localizacion);
+            $spreadsheet->getActiveSheet()->setCellValue("C{$y}", $value->Proceso);
+            $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $value->total);
+            $spreadsheet->getActiveSheet()->setCellValue("F{$y}",  '$' . number_format($value->totalprice, 2));
+            $spreadsheet->getActiveSheet()->setCellValue(
+                "H{$y}",
+                number_format(
+                    $value->total ? ($value->total / $consolidado['sumaTotal']->total) * 100 : 0,
+                    2
+                ) . ' %'
+            );
         }
 
-        if(sizeof((array)$consolidado['FaltanteNivelCentral'])){
-            $totalFaltanteNivelCentral = $consolidado['FaltanteNivelCentral']->total;
-            $consolidadoFaltanteNivelCentralPrecio = $consolidado['FaltanteNivelCentral']->totalprice;
-        } else {
-            $totalFaltanteNivelCentral = 0;
-            $consolidadoFaltanteNivelCentralPrecio = 0;
-        }
-
-        if(sizeof((array)$consolidado['FaltanteTransito'])){
-            $totalFaltanteTransito = $consolidado['FaltanteTransito']->total;
-            $consolidadoFaltanteTransitoPrecio = $consolidado['FaltanteTransito']->totalprice;
-        } else {
-            $totalFaltanteTransito = 0;
-            $consolidadoFaltanteTransitoPrecio = 0;
-        }
-
-        $totalInventariado = $totalInventariadoGeneral + $totalInventariadoInfantil;
-        $totalInventariadoPrecio = $consolidadoInventariadoGeneralPrecio + $consolidadoInventariadoInfantilPrecio;
-        $totalFaltante = $totalFaltanteGeneral + $totalFaltanteInfantil;
-        $totalFaltantePrecio = $consolidadoFaltanteGeneralPrecio + $consolidadoFaltanteInfantilPrecio;
-        $totalSuma = $totalInventariado + $totalFaltante + $totalFaltanteNivelCentral + $totalFaltanteTransito;
-        $totalSumaPrecio = $totalInventariadoPrecio + $totalFaltantePrecio + $consolidadoFaltanteNivelCentralPrecio + $consolidadoFaltanteTransitoPrecio;
-        $porcentajeFaltanteGeneral = $totalFaltanteGeneral ? ($totalFaltanteGeneral / $totalSuma) * 100 : 0;
-        $porcentajeFaltanteInfantil = $totalFaltanteInfantil ? ($totalFaltanteInfantil / $totalSuma) * 100 : 0;
-        $porcentajeFaltanteNivelCentral = $totalFaltanteNivelCentral ? ($totalFaltanteNivelCentral / $totalSuma) * 100 : 0;
-        $porcentajeFaltanteTransito = $totalFaltanteTransito ? ($totalFaltanteTransito / $totalSuma) * 100 : 0;
-        $porcentajeInventariadoGeneral = $totalInventariadoGeneral ? ($totalInventariadoGeneral / $totalSuma) * 100 : 0;
-        $porcentajeInventariadoInfantil = $totalInventariadoInfantil ? ($totalInventariadoInfantil / $totalSuma) * 100 : 0;
-
-        $y+=1;
-        $spreadsheet->getActiveSheet()->setCellValue("A{$y}", 'Inventariado');
-        $spreadsheet->getActiveSheet()->mergeCells("A{$y}:A".$y+1, \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
-        $spreadsheet->getActiveSheet()->setCellValue("B{$y}", 'General');
-        $spreadsheet->getActiveSheet()->setCellValue("C{$y}", 'No Disponible');
-        $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $totalInventariadoGeneral);
-        $spreadsheet->getActiveSheet()->setCellValue("E{$y}", $totalInventariado);
-        $spreadsheet->getActiveSheet()->setCellValue("F{$y}",  '$' . number_format($consolidadoInventariadoGeneralPrecio,2));
-        $spreadsheet->getActiveSheet()->setCellValue("G{$y}",  '$' . number_format($consolidadoInventariadoGeneralPrecio + $consolidadoInventariadoInfantilPrecio,2));
-        $spreadsheet->getActiveSheet()->mergeCells("G{$y}:G".$y+1, \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
-        $spreadsheet->getActiveSheet()->setCellValue("H{$y}", number_format($porcentajeInventariadoGeneral, 2) . ' %');
-        $spreadsheet->getActiveSheet()->setCellValue("I{$y}", number_format($porcentajeInventariadoGeneral + $porcentajeInventariadoInfantil, 2) . ' %');
-
-        $y+=1;
-        $spreadsheet->getActiveSheet()->setCellValue("B{$y}", 'Infantil');
-        $spreadsheet->getActiveSheet()->setCellValue("C{$y}", 'No Disponible');
-        $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $totalInventariadoInfantil);
-        $spreadsheet->getActiveSheet()->setCellValue("F{$y}",  '$' . number_format($consolidadoInventariadoInfantilPrecio, 2));
-        $spreadsheet->getActiveSheet()->setCellValue("H{$y}", number_format($porcentajeInventariadoInfantil, 2) . ' %');
-
-        $y+=1;
-        $spreadsheet->getActiveSheet()->setCellValue("A{$y}", 'Faltante');
-        $spreadsheet->getActiveSheet()->mergeCells("A{$y}:A".$y+1, \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
-        $spreadsheet->getActiveSheet()->setCellValue("B{$y}", 'General');
-        $spreadsheet->getActiveSheet()->setCellValue("C{$y}", 'No Disponible');
-        $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $totalFaltanteGeneral);
-        $spreadsheet->getActiveSheet()->setCellValue("E{$y}", $totalFaltante);
-        $spreadsheet->getActiveSheet()->setCellValue("F{$y}", '$' . number_format($consolidadoFaltanteGeneralPrecio, 2));
-        $spreadsheet->getActiveSheet()->setCellValue("G{$y}", '$' . number_format($consolidadoFaltanteGeneralPrecio + $consolidadoFaltanteInfantilPrecio, 2));
-        $spreadsheet->getActiveSheet()->mergeCells("G{$y}:G".$y+1, \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
-        $spreadsheet->getActiveSheet()->setCellValue("H{$y}", number_format($porcentajeFaltanteGeneral, 2) . ' %');
-        $spreadsheet->getActiveSheet()->setCellValue("I{$y}", number_format($porcentajeFaltanteGeneral + $porcentajeFaltanteInfantil, 2) . ' %');
-
-        $y+=1;
-        $spreadsheet->getActiveSheet()->setCellValue("B{$y}", 'Infantil');
-        $spreadsheet->getActiveSheet()->setCellValue("C{$y}", 'No Disponible');
-        $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $totalFaltanteInfantil);
-        $spreadsheet->getActiveSheet()->setCellValue("F{$y}", '$' . number_format($consolidadoFaltanteInfantilPrecio,2));
-        $spreadsheet->getActiveSheet()->setCellValue("H{$y}", number_format($porcentajeFaltanteInfantil, 2) . ' %');
-
-        $y+=1;
+        $spreadsheet->getActiveSheet()->mergeCells("A{$initialMergeUbication}:A$y", \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
+        $spreadsheet->getActiveSheet()->mergeCells("E{$initialMergeUbication}:E$y", \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
+        $spreadsheet->getActiveSheet()->mergeCells("G{$initialMergeUbication}:G$y", \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
+        $spreadsheet->getActiveSheet()->mergeCells("I{$initialMergeUbication}:I$y", \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
+        dump($consolidado);die;
+        $y += 1;
         $spreadsheet->getActiveSheet()->setCellValue("A{$y}", 'Faltante');
         $spreadsheet->getActiveSheet()->setCellValue("B{$y}", 'Nivel Central');
         $spreadsheet->getActiveSheet()->mergeCells("B{$y}:C{$y}", \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
         $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $totalFaltanteNivelCentral);
-        $spreadsheet->getActiveSheet()->setCellValue("F{$y}", '$' . number_format($consolidadoFaltanteNivelCentralPrecio,2));
+        $spreadsheet->getActiveSheet()->setCellValue("F{$y}", '$' . number_format($consolidadoFaltanteNivelCentralPrecio, 2));
         $spreadsheet->getActiveSheet()->setCellValue("H{$y}", number_format($porcentajeFaltanteNivelCentral, 2) . ' %');
 
-        $y+=1;
+        $y += 1;
         $spreadsheet->getActiveSheet()->setCellValue("A{$y}", 'Faltante');
         $spreadsheet->getActiveSheet()->setCellValue("B{$y}", 'Tránsito');
         $spreadsheet->getActiveSheet()->mergeCells("B{$y}:C{$y}", \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
         $spreadsheet->getActiveSheet()->setCellValue("D{$y}", $totalFaltanteTransito);
-        $spreadsheet->getActiveSheet()->setCellValue("F{$y}", '$' . number_format($consolidadoFaltanteTransitoPrecio,2));
+        $spreadsheet->getActiveSheet()->setCellValue("F{$y}", '$' . number_format($consolidadoFaltanteTransitoPrecio, 2));
         $spreadsheet->getActiveSheet()->setCellValue("H{$y}", number_format($porcentajeFaltanteTransito, 2) . ' %');
 
-        $y+=1;
+        $y += 1;
         $spreadsheet->getActiveSheet()->setCellValue("A{$y}", 'Colección Total');
         $spreadsheet->getActiveSheet()->mergeCells("A{$y}:C{$y}", \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::MERGE_CELL_CONTENT_MERGE);
         $this->addHeaderStyle($spreadsheet, "A{$y}:C{$y}");
@@ -643,8 +646,9 @@ class XlssExport{
         ]);
     }
 
-    public function addHeaderStyle($spreadsheet, $cell){
-        $spreadsheet->getActiveSheet()->getStyle($cell)->getFont()->setBold( true );
+    public function addHeaderStyle($spreadsheet, $cell)
+    {
+        $spreadsheet->getActiveSheet()->getStyle($cell)->getFont()->setBold(true);
         $spreadsheet->getActiveSheet()->getStyle($cell)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('666699');
         $spreadsheet->getActiveSheet()->getStyle($cell)->getFont()->getColor()->setARGB('ffffff');
     }
