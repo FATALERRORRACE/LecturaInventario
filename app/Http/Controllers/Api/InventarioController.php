@@ -203,8 +203,6 @@ class InventarioController extends Controller{
     }
  
     public function downloadReport(Request $request){
-        dump($request->name);
-        dump(file_exists("/tmp/{$request->name}"));die;
         header('Content-Description: File Transfer');
         header('Content-Disposition: attachment; filename="' . basename("/tmp/{$request->name}") . '"');
         header('Expires: 0');

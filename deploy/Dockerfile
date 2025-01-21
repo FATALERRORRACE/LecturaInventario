@@ -78,7 +78,7 @@ RUN apk add --no-cache \
 # copy files from the build stage
 COPY --from=build /var/www/inventario /var/www/inventario
 COPY ./deploy/default.conf /etc/nginx/http.d/default.conf
-#COPY ./deploy/php.ini "$PHP_INI_DIR/conf.d/app.ini"
+COPY ./deploy/php.ini "$PHP_INI_DIR/conf.d/app.ini-production"
 
 WORKDIR /var/www/inventario
 
